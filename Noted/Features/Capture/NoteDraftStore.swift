@@ -9,6 +9,7 @@ struct NoteDraft: Codable {
 enum NoteDraftStore {
     private static var path: URL {
         #if DEBUG
+        if let directory = MockFixtures.draftDirectory { return directory.appendingPathComponent("capture.json") }
         if let directory = PhaseFourFixtures.draftDirectory { return directory.appendingPathComponent("capture.json") }
         #endif
         return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]

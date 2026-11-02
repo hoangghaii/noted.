@@ -1,6 +1,6 @@
 # Phase 06 — Bộ sưu tập và Chi tiết
 
-Ngày 2026-11-02 · Ưu tiên: cao · Phụ thuộc: Phase 04 · Trạng thái: chưa bắt đầu · Review: chưa
+Ngày 2026-11-02 · Ưu tiên: cao · Phụ thuộc: Phase 04 · Trạng thái: đã triển khai simulator, unit 46/46 + UI 4/4 đạt; fidelity còn mở · Review: không có blocker (review tĩnh)
 
 ## Khác biệt hiện tại ↔ mock (Bộ sưu tập)
 
@@ -33,11 +33,11 @@ Ngày 2026-11-02 · Ưu tiên: cao · Phụ thuộc: Phase 04 · Trạng thái: 
 
 ## Todo
 
-- [ ] Header + menu “…”
-- [ ] Pill tạo sage
-- [ ] FolderCard + tab mật ong + tông xen kẽ
-- [ ] Ánh xạ biểu tượng thư mục + unit test
-- [ ] Chi tiết, Thùng rác, Backup đồng bộ
+- [x] Header + menu “…”
+- [x] Pill tạo sage
+- [x] FolderCard + tab mật ong + tông xen kẽ
+- [x] Ánh xạ biểu tượng thư mục + unit test
+- [x] Chi tiết, Thùng rác, Backup đồng bộ
 
 ## Nghiệm thu
 
@@ -49,3 +49,18 @@ Ngày 2026-11-02 · Ưu tiên: cao · Phụ thuộc: Phase 04 · Trạng thái: 
 
 - Tab nhô lên có thể bị cắt bởi `ScrollView` clip ở thẻ đầu → thêm padding top.
 - Tên bộ sưu tập dài 2 dòng làm lệch chiều cao → `lineLimit(2)`, thẻ co giãn, tab cố định.
+
+## Kết quả triển khai simulator — 2026-11-02
+
+- [x] Unit ánh xạ icon và toàn suite: 46/46 đạt.
+- [x] UI tạo/mở/đổi tên/xóa + menu Backup/Trash, editor draft/lỗi lưu, Trash restore/xóa: 4/4 đạt trong một lượt cuối.
+- [x] Review độc lập không có blocker; `git diff --check` đạt.
+- [ ] Checklist fidelity ≥98%, trọng yếu 100%: chưa đạt nghiệm thu; probe màu 15/17 không thay cho điểm checklist.
+
+Bằng chứng và giới hạn: [Phase 06 evidence](../../docs/evidence/20261102-paper-phase6/README.md). Simulator đang chạy fixture Collections tách dữ liệu cá nhân. Có sửa bổ sung observer đóng bàn phím trong `LibraryLifecycleView.swift`: bỏ qua native alert/control để nút Tạo/Lưu hoạt động bằng một lần chạm.
+
+## Retest 2026-11-03
+
+- Simulator riêng `Claude Test iPhone 12 Pro` (iOS 18.6): unit 46/46, UI 23/23 (PaperComponents, MockFidelity, Library, PhaseFourAcceptance), 0 runner restart. Lỗi “signal kill” trước đó do hai phiên chạy test cùng lúc trên một simulator, không phải lỗi test.
+- Chi tiết sửa và số đo: [retest evidence](../../docs/evidence/20261103-paper-phase5-6-retest/summary.md).
+- Bám mock: icon thư mục 66 pt nét 3, tim tô đặc, tab 72×20, bước hàng 125,5 pt khớp v3. Probe màu Bộ sưu tập 15/17 → **17/17**. Tìm kiếm/Chi tiết/Editor/Thùng rác/Backup kiểm tra ảnh, không vỡ layout.

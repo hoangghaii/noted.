@@ -1,0 +1,144 @@
+{
+  "screen": "library",
+  "metric": "CIEDE2000 (sRGB D65, mean 5x5 pixels)",
+  "ssim": "11086.4 (0.169167)",
+  "ssimInterpretation": "ImageMagick SSIM distortion: 0 means identical; informational only",
+  "deviceCrop": {
+    "topPixels": 141,
+    "bottomPixels": 102
+  },
+  "comparedSize": [
+    1170,
+    2213
+  ],
+  "probes": [
+    {
+      "id": "library-01",
+      "expected": "#FCF7EF",
+      "actual": "#F7F5F1",
+      "deltaE2000": 2.0874,
+      "tolerance": 3,
+      "passed": true
+    },
+    {
+      "id": "library-02",
+      "expected": "#ECE6DA",
+      "actual": "#FFFFFF",
+      "deltaE2000": 7.6456,
+      "tolerance": 3,
+      "passed": false
+    },
+    {
+      "id": "library-03",
+      "expected": "#204132",
+      "actual": "#252C73",
+      "deltaE2000": 32.5214,
+      "tolerance": 3,
+      "passed": false
+    },
+    {
+      "id": "library-04",
+      "expected": "#2C4D3F",
+      "actual": "#252C73",
+      "deltaE2000": 32.3421,
+      "tolerance": 3,
+      "passed": false
+    },
+    {
+      "id": "library-05",
+      "expected": "#EDBE6B",
+      "actual": "#252C73",
+      "deltaE2000": 76.2711,
+      "tolerance": 3,
+      "passed": false
+    },
+    {
+      "id": "library-06",
+      "expected": "#214032",
+      "actual": "#F7F5F1",
+      "deltaE2000": 64.8934,
+      "tolerance": 3,
+      "passed": false
+    },
+    {
+      "id": "library-07",
+      "expected": "#EFE9DE",
+      "actual": "#F7F5F1",
+      "deltaE2000": 4.1022,
+      "tolerance": 3,
+      "passed": false
+    },
+    {
+      "id": "library-08",
+      "expected": "#EDE8DC",
+      "actual": "#F7F5F1",
+      "deltaE2000": 4.5115,
+      "tolerance": 3,
+      "passed": false
+    },
+    {
+      "id": "library-09",
+      "expected": "#EEE9DE",
+      "actual": "#F7F5F1",
+      "deltaE2000": 4.0539,
+      "tolerance": 3,
+      "passed": false
+    },
+    {
+      "id": "library-10",
+      "expected": "#FCF5E8",
+      "actual": "#F7F5F1",
+      "deltaE2000": 4.0871,
+      "tolerance": 3,
+      "passed": false
+    },
+    {
+      "id": "library-11",
+      "expected": "#FDF6E9",
+      "actual": "#FFFFFF",
+      "deltaE2000": 6.3346,
+      "tolerance": 3,
+      "passed": false
+    },
+    {
+      "id": "library-12",
+      "expected": "#EEBC68",
+      "actual": "#F6F4F1",
+      "deltaE2000": 24.8508,
+      "tolerance": 3,
+      "passed": false
+    },
+    {
+      "id": "library-13",
+      "expected": "#F0BB60",
+      "actual": "#FFFFFF",
+      "deltaE2000": 27.655,
+      "tolerance": 3,
+      "passed": false
+    },
+    {
+      "id": "library-14",
+      "expected": "#DFE5D8",
+      "actual": "#FFFFFF",
+      "deltaE2000": 9.2848,
+      "tolerance": 3,
+      "passed": false
+    },
+    {
+      "id": "library-15",
+      "expected": "#DEE4D7",
+      "actual": "#F7F5F1",
+      "deltaE2000": 7.3561,
+      "tolerance": 3,
+      "passed": false
+    },
+    {
+      "id": "library-16",
+      "expected": "#F8F4EB",
+      "actual": "#FFFFFF",
+      "deltaE2000": 4.8533,
+      "tolerance": 3,
+      "passed": false
+    }
+  ]
+}

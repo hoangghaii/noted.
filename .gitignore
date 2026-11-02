@@ -7,3 +7,4 @@ Config/Local.xcconfig
 .env
 .env.*
 !.env.example
+__pycache__/

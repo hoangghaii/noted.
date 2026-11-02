@@ -27,6 +27,7 @@ struct ItemDetailView: View {
                         StoredImageView(url: store.attachmentURL(attachment), maximumPixels: 1800)
                             .frame(maxWidth: .infinity).clipShape(RoundedRectangle(cornerRadius: NotedDesign.Radius.card))
                         ShareLink(item: store.attachmentURL(attachment)) { Label("Chia sẻ ảnh gốc", systemImage: "square.and.arrow.up") }
+                            .buttonStyle(NotedButtonStyle(role: .soft))
                             .accessibilityIdentifier("detailShareOriginal")
                     }
                 }
@@ -37,14 +38,20 @@ struct ItemDetailView: View {
                             .multilineTextAlignment(.leading)
                     }
                     .accessibilityIdentifier("detailOpenURL")
-                    ShareLink(item: url) { Label("Chia sẻ link", systemImage: "square.and.arrow.up") }
+                    ShareLink(item: url) { Label("Chia sẻ link", systemImage: "square.and.arrow.up") }.buttonStyle(NotedButtonStyle(role: .soft))
                 }
                 if item.kind == "link", item.previewStatus == "pending" || item.previewStatus == "running" {
                     ProgressView("Đang tải preview liên kết…").font(.footnote)
                 }
                 if !item.body.isEmpty { Text(item.body).font(.body).foregroundStyle(NotedDesign.Palette.primaryText).textSelection(.enabled).frame(maxWidth: .infinity, alignment: .leading) }
-                if item.kind == "text" { ShareLink(item: item.body) { Label("Chia sẻ ghi chú", systemImage: "square.and.arrow.up") } }
-                if !item.tags.isEmpty { Text(item.tags.map { "#" + $0 }.joined(separator: "  ")).foregroundStyle(NotedDesign.Palette.brand) }
+                if item.kind == "text" { ShareLink(item: item.body) { Label("Chia sẻ ghi chú", systemImage: "square.and.arrow.up") }.buttonStyle(NotedButtonStyle(role: .soft)) }
+                if !item.tags.isEmpty {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 100), alignment: .leading)], alignment: .leading, spacing: 8) {
+                        ForEach(Array(item.tags.enumerated()), id: \.offset) { _, tag in
+                            TagChip(title: "#" + tag).frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                    }
+                }
                 if let collection = store.collections.first(where: { $0.id == item.collectionID }) {
                     Label(collection.name, systemImage: "folder").font(.subheadline).foregroundStyle(.secondary)
                 }
@@ -63,7 +70,7 @@ struct ItemDetailView: View {
                 if item.kind == "image" {
                     Button("Đọc chữ lại", systemImage: "text.viewfinder") {
                         perform { item.ocrStatus = "pending"; try store.saveChanges() }
-                    }.font(.subheadline).disabled(item.ocrStatus == "pending" || item.ocrStatus == "running")
+                    }.buttonStyle(NotedButtonStyle(role: .soft)).disabled(item.ocrStatus == "pending" || item.ocrStatus == "running")
                     if item.ocrStatus == "pending" || item.ocrStatus == "running" {
                         ProgressView(item.ocrStatus == "running" ? "Đang nhận diện chữ…" : "Đang chờ nhận diện chữ…").font(.footnote)
                     }
@@ -71,10 +78,11 @@ struct ItemDetailView: View {
             }
             .padding(NotedDesign.Spacing.base)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(NotedDesign.Palette.surface, in: RoundedRectangle(cornerRadius: NotedDesign.Radius.card))
+            .paperBackground(NotedDesign.Palette.surface)
+            .clipShape(RoundedRectangle(cornerRadius: NotedDesign.Radius.card))
             .padding(NotedDesign.Spacing.base)
         }
-        .background(NotedDesign.Palette.paper)
+        .paperBackground()
         .navigationTitle(item.kind == "image" ? "Ảnh" : item.kind == "link" ? "Liên kết" : "Ghi chú")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.visible, for: .navigationBar)
@@ -86,7 +94,13 @@ struct ItemDetailView: View {
                     Button(item.pinned ? "Bỏ ghim" : "Ghim", systemImage: "pin") { perform { try store.togglePin(item) } }
                     Button("Chuyển vào thùng rác", systemImage: "trash", role: .destructive) { confirmTrash = true }
                         .accessibilityIdentifier("itemTrash")
-                } label: { Image(systemName: "ellipsis.circle") }.accessibilityLabel("Tùy chọn nội dung")
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(NotedDesign.Palette.primaryText)
+                        .frame(width: 44, height: 44)
+                        .background(NotedDesign.Palette.chip, in: Circle())
+                }.accessibilityLabel("Tùy chọn nội dung")
             }
         }
         .sheet(isPresented: $showEditor) { ItemEditor(item: item, store: store) }
@@ -150,20 +164,29 @@ private struct ItemEditor: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Tiêu đề") {
-                    TextField("Không bắt buộc", text: $draft.title).accessibilityIdentifier("editTitle")
+                Section {
+                    PaperField(label: "Tiêu đề") {
+                        TextField("Không bắt buộc", text: $draft.title).accessibilityIdentifier("editTitle")
+                    }
+                    PaperField(label: "Nội dung") {
+                        TextEditor(text: $draft.body)
+                            .scrollContentBackground(.hidden)
+                            .frame(minHeight: 180)
+                            .accessibilityIdentifier("editBody")
+                    }
+                    PaperField(label: "Thẻ") {
+                        TextField("Tag, phân cách bằng dấu phẩy", text: $draft.tags)
+                            .textInputAutocapitalization(.never).accessibilityIdentifier("editTags")
+                    }
+                    PaperField(label: "Bộ sưu tập") {
+                        Picker("Bộ sưu tập", selection: $draft.collectionID) {
+                            Text("Inbox").tag(UUID?.none)
+                            ForEach(store.collections) { collection in Text(collection.name).tag(Optional(collection.id)) }
+                        }.accessibilityIdentifier("editCollection")
+                    }
                 }
-                Section("Nội dung") {
-                    TextEditor(text: $draft.body).frame(minHeight: 180).accessibilityIdentifier("editBody")
-
-                }
-                Section("Tổ chức") {
-                    TextField("Tag, phân cách bằng dấu phẩy", text: $draft.tags).textInputAutocapitalization(.never).accessibilityIdentifier("editTags")
-                    Picker("Bộ sưu tập", selection: $draft.collectionID) {
-                        Text("Inbox").tag(UUID?.none)
-                        ForEach(store.collections) { collection in Text(collection.name).tag(Optional(collection.id)) }
-                    }.accessibilityIdentifier("editCollection")
-                }
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
                 #if DEBUG
                 if PhaseFourFixtures.isVerificationStore(store) {
                     Section("Kiểm chứng dữ liệu thử") {
@@ -184,12 +207,12 @@ private struct ItemEditor: View {
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(NotedDesign.Palette.paper)
+            .paperBackground()
             .tint(NotedDesign.Palette.brand)
             .accessibilityIdentifier("itemEditorForm")
             .navigationTitle("Chỉnh sửa").navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("Đóng") { dismiss() } }
+                ToolbarItem(placement: .cancellationAction) { CircleIconButton(symbol: "xmark", label: "Đóng") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Lưu") {
                         do {
@@ -200,7 +223,7 @@ private struct ItemEditor: View {
                             try? FileManager.default.removeItem(at: DetailDraftStore.path(item.id))
                             dismiss()
                         } catch { self.error = error.localizedDescription }
-                    }.accessibilityIdentifier("editSave")
+                    }.buttonStyle(NotedButtonStyle(role: .primary)).accessibilityIdentifier("editSave")
                 }
             }
             .onChange(of: draft.title) { _, _ in persist() }

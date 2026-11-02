@@ -1,6 +1,6 @@
 # Phase 04 — Component chung và tab bar
 
-Ngày 2026-11-02 · Ưu tiên: cao · Phụ thuộc: Phase 02 · Trạng thái: chưa bắt đầu · Review: chưa
+Ngày 2026-11-02 · Ưu tiên: cao · Phụ thuộc: Phase 02 · Trạng thái: đã triển khai; 5/5 UI test simulator đạt, chờ nghiệm thu ảnh iPhone · Review: đã review độc lập, không còn finding code
 
 ## Insight
 
@@ -40,10 +40,10 @@ Ngày 2026-11-02 · Ưu tiên: cao · Phụ thuộc: Phase 02 · Trạng thái: 
 
 ## Todo
 
-- [ ] `NotedPaperUI.swift` + Preview
-- [ ] Pill bằng nhau có test layout (UI test đọc `frame.width` các pill `libraryFilter_*`, chênh ≤ 1 pt)
-- [ ] Tab bar mới
-- [ ] Build app + extension
+- [x] `NotedPaperUI.swift` + Preview
+- [x] Pill bằng nhau có test layout (UI test đọc `frame.width` các pill `libraryFilter_*`, chênh ≤ 1 pt)
+- [x] Tab bar mới
+- [x] Build app + extension (Debug iPhoneOS build-for-testing, unsigned; 5/5 UI tests simulator đạt)
 
 ## Nghiệm thu
 
@@ -55,3 +55,18 @@ Ngày 2026-11-02 · Ưu tiên: cao · Phụ thuộc: Phase 02 · Trạng thái: 
 
 - `containerRelativeFrame` cần iOS 17+ — kiểm tra deployment target; nếu thấp hơn dùng `GeometryReader`.
 - Bóng + texture trên nhiều card trong lưới → kiểm tra cuộn mượt; nếu giật, `drawingGroup()` cho lớp texture.
+
+## Kết quả triển khai (2026-11-02)
+
+- Thêm shared component vào cả Noted và NotedShare, bao gồm style `.soft`/`prominent`, pill/group, CircleIconButton, PaperCard/Curl, PaperField, TagChip; tái sử dụng PaperBackground Phase 02. Preview có 3 tông, curl, pill và field.
+- Chuyển riêng filter và chế độ capture sang group để kiểm chứng layout; phần thiết kế màn còn lại thuộc Phase 05/07. Giữ wrapper NotedFilterChip tương thích. Đổi test capture từ segmentedControls sang captureMode_note/link/photo.
+- Giữ libraryFilters trên ScrollView; thêm libraryFilter_all/notes/images/links/inbox/pinned. Capture dùng FocusState để bỏ focus khi đổi mode.
+- Tab bar dùng doc.text.fill / magnifyingglass / square.stack.3d.up.fill, icon 24, chữ 12, nền bar không hairline; giữ identifier cũ.
+- Review độc lập đã xác nhận sửa selector, focus và coverage Đã ghim ở XXXL; không còn finding code. Không đổi schema/payload/dữ liệu cá nhân.
+- Chi tiết kiểm chứng: [Phase 04 evidence](../../docs/evidence/20261102-paper-phase4/summary.md). Nghiệm thu ảnh iPhone thật còn pending vì thiết bị chưa kết nối.
+
+## Retest 2026-11-03
+
+- Simulator riêng `Claude Test iPhone 12 Pro` (iOS 18.6): unit 46/46, UI 23/23 (PaperComponents, MockFidelity, Library, PhaseFourAcceptance), 0 runner restart. Lỗi “signal kill” trước đó do hai phiên chạy test cùng lúc trên một simulator, không phải lỗi test.
+- Chi tiết sửa và số đo: [retest evidence](../../docs/evidence/20261103-paper-phase5-6-retest/summary.md).
+- 4 ca PhaseFourAcceptance trượt trên simulator cũng trượt ở baseline `9c56135` (không phải hồi quy); đã sửa locator/chờ trong test. Sửa thêm observer bàn phím để chạm đầu tiên vào Toggle khi bàn phím mở không bị mất.

@@ -43,7 +43,7 @@ struct DataManagementView: View {
                         Label("Nhập backup", systemImage: "square.and.arrow.down")
                             .frame(maxWidth: .infinity)
                     }
-                        .buttonStyle(NotedButtonStyle(role: .secondary))
+                        .buttonStyle(NotedButtonStyle(role: .soft))
                         .accessibilityIdentifier("backupImport")
                 } footer: {
                     Text("Backup gồm ghi chú, link, ảnh gốc, collections, tag và thùng rác. File chưa mã hóa; hãy chọn nơi lưu phù hợp. Nhập sẽ hợp nhất và giữ cả hai bản khi nội dung xung đột.")
@@ -74,7 +74,7 @@ struct DataManagementView: View {
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(NotedDesign.Palette.paper)
+            .paperBackground()
             .navigationTitle("Dữ liệu & backup")
             .navigationBarTitleDisplayMode(.inline)
             .task(id: initialImportURL) {
@@ -82,7 +82,7 @@ struct DataManagementView: View {
                 handledImportURL = url
                 await importBackup(url)
             }
-            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Xong") { dismiss() }.disabled(busy) } }
+            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Xong") { dismiss() }.buttonStyle(NotedButtonStyle(role: .soft)).disabled(busy) } }
             .operationLoading(busy, message: busyMessage)
             .interactiveDismissDisabled(busy)
             .sheet(item: $export) { output in

@@ -34,99 +34,129 @@ struct StoredImageView: View {
     }
 }
 
+/// Shared rows keep both paper cards at the height of the tallest card.
+struct ItemCardGrid: View {
+    let items: [Item]
+    let store: LibraryStore
+    @Environment(\.dynamicTypeSize) private var typeSize
+    @State private var error: String?
+
+    private var columns: Int { typeSize.isAccessibilitySize ? 1 : 2 }
+
+    var body: some View {
+        LazyVStack(spacing: 12) {
+            ForEach(Array(stride(from: 0, to: items.count, by: columns)), id: \.self) { start in
+                HStack(alignment: .top, spacing: 12) {
+                    ForEach(Array(items[start..<min(start + columns, items.count)])) { item in
+                        NavigationLink { ItemDetailView(item: item, store: store) } label: {
+                            ItemCard(item: item, store: store)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityIdentifier("item_" + item.id.uuidString)
+                        .overlay(alignment: .topTrailing) {
+                            Menu {
+                                Button(item.pinned ? "Bỏ ghim" : "Ghim", systemImage: "pin") {
+                                    do { try store.togglePin(item) } catch { self.error = error.localizedDescription }
+                                }
+                                Button("Chuyển vào Thùng rác", systemImage: "trash", role: .destructive) {
+                                    do { try store.trash(item) } catch { self.error = error.localizedDescription }
+                                }
+                            } label: {
+                                Image(systemName: "ellipsis")
+                                    .font(.system(size: 17, weight: .semibold))
+                                    .foregroundStyle(item.kind == "image" ? .white : NotedDesign.tone(for: item.id, kind: item.kind).foreground)
+                                    .shadow(color: item.kind == "image" ? .black.opacity(0.7) : .clear, radius: 2)
+                                    .frame(width: 44, height: 44)
+                                    .contentShape(Rectangle())
+                            }
+                            .accessibilityLabel("Tùy chọn nội dung")
+                            .accessibilityIdentifier("itemMenu_" + item.id.uuidString)
+                        }
+                    }
+                    if columns == 2 && start + 1 == items.count {
+                        Color.clear.frame(maxWidth: .infinity)
+                    }
+                }
+                .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .alert("Chưa hoàn tất", isPresented: Binding(get: { error != nil }, set: { if !$0 { error = nil } })) {
+            Button("Đóng", role: .cancel) { error = nil }
+        } message: { Text(error ?? "") }
+    }
+}
+
 struct ItemCard: View {
     let item: Item
     let store: LibraryStore
 
-    private var title: String {
-        item.displayTitle
+    private var tone: NotedDesign.PaperTone { NotedDesign.tone(for: item.id, kind: item.kind) }
+    private var sketch: NotedDesign.Sketch {
+        item.kind == "image" ? .photo : item.kind == "link" ? .link : .note
     }
-
-    private var kindLabel: String {
-        switch item.kind {
-        case "image": "ẢNH"
-        case "link": "LIÊN KẾT"
-        default: "GHI CHÚ"
-        }
+    private var excerpt: String {
+        String(item.body.prefix(400)).components(separatedBy: .newlines).map { line in
+            line.hasPrefix("- ") ? "• " + line.dropFirst(2) : line
+        }.joined(separator: "\n")
     }
-
-    private var kindSymbol: String {
-        switch item.kind {
-        case "image": "photo"
-        case "link": "link"
-        default: "note.text"
-        }
-    }
-
-    private var collectionLabel: String {
-        store.collections.first(where: { $0.id == item.collectionID })?.name ?? "Inbox"
-    }
-
     private var dateLabel: String {
-        if Calendar.current.isDateInToday(item.createdAt) { return "Hôm nay" }
-        if Calendar.current.isDateInYesterday(item.createdAt) { return "Hôm qua" }
-        return item.createdAt.formatted(.dateTime.day().month(.abbreviated))
+        let parts = Calendar(identifier: .gregorian).dateComponents([.day, .month, .year], from: item.createdAt)
+        return "\(parts.day ?? 1) thg \(parts.month ?? 1), \(parts.year ?? 2024)"
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: NotedDesign.Spacing.xs) {
-            if let attachment = item.attachments.first, item.kind == "image" {
-                StoredImageView(url: store.attachmentURL(attachment), contentMode: .fill)
-                    .frame(maxWidth: .infinity).frame(height: 72)
-                    .background(NotedDesign.Palette.brandSoft)
-                    .clipShape(RoundedRectangle(cornerRadius: NotedDesign.Radius.thumbnail))
-            }
-            HStack(spacing: NotedDesign.Spacing.xs) {
-                Image(systemName: kindSymbol)
-                Text(kindLabel)
-                    .tracking(0.4)
-                Spacer()
-                if item.pinned {
-                    Label("Đã ghim", systemImage: "pin.fill")
-                        .labelStyle(.titleAndIcon)
+        PaperCard(tone: tone, curl: NotedDesign.curls(for: item.id, kind: item.kind)) {
+            VStack(alignment: .leading, spacing: 0) {
+                if item.kind == "image" {
+                    ZStack(alignment: .topLeading) {
+                        Group {
+                            if let attachment = item.attachments.first {
+                                StoredImageView(url: store.attachmentURL(attachment), contentMode: .fill)
+                            } else {
+                                NotedDesign.Palette.brandSoft
+                            }
+                        }
+                        .frame(maxWidth: .infinity).frame(height: 120).clipped()
+                        sketch.image.resizable().scaledToFit().frame(width: 22, height: 22)
+                            .foregroundStyle(.white).shadow(color: .black.opacity(0.7), radius: 2).padding(12)
+                    }
+                } else {
+                    // v3: icon 14 pt from the top, title starts ~46 pt down.
+                    sketch.image.resizable().scaledToFit().frame(width: 24, height: 24)
+                        .padding(.horizontal, 12).padding(.top, 13).padding(.bottom, 9)
                 }
-            }
-            .font(.caption2.weight(.bold))
-            .foregroundStyle(NotedDesign.Palette.brand)
-            Text(title)
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(NotedDesign.Palette.primaryText)
-                .lineLimit(2)
-            if item.kind == "text", !item.body.isEmpty {
-                Text(item.body)
-                    .font(.caption)
-                    .foregroundStyle(NotedDesign.Palette.secondaryText)
-                    .lineLimit(1)
-            } else if item.kind == "link" {
-                Text(URL(string: item.originalURL)?.host ?? item.originalURL)
-                    .font(.caption)
-                    .foregroundStyle(NotedDesign.Palette.secondaryText)
-                    .lineLimit(1)
-            }
-            if item.kind != "image", !item.tags.isEmpty {
-                Text(item.tags.prefix(3).map { "#" + $0 }.joined(separator: " "))
-                    .font(.caption2)
-                    .foregroundStyle(NotedDesign.Palette.brand)
-                    .lineLimit(1)
-            }
-            if item.kind != "image" {
-                Spacer(minLength: 0)
-                HStack(spacing: NotedDesign.Spacing.xs) {
-                    Text(dateLabel)
-                    Text("·")
-                    Text(collectionLabel).lineLimit(1)
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(item.displayTitle)
+                        .font(.system(size: item.kind == "image" ? 13 : 15.5, weight: .semibold))
+                        .lineLimit(2)
+                    if item.kind != "image", !excerpt.isEmpty {
+                        // v3 fits ~26 characters per line in a half-width card.
+                        Text(excerpt).font(.system(size: 12.5)).lineSpacing(2.5)
+                            .foregroundStyle(tone.secondaryForeground)
+                            .lineLimit(item.kind == "link" ? 3 : 5)
+                    }
+                    if item.kind == "link" {
+                        // v3 puts the external-link mark after the domain.
+                        HStack(spacing: 6) {
+                            Text(URL(string: item.originalURL)?.host ?? item.originalURL).lineLimit(1)
+                            Image(systemName: "arrow.up.right.square").accessibilityHidden(true)
+                        }
+                        .font(.caption).foregroundStyle(tone.secondaryForeground)
+                    }
+                    Spacer(minLength: 0)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(dateLabel)
+                        if item.pinned { Label("Đã ghim", systemImage: "pin.fill") }
+                    }
+                    .font(.caption2).foregroundStyle(tone.secondaryForeground)
                 }
-                .font(.caption2)
-                .foregroundStyle(NotedDesign.Palette.secondaryText)
+                .padding(.leading, 12).padding(.trailing, 8).padding(.bottom, 12)
+                .padding(.top, item.kind == "image" ? 10 : 0)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             }
+            .frame(maxWidth: .infinity, minHeight: 180, maxHeight: .infinity, alignment: .topLeading)
         }
-        .padding(10)
-        .frame(maxWidth: .infinity, minHeight: 156, alignment: .topLeading)
-        .background(NotedDesign.Palette.surface, in: RoundedRectangle(cornerRadius: NotedDesign.Radius.card))
-        .overlay {
-            RoundedRectangle(cornerRadius: NotedDesign.Radius.card)
-                .strokeBorder(NotedDesign.Palette.border)
-        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .contentShape(RoundedRectangle(cornerRadius: NotedDesign.Radius.card))
     }
 }

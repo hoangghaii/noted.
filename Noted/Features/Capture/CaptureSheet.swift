@@ -21,6 +21,8 @@ private struct ImportedPhoto: Transferable {
 
 struct CaptureSheet: View {
     let store: LibraryStore
+    private enum EditorFocus: Hashable { case body, url }
+    @FocusState private var editorFocus: EditorFocus?
     @Environment(\.dismiss) private var dismiss
     @State private var draft = NoteDraftStore.read()
     @State private var photos: [PhotosPickerItem] = []
@@ -68,15 +70,14 @@ struct CaptureSheet: View {
     }
 
     private var modeSection: some View {
-        Picker("Loại nội dung", selection: $draft.mode) {
-            Text("Ghi chú").tag("note")
-            Text("Link").tag("link")
-            Text("Ảnh").tag("photo")
+        EqualWidthPillGroup(count: 3, visualHeight: 44, accessibilityID: "captureMode") { index in
+            let mode = ["note", "link", "photo"][index]
+            NotedPill(title: ["Ghi chú", "Link", "Ảnh"][index], selected: draft.mode == mode, visualHeight: 44) {
+                editorFocus = nil
+                draft.mode = mode
+            }
+            .accessibilityIdentifier("captureMode_" + mode)
         }
-        .pickerStyle(.segmented)
-        .accessibilityIdentifier("captureMode")
-        .padding(NotedDesign.Spacing.sm)
-        .background(NotedDesign.Palette.brandSoft, in: RoundedRectangle(cornerRadius: NotedDesign.Radius.input))
     }
 
     private var linkSection: some View {
@@ -85,6 +86,7 @@ struct CaptureSheet: View {
                 .font(NotedDesign.TypeStyle.heading)
                 .foregroundStyle(NotedDesign.Palette.primaryText)
             TextField("Địa chỉ http hoặc https", text: $draft.url)
+                .focused($editorFocus, equals: .url)
                 .keyboardType(.URL)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
@@ -131,6 +133,7 @@ struct CaptureSheet: View {
                         .allowsHitTesting(false)
                 }
                 TextEditor(text: $draft.body)
+                    .focused($editorFocus, equals: .body)
                 .scrollContentBackground(.hidden)
                 .padding(NotedDesign.Spacing.md)
                 .frame(minHeight: 180)

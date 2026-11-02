@@ -17,7 +17,7 @@ struct RootView: View {
                 LibraryView(store: store, onManageData: onManageData,
                             onShowTrash: { showTrash = true }, onCapture: openCapture)
             }
-            .tabItem { Label("Thư viện", systemImage: "square.grid.2x2") }
+            .tabItem { Label("Thư viện", systemImage: "doc.text.fill") }
             .toolbar(.hidden, for: .tabBar)
             .tag(Destination.library)
             NavigationStack {
@@ -27,9 +27,9 @@ struct RootView: View {
             .toolbar(.hidden, for: .tabBar)
             .tag(Destination.search)
             NavigationStack {
-                CollectionsView(store: store)
+                CollectionsView(store: store, onManageData: onManageData, onShowTrash: { showTrash = true })
             }
-            .tabItem { Label("Bộ sưu tập", systemImage: "folder") }
+            .tabItem { Label("Bộ sưu tập", systemImage: "square.stack.3d.up.fill") }
             .toolbar(.hidden, for: .tabBar)
             .tag(Destination.collections)
         }
@@ -37,21 +37,26 @@ struct RootView: View {
         .tint(NotedDesign.Palette.brand)
         .sheet(isPresented: $showCapture) { CaptureSheet(store: store) }
         .sheet(isPresented: $showTrash) { NavigationStack { TrashView(store: store) } }
+        #if DEBUG
+        .task {
+            if MockFixtures.requestedVariant == .collections { selectedTab = .collections }
+            if MockFixtures.requestedVariant == .capture { showCapture = true }
+        }
+        #endif
     }
 
     private var destinationBar: some View {
         HStack(spacing: 0) {
-            destinationButton(.library, title: "Thư viện", symbol: "square.grid.2x2", id: "libraryTab")
+            destinationButton(.library, title: "Thư viện", symbol: "doc.text.fill", id: "libraryTab")
             destinationButton(.search, title: "Tìm kiếm", symbol: "magnifyingglass", id: "searchTab")
-            destinationButton(.collections, title: "Bộ sưu tập", symbol: "folder", id: "collectionsTab")
+            destinationButton(.collections, title: "Bộ sưu tập", symbol: "square.stack.3d.up.fill", id: "collectionsTab")
         }
         .frame(maxWidth: .infinity)
         .padding(.top, NotedDesign.Spacing.sm)
         .padding(.bottom, NotedDesign.Spacing.xs)
         .background {
-            NotedDesign.Palette.surface
+            NotedDesign.Palette.bar
                 .ignoresSafeArea(edges: .bottom)
-                .overlay(alignment: .top) { NotedDesign.Palette.border.frame(height: 1) }
         }
     }
 
@@ -60,9 +65,9 @@ struct RootView: View {
             selectedTab = destination
         } label: {
             VStack(spacing: 3) {
-                Image(systemName: symbol).font(.system(size: 21, weight: .regular))
+                Image(systemName: symbol).font(.system(size: 24, weight: .regular))
                     .frame(height: 24)
-                Text(title).font(.system(size: 11, weight: selectedTab == destination ? .bold : .medium))
+                Text(title).font(.system(size: 12, weight: selectedTab == destination ? .bold : .medium))
                     .lineLimit(1)
             }
             .foregroundStyle(selectedTab == destination ? NotedDesign.Palette.brand : NotedDesign.Palette.secondaryText)

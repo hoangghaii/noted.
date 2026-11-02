@@ -1,69 +1,13 @@
 import SwiftUI
 
-enum NotedButtonRole: Equatable {
-    case primary, secondary, quiet, destructive
-}
-
-struct NotedButtonStyle: ButtonStyle {
-    let role: NotedButtonRole
-    @Environment(\.isEnabled) private var isEnabled
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(.subheadline.weight(.semibold))
-            .frame(minHeight: 44)
-            .padding(.horizontal, NotedDesign.Spacing.base)
-            .foregroundStyle(foreground)
-            .background(background, in: Capsule())
-            .overlay {
-                Capsule()
-                    .strokeBorder(border, lineWidth: role == .quiet ? 0 : 1)
-            }
-            .opacity(isEnabled ? (configuration.isPressed ? 0.75 : 1) : 0.45)
-    }
-
-    private var foreground: Color {
-        switch role {
-        case .primary: NotedDesign.Palette.accentText
-        case .secondary: NotedDesign.Palette.brand
-        case .quiet: NotedDesign.Palette.brand
-        case .destructive: NotedDesign.Palette.error
-        }
-    }
-
-    private var background: Color {
-        switch role {
-        case .primary: NotedDesign.Palette.accent
-        case .secondary: NotedDesign.Palette.brandSoft
-        case .quiet: .clear
-        case .destructive: NotedDesign.Palette.errorSoft
-        }
-    }
-
-    private var border: Color {
-        .clear
-    }
-}
-
+/// Compatibility wrapper for screens migrating to the shared pill group.
 struct NotedFilterChip: View {
     let title: String
     let selected: Bool
     let action: () -> Void
-    @ScaledMetric(relativeTo: .subheadline) private var width = 96
 
     var body: some View {
-        Button(action: action) {
-            Text(title)
-                .font(.subheadline.weight(.medium))
-                .lineLimit(1)
-                .fixedSize(horizontal: true, vertical: false)
-                .frame(width: width)
-                .frame(minHeight: 44)
-                .foregroundStyle(selected ? NotedDesign.Palette.onBrand : NotedDesign.Palette.secondaryText)
-                .background(selected ? NotedDesign.Palette.brand : NotedDesign.Palette.paper, in: Capsule())
-        }
-        .buttonStyle(.plain)
-        .accessibilityAddTraits(selected ? .isSelected : [])
+        NotedPill(title: title, selected: selected, action: action).frame(width: 96)
     }
 }
 

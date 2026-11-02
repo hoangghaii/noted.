@@ -1,6 +1,6 @@
 # Noted — UI “Giấy & Bảng ghim” theo mock v3
 
-Ngày 2026-11-02. Trạng thái: **chưa triển khai**. Nguồn: [cuộc trao đổi](../../docs/chat-exports/20261102-noted-design-conversation.md), [mock UI v3](../../docs/design-preview/noted-paper-ui-mock-v3.png), [icon bảng ghim](../../docs/design-preview/icon-concepts/noted-pinboard-selected.png), [ghi chú concept](../../docs/design-preview/paper-concept.md).
+Ngày 2026-11-02. Trạng thái: **đã hoàn tất Phase 01; Phase 02 đã triển khai, đang kiểm chứng; Phase 03 đã cài icon mới, chờ ảnh Home Screen; Phase 04 đã triển khai, 5/5 UI test simulator đạt, chờ ảnh iPhone; Phase 05 đã triển khai trên simulator, chờ nghiệm thu fidelity và UI suite ổn định; Phase 06 đã triển khai simulator, unit 46/46 và UI 4/4 đạt, chờ fidelity**. Nguồn: [cuộc trao đổi](../../docs/chat-exports/20261102-noted-design-conversation.md), [mock UI v3](../../docs/design-preview/noted-paper-ui-mock-v3.png), [icon bảng ghim](../../docs/design-preview/icon-concepts/noted-pinboard-selected.png), [ghi chú concept](../../docs/design-preview/paper-concept.md).
 
 ## Mục tiêu
 
@@ -30,12 +30,12 @@ Ngày 2026-11-02. Trạng thái: **chưa triển khai**. Nguồn: [cuộc trao �
 
 | Phase | Trạng thái | Kết quả |
 |---|---|---|
-| [01 — Đặc tả đo và bộ so sánh](phase-01-spec-and-fidelity-harness.md) | Chưa bắt đầu | Ảnh tham chiếu cắt từ mock, spec số đo, checklist, fixture dữ liệu mock, script so sánh |
-| [02 — Token, texture, asset vẽ tay](phase-02-tokens-texture-assets.md) | Chưa bắt đầu | Palette mới, PaperGrain, SVG lightbulb/folder/kind, quy tắc tông & góc cong |
-| [03 — App icon bảng ghim](phase-03-app-icon.md) | Chưa bắt đầu | AppIcon 1024 opaque, kiểm tra 60/120/180 px và Home Screen |
-| [04 — Component chung & tab bar](phase-04-components-and-tab-bar.md) | Chưa bắt đầu | PaperCard, EqualWidthPills, CircleIconButton, PaperField, TagChip, tab bar |
-| [05 — Thư viện & Tìm kiếm](phase-05-library-and-search.md) | Chưa bắt đầu | Header, hero, filter, lưới card theo hàng, menu card |
-| [06 — Bộ sưu tập & Chi tiết](phase-06-collections-and-detail.md) | Chưa bắt đầu | Folder card có tab mật ong, icon theo bộ sưu tập |
+| [01 — Đặc tả đo và bộ so sánh](phase-01-spec-and-fidelity-harness.md) | Hoàn tất (4/4 UI test iPhone) | Ảnh tham chiếu cắt từ mock, spec số đo, checklist, fixture dữ liệu mock, script so sánh |
+| [02 — Token, texture, asset vẽ tay](phase-02-tokens-texture-assets.md) | Đang kiểm chứng | Palette mới, PaperGrain, SVG lightbulb/folder/kind, quy tắc tông & góc cong |
+| [03 — App icon bảng ghim](phase-03-app-icon.md) | Đã cài, chờ Home Screen | AppIcon 1024 opaque, kiểm tra 60/120/180 px và Home Screen |
+| [04 — Component chung & tab bar](phase-04-components-and-tab-bar.md) | Simulator: toàn suite UI 23/23 sau retest 2026-11-03; chờ ảnh iPhone | PaperCard, EqualWidthPills, CircleIconButton, PaperField, TagChip, tab bar |
+| [05 — Thư viện & Tìm kiếm](phase-05-library-and-search.md) | Simulator 23/23 UI, probe màu 16/16 (2026-11-03); checklist ≥98% chờ Phase 08 | Header, hero, filter, lưới card theo hàng, menu card |
+| [06 — Bộ sưu tập & Chi tiết](phase-06-collections-and-detail.md) | Simulator unit 46/46, UI 23/23, probe 17/17 (2026-11-03); checklist chờ Phase 08 | Folder card có tab mật ong, icon theo bộ sưu tập; Detail/Editor/Trash/Backup đồng bộ |
 | [07 — Lưu nhanh & Share Extension](phase-07-capture-and-share.md) | Chưa bắt đầu | Sheet như mock, Tiêu đề/Bộ sưu tập/Thẻ, Share đồng bộ |
 | [08 — Vòng bám sát & nghiệm thu iPhone](phase-08-fidelity-loop-and-device-acceptance.md) | Chưa bắt đầu | Điểm checklist ≥ 98%, test xanh, dữ liệu còn nguyên |
 

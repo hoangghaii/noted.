@@ -29,7 +29,7 @@ struct LibraryStartupView: View {
     private func openStore() {
         do {
             #if DEBUG
-            store = try PhaseFourFixtures.openIfRequested() ?? LibraryStore()
+            store = try MockFixtures.openIfRequested() ?? PhaseFourFixtures.openIfRequested() ?? LibraryStore()
             #else
             store = try LibraryStore()
             #endif
@@ -120,6 +120,10 @@ private final class KeyboardDismissView: UIView, UIGestureRecognizerDelegate {
         detach()
         guard let window else { return }
         tap.cancelsTouchesInView = false
+        // Deliver touchesEnded to the tapped view immediately; otherwise it waits for this
+        // recognizer, whose keyboard dismissal reflows the layout first and the SwiftUI
+        // control (e.g. the pin Toggle under an open keyboard) misses its own tap.
+        tap.delaysTouchesEnded = false
         tap.delegate = self
         window.addGestureRecognizer(tap)
         observedWindow = window
@@ -130,13 +134,23 @@ private final class KeyboardDismissView: UIView, UIGestureRecognizerDelegate {
         observedWindow = nil
     }
 
-    @objc private func dismissKeyboard() { observedWindow?.endEditing(true) }
+    // Dismiss after the current touch has been handled so the layout change cannot steal it.
+    @objc private func dismissKeyboard() {
+        DispatchQueue.main.async { [weak self] in self?.observedWindow?.endEditing(true) }
+    }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        // Ending editing inside a native alert can reposition it during the same
+        // touch and swallow its action. Let modal controls own their keyboard.
+        var responder: UIResponder? = touch.view
+        while let candidate = responder {
+            if candidate is UIAlertController { return false }
+            responder = candidate.next
+        }
         var view = touch.view
         while let candidate = view {
             // A tap inside any input must retain focus, including cursor selection.
-            if candidate is UITextField || candidate is UITextView { return false }
+            if candidate is UIControl || candidate is UITextView { return false }
             view = candidate.superview
         }
         return true

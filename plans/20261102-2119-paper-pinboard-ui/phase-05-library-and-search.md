@@ -1,6 +1,6 @@
 # Phase 05 — Thư viện và Tìm kiếm
 
-Ngày 2026-11-02 · Ưu tiên: cao · Phụ thuộc: Phase 04 · Trạng thái: chưa bắt đầu · Review: chưa
+Ngày 2026-11-02 · Ưu tiên: cao · Phụ thuộc: Phase 04 · Trạng thái: đã triển khai trên simulator; kiểm thử UI còn bất ổn, chờ nghiệm thu fidelity · Review: đã review tĩnh, không có lỗi chặn
 
 ## Khác biệt hiện tại ↔ mock (Thư viện)
 
@@ -41,13 +41,13 @@ Ngày 2026-11-02 · Ưu tiên: cao · Phụ thuộc: Phase 04 · Trạng thái: 
 
 ## Todo
 
-- [ ] Header + hero + bóng đèn
-- [ ] Filter bằng nhau, thứ tự mới
-- [ ] Lưới hàng cao bằng nhau
-- [ ] ItemCard 3 biến thể + tông + cong + menu
-- [ ] Định dạng ngày
-- [ ] Tìm kiếm đồng bộ
-- [ ] Sửa UI tests bị ảnh hưởng
+- [x] Header + hero + bóng đèn
+- [x] Filter bằng nhau, thứ tự mới
+- [x] Lưới hàng cao bằng nhau
+- [x] ItemCard 3 biến thể + tông + cong + menu
+- [x] Định dạng ngày
+- [x] Tìm kiếm đồng bộ
+- [x] Sửa UI tests bị ảnh hưởng
 
 ## Nghiệm thu
 
@@ -59,3 +59,17 @@ Ngày 2026-11-02 · Ưu tiên: cao · Phụ thuộc: Phase 04 · Trạng thái: 
 
 - `Menu` lồng trong `NavigationLink` nuốt chạm → dùng overlay ngoài label như bước 6.
 - Excerpt 5 dòng với ghi chú rất dài → `lineLimit(5)` và cắt `prefix(400)` trước khi render để tránh layout chậm.
+
+## Kết quả triển khai — 2026-11-02
+
+- Thực hiện trên iPhone 12 Pro simulator / iOS 18.6 theo yêu cầu phiên này. Giữ dữ liệu cá nhân; test dùng fixture cô lập.
+- Build simulator đạt; unit suite 45/45 đạt. Các kịch bản UI đều có lượt đạt qua nhiều lần chạy: fixture Thư viện, bốn test component cũ, menu/ngày/chiều cao hàng mới, filter Tìm kiếm và mở chi tiết mới, phân trang/lọc/ghim sau relaunch cũ.
+- Chưa có một lượt UI suite xanh hoàn toàn: runner bị `Test crashed with signal kill` ngẫu nhiên, kể cả khi tắt parallel và timeout. Không coi các lần runner bị kill là test đạt. Chi tiết lần chạy và ảnh: [báo cáo](../../docs/evidence/20261102-paper-phase5/README.md).
+- Review tĩnh độc lập không phát hiện lỗi chặn; `git diff --check` đạt.
+- `compare.sh` đã chạy trên ảnh simulator; 11/16 probe màu đạt. Đây không phải điểm checklist. Còn lệch hình học/màu hero so với mock; **chưa đạt/chưa xác nhận ≥98% và chưa nghiệm thu iPhone thật**. Giữ nghiệm thu fidelity mở cho vòng Phase 08.
+
+## Retest 2026-11-03
+
+- Simulator riêng `Claude Test iPhone 12 Pro` (iOS 18.6): unit 46/46, UI 23/23 (PaperComponents, MockFidelity, Library, PhaseFourAcceptance), 0 runner restart. Lỗi “signal kill” trước đó do hai phiên chạy test cùng lúc trên một simulator, không phải lỗi test.
+- Chi tiết sửa và số đo: [retest evidence](../../docs/evidence/20261103-paper-phase5-6-retest/summary.md).
+- Bám mock: hero 111 pt một dòng + bóng đèn overlay, nhịp dọc 12,5/14 pt, card chữ 15,5/12,5 pt, icon 24 pt, ↗ sau tên miền, curl 30 pt, texture soft-light, hero `#284739`. Probe màu Thư viện 11/16 → **16/16**. Checklist ≥98% vẫn là cổng Phase 08; còn lệch: tiêu đề link xuống 2 dòng, ngắt dòng trích đoạn.
