@@ -33,10 +33,11 @@ struct TrashView: View {
                     }
                 }
                 .padding(.vertical, NotedDesign.Spacing.sm)
+                .listRowBackground(NotedDesign.Palette.toneCream)
             }
         }
         .scrollContentBackground(.hidden)
-        .background(NotedDesign.Palette.paper)
+        .paperBackground()
         .overlay {
             if items.isEmpty {
                 ContentUnavailableView(
@@ -48,7 +49,7 @@ struct TrashView: View {
             }
         }
         .navigationTitle("Thùng rác").navigationBarTitleDisplayMode(.inline)
-        .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Xong") { dismiss() } } }
+        .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Xong") { dismiss() }.buttonStyle(NotedButtonStyle(role: .soft)) } }
         .overlay { confirmationOverlay }
         .alert("Chưa hoàn tất", isPresented: Binding(get: { error != nil }, set: { if !$0 { error = nil } })) {
             Button("Đóng", role: .cancel) { error = nil }
@@ -65,7 +66,7 @@ struct TrashView: View {
                         .font(.title3)
                         .foregroundStyle(NotedDesign.Palette.error)
                         .frame(width: 44, height: 44)
-                        .background(NotedDesign.Palette.errorSoft, in: RoundedRectangle(cornerRadius: NotedDesign.Radius.thumbnail))
+                        .background(NotedDesign.Palette.errorSoft, in: Circle())
                     Text("Xóa vĩnh viễn mục này?")
                         .font(NotedDesign.TypeStyle.title)
                         .foregroundStyle(NotedDesign.Palette.primaryText)
@@ -88,7 +89,8 @@ struct TrashView: View {
                 }
                 .padding(NotedDesign.Spacing.lg)
                 .frame(maxWidth: 350)
-                .background(NotedDesign.Palette.surface, in: RoundedRectangle(cornerRadius: NotedDesign.Radius.card))
+                .paperBackground(NotedDesign.Palette.surface)
+                .clipShape(RoundedRectangle(cornerRadius: NotedDesign.Radius.card))
                 .overlay { RoundedRectangle(cornerRadius: NotedDesign.Radius.card).strokeBorder(NotedDesign.Palette.border) }
                 .accessibilityElement(children: .contain)
                 .accessibilityIdentifier("trashConfirmDialog")

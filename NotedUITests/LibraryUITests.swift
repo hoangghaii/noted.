@@ -26,7 +26,7 @@ final class LibraryUITests: XCTestCase {
         let marker = "NOTED UI " + UUID().uuidString.prefix(8) + " Ca phe Da Nang"
         XCTAssertTrue(app.buttons["captureAdd"].waitForExistence(timeout: 20))
         app.buttons["captureAdd"].tap()
-        app.segmentedControls.buttons["Ghi chú"].tap()
+        app.buttons["captureMode_note"].tap()
         let body = app.textViews["captureBody"]
         XCTAssertTrue(body.waitForExistence(timeout: 10))
         body.tap()
@@ -53,7 +53,7 @@ final class LibraryUITests: XCTestCase {
         let marker = "PHASE4 " + UUID().uuidString.prefix(8)
         XCTAssertTrue(app.buttons["captureAdd"].waitForExistence(timeout: 20))
         app.buttons["captureAdd"].tap()
-        app.segmentedControls.buttons["Ghi chú"].tap()
+        app.buttons["captureMode_note"].tap()
         let body = app.textViews["captureBody"]
         XCTAssertTrue(body.waitForExistence(timeout: 10))
         body.tap()

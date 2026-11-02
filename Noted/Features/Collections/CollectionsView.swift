@@ -2,6 +2,8 @@ import SwiftUI
 
 struct CollectionsView: View {
     let store: LibraryStore
+    var onManageData: (() -> Void)? = nil
+    var onShowTrash: (() -> Void)? = nil
     @State private var showCreate = false
     @State private var name = ""
     @State private var renaming: ItemCollection?
@@ -11,19 +13,38 @@ struct CollectionsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: NotedDesign.Spacing.base) {
-                VStack(alignment: .leading, spacing: NotedDesign.Spacing.xs) {
-                    Text("Bộ sưu tập")
-                        .font(NotedDesign.TypeStyle.display)
-                        .foregroundStyle(NotedDesign.Palette.primaryText)
-                    Text("Sắp xếp theo cách của bạn.")
-                        .font(NotedDesign.TypeStyle.body)
-                        .foregroundStyle(NotedDesign.Palette.secondaryText)
+                HStack {
+                    VStack(alignment: .leading, spacing: NotedDesign.Spacing.xs) {
+                        Text("Bộ sưu tập")
+                            .font(NotedDesign.TypeStyle.display)
+                            .foregroundStyle(NotedDesign.Palette.primaryText)
+                        Text("Mỗi ý tưởng, một góc riêng.")
+                            .font(.body)
+                            .foregroundStyle(NotedDesign.Palette.secondaryText)
+                    }
+                    Spacer(minLength: 0)
+                    if let onManageData, let onShowTrash {
+                        Menu {
+                            Button("Dữ liệu & Backup", systemImage: "externaldrive", action: onManageData)
+                            Button("Thùng rác", systemImage: "trash", action: onShowTrash)
+                        } label: {
+                            Image(systemName: "ellipsis")
+                                .font(.system(size: 20, weight: .semibold))
+                                .foregroundStyle(NotedDesign.Palette.primaryText)
+                                .frame(width: 44, height: 44)
+                                .background(NotedDesign.Palette.chip, in: Circle())
+                        }
+                        .accessibilityLabel("Tùy chọn bộ sưu tập")
+                        .accessibilityIdentifier("collectionsOptions")
+                    }
                 }
                 Button { name = ""; showCreate = true } label: {
                     Label("Tạo bộ sưu tập", systemImage: "plus")
+                        .font(.system(size: 17))
+                        .frame(minHeight: 48)
                         .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(NotedButtonStyle(role: .secondary))
+                .buttonStyle(NotedButtonStyle(role: .soft))
                 .accessibilityIdentifier("collectionCreate")
                 .padding(.top, NotedDesign.Spacing.sm)
                 if store.collections.isEmpty {
@@ -35,37 +56,13 @@ struct CollectionsView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, NotedDesign.Spacing.xl)
                 } else {
-                    ForEach(store.collections) { collection in
+                    ForEach(Array(store.collections.enumerated()), id: \.element.id) { index, collection in
                         NavigationLink {
                             LibraryView(store: store, collectionID: collection.id, collectionTitle: collection.name)
                         } label: {
-                            HStack(spacing: NotedDesign.Spacing.md) {
-                                Image(systemName: "folder.fill")
-                                    .font(.title3)
-                                    .foregroundStyle(NotedDesign.Palette.brand)
-                                    .frame(width: 44, height: 44)
-                                    .background(NotedDesign.Palette.brandSoft, in: RoundedRectangle(cornerRadius: NotedDesign.Radius.thumbnail))
-                                VStack(alignment: .leading, spacing: NotedDesign.Spacing.xs) {
-                                    Text(collection.name)
-                                        .font(NotedDesign.TypeStyle.heading)
-                                        .foregroundStyle(NotedDesign.Palette.primaryText)
-                                        .lineLimit(2)
-                                    Text(collectionSubtitle(collection))
-                                        .font(.caption)
-                                        .foregroundStyle(NotedDesign.Palette.secondaryText)
-                                        .lineLimit(1)
-                                }
-                                Spacer(minLength: 4)
-                                Text("\(collectionItems(collection).count)")
-                                    .font(.subheadline.monospacedDigit())
-                                    .foregroundStyle(NotedDesign.Palette.secondaryText)
-                                Image(systemName: "chevron.right")
-                                    .font(.caption.weight(.semibold))
-                                    .foregroundStyle(NotedDesign.Palette.secondaryText)
-                            }
-                            .padding(NotedDesign.Spacing.base)
-                            .background(NotedDesign.Palette.surface, in: RoundedRectangle(cornerRadius: NotedDesign.Radius.card))
-                            .overlay { RoundedRectangle(cornerRadius: NotedDesign.Radius.card).strokeBorder(NotedDesign.Palette.border) }
+                            FolderCard(name: collection.name, count: collectionItems(collection).count,
+                                       sketch: NotedDesign.folderSketch(for: collection.name, id: collection.id),
+                                       tone: NotedDesign.folderTone(at: index))
                         }
                         .buttonStyle(.plain)
                         .accessibilityIdentifier("collection_" + collection.id.uuidString)
@@ -73,6 +70,7 @@ struct CollectionsView: View {
                             Button("Đổi tên", systemImage: "pencil") { name = collection.name; renaming = collection }
                             Button("Xóa bộ sưu tập", systemImage: "folder.badge.minus", role: .destructive) { deleting = collection }
                         }
+                        .padding(.top, index == 0 ? 22 : 11.5)
                     }
                 }
                 Text("Nội dung chưa phân loại vẫn nằm trong Inbox.")
@@ -86,7 +84,7 @@ struct CollectionsView: View {
             .padding(NotedDesign.Spacing.base)
             .padding(.bottom, 88)
         }
-        .background(NotedDesign.Palette.paper)
+        .paperBackground()
         .navigationTitle("")
         .toolbar(.hidden, for: .navigationBar)
         .alert("Bộ sưu tập mới", isPresented: $showCreate) {
@@ -109,9 +107,42 @@ struct CollectionsView: View {
     private func collectionItems(_ collection: ItemCollection) -> [Item] {
         store.items.filter { $0.collectionID == collection.id && $0.trashedAt == nil }
     }
-    private func collectionSubtitle(_ collection: ItemCollection) -> String {
-        let titles = collectionItems(collection).prefix(2).map(\.displayTitle)
-        return titles.isEmpty ? "Chưa có nội dung" : titles.joined(separator: ", ")
-    }
     private func perform(_ action: () throws -> Void) { do { try action() } catch { self.error = error.localizedDescription } }
+}
+
+/// App-only folder row: the tab sits behind the paper and has its own layout space.
+private struct FolderCard: View {
+    let name: String
+    let count: Int
+    let sketch: NotedDesign.Sketch
+    let tone: NotedDesign.PaperTone
+
+    var body: some View {
+        PaperCard(tone: tone) {
+            // v3: ~99 pt rows, ~54 pt folder drawing inset ~30 pt, name starting ~124 pt in.
+            HStack(spacing: 28) {
+                // The SVG artwork fills ~81% of its box.
+                sketch.image.resizable().scaledToFit()
+                    .frame(width: 66, height: 66)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(name).font(.system(size: 19, weight: .semibold)).lineLimit(2)
+                    Text("\(count) mục").font(.system(size: 14))
+                        .foregroundStyle(NotedDesign.Palette.secondaryText)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right").font(.system(size: 16, weight: .medium))
+                    .accessibilityHidden(true)
+            }
+            .foregroundStyle(NotedDesign.Palette.primaryText)
+            .padding(.leading, 26).padding(.trailing, 20).padding(.vertical, 16)
+            .frame(maxWidth: .infinity, minHeight: 98, alignment: .leading)
+        }
+        .background(alignment: .topLeading) {
+            UnevenRoundedRectangle(topLeadingRadius: 6, topTrailingRadius: 6)
+                .fill(NotedDesign.Palette.folderTab)
+                .frame(width: 72, height: 20)
+                .offset(x: 22, y: -15)
+        }
+    }
 }

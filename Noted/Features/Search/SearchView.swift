@@ -30,27 +30,24 @@ struct SearchView: View {
                         .font(.subheadline)
                         .foregroundStyle(NotedDesign.Palette.secondaryText)
                 }
-                HStack(spacing: NotedDesign.Spacing.sm) {
-                    Image(systemName: "magnifyingglass")
-                        .font(.headline)
-                        .foregroundStyle(NotedDesign.Palette.brand)
-                    TextField("Tìm ghi chú, link, ảnh…", text: $query)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled()
-                        .submitLabel(.search)
-                        .accessibilityIdentifier("searchQuery")
-                    if !query.isEmpty {
-                        Button("Xóa tìm kiếm", systemImage: "xmark.circle.fill") { query = "" }
-                            .labelStyle(.iconOnly)
-                            .frame(minWidth: 44, minHeight: 44)
+                PaperField(label: "Tìm kiếm") {
+                    HStack(spacing: NotedDesign.Spacing.sm) {
+                        Image(systemName: "magnifyingglass")
                             .foregroundStyle(NotedDesign.Palette.secondaryText)
+                        TextField("Tìm ghi chú, link, ảnh…", text: $query)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                            .submitLabel(.search)
+                            .accessibilityIdentifier("searchQuery")
+                        if !query.isEmpty {
+                            Button("Xóa tìm kiếm", systemImage: "xmark.circle.fill") { query = "" }
+                                .labelStyle(.iconOnly)
+                                .frame(minWidth: 44, minHeight: 44)
+                                .foregroundStyle(NotedDesign.Palette.secondaryText)
+                        }
                     }
                 }
-                .padding(.horizontal, NotedDesign.Spacing.base)
-                .frame(minHeight: 52)
-                .background(NotedDesign.Palette.surface, in: RoundedRectangle(cornerRadius: NotedDesign.Radius.input))
-                .overlay { RoundedRectangle(cornerRadius: NotedDesign.Radius.input).strokeBorder(NotedDesign.Palette.border) }
-                .padding(.top, NotedDesign.Spacing.sm)
+                filters
 
                 HStack(alignment: .firstTextBaseline) {
                     Text(settledQuery.isEmpty ? "Mới lưu" : "\(results.count) kết quả")
@@ -60,36 +57,6 @@ struct SearchView: View {
                     Text("\(results.count) mục")
                         .font(.caption.monospacedDigit())
                         .foregroundStyle(NotedDesign.Palette.secondaryText)
-                    Menu {
-                        Picker("Loại nội dung", selection: $kind) {
-                            Text("Tất cả").tag("all")
-                            Text("Ghi chú").tag("text")
-                            Text("Link").tag("link")
-                            Text("Ảnh").tag("image")
-                        }
-                        Picker("Thời gian", selection: $period) {
-                            Text("Mọi lúc").tag("all")
-                            Text("Hôm nay").tag("today")
-                            Text("7 ngày qua").tag("week")
-                        }
-                        Picker("Bộ sưu tập", selection: $collection) {
-                            Text("Tất cả bộ sưu tập").tag(UUID?.none)
-                            ForEach(store.collections) { value in Text(value.name).tag(Optional(value.id)) }
-                        }
-                        Button("Xóa bộ lọc") { kind = "all"; period = "all"; collection = nil }
-                    } label: {
-                        Image(systemName: "line.3.horizontal.decrease")
-                            .font(.subheadline)
-                            .foregroundStyle(NotedDesign.Palette.brand)
-                            .frame(width: 44, height: 44)
-                    }
-                    .accessibilityLabel("Lọc")
-                    .accessibilityIdentifier("searchFilters")
-                }
-                if kind != "all" || period != "all" || collection != nil {
-                    Text("Đang lọc: \(kindTitle(kind))")
-                        .font(.footnote)
-                        .foregroundStyle(NotedDesign.Palette.brand)
                 }
                 if results.isEmpty {
                     ContentUnavailableView(
@@ -99,40 +66,12 @@ struct SearchView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, NotedDesign.Spacing.xl)
                 } else {
-                    LazyVStack(spacing: NotedDesign.Spacing.sm) {
-                        ForEach(Array(results.prefix(limit))) { item in
-                            NavigationLink { ItemDetailView(item: item, store: store) } label: {
-                                HStack(spacing: NotedDesign.Spacing.md) {
-                                    Image(systemName: kindSymbol(item.kind))
-                                        .font(.headline)
-                                        .foregroundStyle(NotedDesign.Palette.brand)
-                                        .frame(width: 44, height: 44)
-                                        .background(NotedDesign.Palette.brandSoft,
-                                                    in: RoundedRectangle(cornerRadius: NotedDesign.Radius.thumbnail))
-                                    VStack(alignment: .leading, spacing: NotedDesign.Spacing.xs) {
-                                        Text(item.displayTitle)
-                                            .font(NotedDesign.TypeStyle.heading)
-                                            .foregroundStyle(NotedDesign.Palette.primaryText)
-                                            .lineLimit(2)
-                                        Text("\(kindTitle(item.kind)) · \(item.createdAt.formatted(date: .abbreviated, time: .omitted))")
-                                            .font(.caption)
-                                            .foregroundStyle(NotedDesign.Palette.secondaryText)
-                                    }
-                                    Spacer(minLength: 0)
-                                }
-                                .padding(NotedDesign.Spacing.md)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(NotedDesign.Palette.surface,
-                                            in: RoundedRectangle(cornerRadius: NotedDesign.Radius.input))
-                                .overlay { RoundedRectangle(cornerRadius: NotedDesign.Radius.input).strokeBorder(NotedDesign.Palette.border) }
-                            }
-                            .buttonStyle(.plain)
-                        }
-                    }
+                    ItemCardGrid(items: Array(results.prefix(limit)), store: store)
                     if results.count > limit {
                         Button("Xem thêm") { limit += 50 }
                             .buttonStyle(NotedButtonStyle(role: .secondary))
                             .frame(maxWidth: .infinity)
+                            .accessibilityIdentifier("searchLoadMore")
                     }
                 }
                 Text("Có thể tìm tiếng Việt có hoặc không dấu.")
@@ -160,21 +99,39 @@ struct SearchView: View {
         .onChange(of: collection) { _, _ in limit = 50 }
     }
 
-    private func kindTitle(_ value: String) -> String {
-        switch value {
-        case "text": "Ghi chú"
-        case "link": "Liên kết"
-        case "image": "Ảnh"
-        default: "Tất cả"
+    private var filters: some View {
+        VStack(alignment: .leading, spacing: NotedDesign.Spacing.sm) {
+            EqualWidthPillGroup(count: 4, accessibilityID: "searchKindFilters") { index in
+                let values = ["all", "text", "image", "link"]
+                NotedPill(title: ["Tất cả", "Ghi chú", "Ảnh", "Link"][index], selected: kind == values[index]) {
+                    kind = values[index]
+                }
+                .accessibilityIdentifier("searchKind_" + values[index])
+            }
+            EqualWidthPillGroup(count: 3, accessibilityID: "searchPeriodFilters") { index in
+                let values = ["all", "today", "week"]
+                NotedPill(title: ["Mọi lúc", "Hôm nay", "7 ngày qua"][index], selected: period == values[index]) {
+                    period = values[index]
+                }
+                .accessibilityIdentifier("searchPeriod_" + values[index])
+            }
+            EqualWidthPillGroup(count: store.collections.count + 1, visibleCount: 2, accessibilityID: "searchCollectionFilters") { index in
+                if index == 0 {
+                    NotedPill(title: "Mọi bộ sưu tập", selected: collection == nil) { collection = nil }
+                        .accessibilityIdentifier("searchCollection_all")
+                } else {
+                    let value = store.collections[index - 1]
+                    NotedPill(title: value.name, selected: collection == value.id) { collection = value.id }
+                        .accessibilityIdentifier("searchCollection_" + value.id.uuidString)
+                }
+            }
+            if kind != "all" || period != "all" || collection != nil {
+                Button("Xóa bộ lọc") { kind = "all"; period = "all"; collection = nil }
+                    .buttonStyle(NotedButtonStyle(role: .quiet))
+                    .accessibilityIdentifier("searchClearFilters")
+            }
         }
-    }
-
-    private func kindSymbol(_ value: String) -> String {
-        switch value {
-        case "text": "note.text"
-        case "link": "link"
-        case "image": "photo"
-        default: "square.grid.2x2"
-        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("searchFilters")
     }
 }

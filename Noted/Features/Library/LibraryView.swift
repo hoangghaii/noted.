@@ -25,7 +25,6 @@ struct LibraryView: View {
     @State private var limit = 50
     @State private var error: String?
     @State private var pendingDiscard: CaptureIssue?
-    @Environment(\.dynamicTypeSize) private var typeSize
 
     private var items: [Item] {
         store.items.filter { $0.trashedAt == nil && (collectionID == nil || $0.collectionID == collectionID) && filter.includes($0) }
@@ -53,40 +52,38 @@ struct LibraryView: View {
                             } label: {
                                 Image(systemName: "ellipsis")
                                     .font(.headline)
-                                    .foregroundStyle(NotedDesign.Palette.brand)
+                                    .foregroundStyle(NotedDesign.Palette.primaryText)
                                     .frame(width: 44, height: 44)
-                                    .background(NotedDesign.Palette.surface, in: Circle())
-                                    .overlay { Circle().strokeBorder(NotedDesign.Palette.border) }
+                                    .background(NotedDesign.Palette.chip, in: Circle())
                             }
                             .accessibilityLabel("Tùy chọn thư viện")
                             .accessibilityIdentifier("libraryOptions")
                         }
                     }
                     if let onCapture {
-                        VStack(alignment: .leading, spacing: NotedDesign.Spacing.sm) {
-                            Text("NOTED TRÊN IPHONE")
-                                .font(.system(size: 11, weight: .bold))
-                                .tracking(0.8)
-                                .foregroundStyle(NotedDesign.Palette.heroMuted)
+                        // v3 hero: ~111 pt, one-line 19 pt title; the bulb sits on the right
+                        // without taking width from the text (overlay, not an HStack column).
+                        VStack(alignment: .leading, spacing: 10) {
                             Text("Một ý hay vừa xuất hiện?")
-                                .font(.system(size: 20, weight: .semibold))
+                                .font(.system(size: 19, weight: .medium))
                                 .foregroundStyle(NotedDesign.Palette.heroText)
                             Button(action: onCapture) {
                                 Label("Lưu nhanh", systemImage: "plus")
-                                    .font(.system(size: 14, weight: .bold))
-                                    .frame(minHeight: 44)
-                                    .padding(.horizontal, NotedDesign.Spacing.md)
                             }
-                            .buttonStyle(.plain)
-                            .foregroundStyle(NotedDesign.Palette.accentText)
-                            .background(NotedDesign.Palette.accent, in: Capsule())
+                            .buttonStyle(NotedButtonStyle(role: .primary))
                             .accessibilityIdentifier("captureAdd")
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(NotedDesign.Spacing.base)
-                        .frame(maxWidth: .infinity, minHeight: 124, alignment: .leading)
-                        .background(NotedDesign.Palette.hero,
-                                    in: RoundedRectangle(cornerRadius: NotedDesign.Radius.card))
+                        .padding(.leading, 18).padding(.trailing, 88).padding(.top, 18).padding(.bottom, 16)
+                        .frame(maxWidth: .infinity, minHeight: 111, alignment: .leading)
+                        .overlay(alignment: .trailing) {
+                            NotedDesign.Sketch.lightbulb.image.resizable().scaledToFit()
+                                .frame(width: 76, height: 76)
+                                .foregroundStyle(NotedDesign.Palette.heroText)
+                                .padding(.trailing, 14)
+                                .accessibilityHidden(true)
+                        }
+                        .paperBackground(NotedDesign.Palette.hero, isHero: true)
+                        .clipShape(RoundedRectangle(cornerRadius: NotedDesign.Radius.card))
                     }
                 } else {
                     Text("Nội dung trong bộ sưu tập này.")
@@ -109,22 +106,26 @@ struct LibraryView: View {
                     } label: { NotedStatusBanner(message: "Có nội dung đang chờ xử lý") }
                     .background(NotedDesign.Palette.surface, in: RoundedRectangle(cornerRadius: NotedDesign.Radius.input))
                 }
-                HStack(alignment: .firstTextBaseline) {
-                    Text("Vừa lưu")
-                        .font(NotedDesign.TypeStyle.heading)
-                        .foregroundStyle(NotedDesign.Palette.primaryText)
-                    Spacer()
-                    Text("\(items.count) mục")
-                        .font(.caption.monospacedDigit())
-                        .foregroundStyle(NotedDesign.Palette.secondaryText)
-                }
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach([LibraryFilter.all, .notes, .images, .links, .inbox, .pinned], id: \.self) { choice in
-                            NotedFilterChip(title: choice.rawValue, selected: filter == choice) { filter = choice }
-                        }
+                // v3 rhythm: 12.5 pt from "Vừa lưu" to the pills, 14 pt from pills to cards
+                // (the 44 pt touch row already adds 4 pt around the 36 pt visual pill).
+                VStack(alignment: .leading, spacing: 0) {
+                    HStack(alignment: .firstTextBaseline) {
+                        Text("Vừa lưu")
+                            .font(NotedDesign.TypeStyle.heading)
+                            .foregroundStyle(NotedDesign.Palette.primaryText)
+                        Spacer()
+                        Text("\(items.count) mục")
+                            .font(.caption.monospacedDigit())
+                            .foregroundStyle(NotedDesign.Palette.secondaryText)
                     }
-                }.accessibilityIdentifier("libraryFilters")
+                    EqualWidthPillGroup(count: 6, visibleCount: 4, accessibilityID: "libraryFilters") { index in
+                        let choice = [LibraryFilter.all, .inbox, .images, .links, .notes, .pinned][index]
+                        NotedPill(title: choice.rawValue, selected: filter == choice) { filter = choice }
+                            .accessibilityIdentifier("libraryFilter_" + ["all", "inbox", "images", "links", "notes", "pinned"][index])
+                    }
+                    .padding(.top, 8)
+                }
+                .padding(.top, 4)
                 if items.isEmpty {
                     ContentUnavailableView(
                         filter == .all ? "Chỗ cho những điều muốn giữ" : "Chưa có mục phù hợp",
@@ -136,12 +137,8 @@ struct LibraryView: View {
                                 : "Chọn Thêm để lưu nội dung, rồi chọn bộ sưu tập này."))
                         .padding(.top, NotedDesign.Spacing.lg)
                 } else {
-                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: typeSize.isAccessibilitySize ? 1 : 2), alignment: .leading, spacing: 12) {
-                        ForEach(Array(items.prefix(limit))) { item in
-                            NavigationLink { ItemDetailView(item: item, store: store) } label: { ItemCard(item: item, store: store) }
-                                .buttonStyle(.plain).accessibilityIdentifier("item_" + item.id.uuidString)
-                        }
-                    }
+                    ItemCardGrid(items: Array(items.prefix(limit)), store: store)
+                        .padding(.top, -6)
                     if items.count > limit {
                         Button("Xem thêm") { limit += 50 }
                             .buttonStyle(NotedButtonStyle(role: .secondary))
@@ -149,8 +146,10 @@ struct LibraryView: View {
                             .accessibilityIdentifier("libraryLoadMore")
                     }
                 }
-            }.padding(NotedDesign.Spacing.base)
-                .padding(.bottom, 88)
+            }
+            .padding(.horizontal, NotedDesign.Spacing.base)
+            .padding(.top, 8)
+            .padding(.bottom, NotedDesign.Spacing.base + 88)
         }
         .background(NotedDesign.Palette.paper)
         .accessibilityIdentifier("libraryScroll")

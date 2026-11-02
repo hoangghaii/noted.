@@ -1,0 +1,409 @@
+{
+  "coordinateSystem": "pt at 390pt width, origin at cropped content top; 5x5 reference pixels averaged in sRGB",
+  "screens": {
+    "library": {
+      "probes": [
+        {
+          "id": "library-01",
+          "x": 7.333333333333333,
+          "y": 84.33333333333333,
+          "hex": "#FCF7EF",
+          "tolerance": 3,
+          "role": "canvas"
+        },
+        {
+          "id": "library-02",
+          "x": 347.0,
+          "y": 38.666666666666664,
+          "hex": "#ECE6DA",
+          "tolerance": 3,
+          "role": "menu"
+        },
+        {
+          "id": "library-03",
+          "x": 25.666666666666668,
+          "y": 112.0,
+          "hex": "#204132",
+          "tolerance": 3,
+          "role": "hero-top"
+        },
+        {
+          "id": "library-04",
+          "x": 356.0,
+          "y": 194.66666666666666,
+          "hex": "#2C4D3F",
+          "tolerance": 3,
+          "role": "hero-bottom"
+        },
+        {
+          "id": "library-05",
+          "x": 48.666666666666664,
+          "y": 162.33333333333334,
+          "hex": "#EDBE6B",
+          "tolerance": 3,
+          "role": "hero-capture-pill"
+        },
+        {
+          "id": "library-06",
+          "x": 25.666666666666668,
+          "y": 274.3333333333333,
+          "hex": "#214032",
+          "tolerance": 3,
+          "role": "filter-selected"
+        },
+        {
+          "id": "library-07",
+          "x": 126.66666666666667,
+          "y": 272.6666666666667,
+          "hex": "#EFE9DE",
+          "tolerance": 3,
+          "role": "filter-inbox"
+        },
+        {
+          "id": "library-08",
+          "x": 218.33333333333334,
+          "y": 272.6666666666667,
+          "hex": "#EDE8DC",
+          "tolerance": 3,
+          "role": "filter-photo"
+        },
+        {
+          "id": "library-09",
+          "x": 310.0,
+          "y": 272.6666666666667,
+          "hex": "#EEE9DE",
+          "tolerance": 3,
+          "role": "filter-link"
+        },
+        {
+          "id": "library-10",
+          "x": 21.0,
+          "y": 341.3333333333333,
+          "hex": "#FCF5E8",
+          "tolerance": 3,
+          "role": "card-cream-top"
+        },
+        {
+          "id": "library-11",
+          "x": 181.66666666666666,
+          "y": 460.6666666666667,
+          "hex": "#FDF6E9",
+          "tolerance": 3,
+          "role": "card-cream-bottom"
+        },
+        {
+          "id": "library-12",
+          "x": 209.33333333333334,
+          "y": 341.3333333333333,
+          "hex": "#EEBC68",
+          "tolerance": 3,
+          "role": "card-honey-top"
+        },
+        {
+          "id": "library-13",
+          "x": 365.3333333333333,
+          "y": 442.3333333333333,
+          "hex": "#F0BB60",
+          "tolerance": 3,
+          "role": "card-honey-fold-area"
+        },
+        {
+          "id": "library-14",
+          "x": 209.33333333333334,
+          "y": 534.0,
+          "hex": "#DFE5D8",
+          "tolerance": 3,
+          "role": "card-sage-top"
+        },
+        {
+          "id": "library-15",
+          "x": 365.3333333333333,
+          "y": 662.6666666666666,
+          "hex": "#DEE4D7",
+          "tolerance": 3,
+          "role": "card-sage-bottom"
+        },
+        {
+          "id": "library-16",
+          "x": 99.0,
+          "y": 699.3333333333334,
+          "hex": "#F8F4EB",
+          "tolerance": 3,
+          "role": "tab-bar"
+        }
+      ]
+    },
+    "collections": {
+      "probes": [
+        {
+          "id": "collections-01",
+          "x": 8.333333333333334,
+          "y": 87.0,
+          "hex": "#F9F5EB",
+          "tolerance": 3,
+          "role": "canvas"
+        },
+        {
+          "id": "collections-02",
+          "x": 343.6666666666667,
+          "y": 30.333333333333332,
+          "hex": "#ECE6D9",
+          "tolerance": 3,
+          "role": "menu"
+        },
+        {
+          "id": "collections-03",
+          "x": 36.666666666666664,
+          "y": 124.66666666666667,
+          "hex": "#DFE5D8",
+          "tolerance": 3,
+          "role": "create-pill-left"
+        },
+        {
+          "id": "collections-04",
+          "x": 348.3333333333333,
+          "y": 138.66666666666666,
+          "hex": "#DAE0D2",
+          "tolerance": 3,
+          "role": "create-pill-right"
+        },
+        {
+          "id": "collections-05",
+          "x": 55.666666666666664,
+          "y": 186.0,
+          "hex": "#EEBE6D",
+          "tolerance": 3,
+          "role": "folder-tab-1"
+        },
+        {
+          "id": "collections-06",
+          "x": 27.333333333333332,
+          "y": 209.66666666666666,
+          "hex": "#FAF3E4",
+          "tolerance": 3,
+          "role": "folder-cream-top"
+        },
+        {
+          "id": "collections-07",
+          "x": 358.0,
+          "y": 275.6666666666667,
+          "hex": "#FAF2E3",
+          "tolerance": 3,
+          "role": "folder-cream-bottom"
+        },
+        {
+          "id": "collections-08",
+          "x": 55.666666666666664,
+          "y": 308.6666666666667,
+          "hex": "#ECBD6D",
+          "tolerance": 3,
+          "role": "folder-tab-2"
+        },
+        {
+          "id": "collections-09",
+          "x": 27.333333333333332,
+          "y": 337.0,
+          "hex": "#E3E9DE",
+          "tolerance": 3,
+          "role": "folder-sage-top"
+        },
+        {
+          "id": "collections-10",
+          "x": 358.0,
+          "y": 398.3333333333333,
+          "hex": "#E1E6DB",
+          "tolerance": 3,
+          "role": "folder-sage-bottom"
+        },
+        {
+          "id": "collections-11",
+          "x": 55.666666666666664,
+          "y": 436.3333333333333,
+          "hex": "#EDBF6F",
+          "tolerance": 3,
+          "role": "folder-tab-3"
+        },
+        {
+          "id": "collections-12",
+          "x": 27.333333333333332,
+          "y": 460.0,
+          "hex": "#FCF6EA",
+          "tolerance": 3,
+          "role": "folder-cream-3-top"
+        },
+        {
+          "id": "collections-13",
+          "x": 358.0,
+          "y": 526.0,
+          "hex": "#FAF3E4",
+          "tolerance": 3,
+          "role": "folder-cream-3-bottom"
+        },
+        {
+          "id": "collections-14",
+          "x": 55.666666666666664,
+          "y": 563.6666666666666,
+          "hex": "#E9BA67",
+          "tolerance": 3,
+          "role": "folder-tab-4"
+        },
+        {
+          "id": "collections-15",
+          "x": 27.333333333333332,
+          "y": 587.3333333333334,
+          "hex": "#E4E9DF",
+          "tolerance": 3,
+          "role": "folder-sage-4-top"
+        },
+        {
+          "id": "collections-16",
+          "x": 358.0,
+          "y": 653.3333333333334,
+          "hex": "#E2E8DD",
+          "tolerance": 3,
+          "role": "folder-sage-4-bottom"
+        },
+        {
+          "id": "collections-17",
+          "x": 131.33333333333334,
+          "y": 719.6666666666666,
+          "hex": "#FBF7EF",
+          "tolerance": 3,
+          "role": "tab-bar"
+        }
+      ]
+    },
+    "capture": {
+      "probes": [
+        {
+          "id": "capture-01",
+          "x": 10.0,
+          "y": 38.666666666666664,
+          "hex": "#FAF5ED",
+          "tolerance": 3,
+          "role": "sheet-background"
+        },
+        {
+          "id": "capture-02",
+          "x": 349.6666666666667,
+          "y": 38.666666666666664,
+          "hex": "#E9E2D5",
+          "tolerance": 3,
+          "role": "close-button"
+        },
+        {
+          "id": "capture-03",
+          "x": 33.0,
+          "y": 116.66666666666667,
+          "hex": "#203F2F",
+          "tolerance": 3,
+          "role": "mode-note-selected"
+        },
+        {
+          "id": "capture-04",
+          "x": 157.0,
+          "y": 116.66666666666667,
+          "hex": "#ECE7DA",
+          "tolerance": 3,
+          "role": "mode-link"
+        },
+        {
+          "id": "capture-05",
+          "x": 280.6666666666667,
+          "y": 116.66666666666667,
+          "hex": "#EDE6D9",
+          "tolerance": 3,
+          "role": "mode-photo"
+        },
+        {
+          "id": "capture-06",
+          "x": 28.333333333333332,
+          "y": 203.66666666666666,
+          "hex": "#FAF7F0",
+          "tolerance": 3,
+          "role": "title-field-left"
+        },
+        {
+          "id": "capture-07",
+          "x": 363.3333333333333,
+          "y": 231.33333333333334,
+          "hex": "#F7F3EB",
+          "tolerance": 3,
+          "role": "title-field-right"
+        },
+        {
+          "id": "capture-08",
+          "x": 33.0,
+          "y": 286.3333333333333,
+          "hex": "#FCF6EA",
+          "tolerance": 3,
+          "role": "body-field-top"
+        },
+        {
+          "id": "capture-09",
+          "x": 358.6666666666667,
+          "y": 447.0,
+          "hex": "#FCF7E9",
+          "tolerance": 3,
+          "role": "body-field-bottom"
+        },
+        {
+          "id": "capture-10",
+          "x": 28.333333333333332,
+          "y": 515.6666666666666,
+          "hex": "#F9F6F0",
+          "tolerance": 3,
+          "role": "collection-field-left"
+        },
+        {
+          "id": "capture-11",
+          "x": 358.6666666666667,
+          "y": 538.6666666666666,
+          "hex": "#F8F5EF",
+          "tolerance": 3,
+          "role": "collection-field-right"
+        },
+        {
+          "id": "capture-12",
+          "x": 28.333333333333332,
+          "y": 607.3333333333334,
+          "hex": "#F8F5EE",
+          "tolerance": 3,
+          "role": "tags-field"
+        },
+        {
+          "id": "capture-13",
+          "x": 166.0,
+          "y": 616.6666666666666,
+          "hex": "#DCE1D4",
+          "tolerance": 3,
+          "role": "tag-chip"
+        },
+        {
+          "id": "capture-14",
+          "x": 33.0,
+          "y": 690.0,
+          "hex": "#EBA94B",
+          "tolerance": 3,
+          "role": "save-button-left"
+        },
+        {
+          "id": "capture-15",
+          "x": 354.3333333333333,
+          "y": 699.3333333333334,
+          "hex": "#EEAB4B",
+          "tolerance": 3,
+          "role": "save-button-right"
+        },
+        {
+          "id": "capture-16",
+          "x": 193.66666666666666,
+          "y": 20.333333333333332,
+          "hex": "#BBB6A8",
+          "tolerance": 3,
+          "role": "handle"
+        }
+      ]
+    }
+  }
+}

@@ -58,3 +58,22 @@ Các luồng đã chạy đạt và artifact cụ thể nằm trong [verificatio
 ## Giới hạn kiểm chứng
 
 Kết nối/trust đã được giải quyết và app chạy được. Bộ UI test mới có thể chờ người dùng xác thực Enable UI Automation sau phiên làm việc dài. Trạng thái mới nhất nằm trong verification và plan; không dùng Simulator/TestFlight thay cho iPhone.
+
+## Build cho iPhone 12 Pro Simulator
+
+Đã kiểm chứng ngày 2026-11-02 trên iOS18.6, simulator `Noted iPhone 12 Pro` (`7D44052B-6FFC-4464-82CA-2769CEF28163`). Project mặc định chỉ bật iphoneos; ghi đè tạm thời khi build simulator:
+
+```sh
+xcodebuild -project Noted.xcodeproj -scheme Noted -configuration Debug \
+  -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+  -derivedDataPath /private/tmp/noted-iphone12pro-simulator \
+  SUPPORTED_PLATFORMS='iphoneos iphonesimulator' \
+  CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- CODE_SIGNING_REQUIRED=NO build
+xcrun simctl install 7D44052B-6FFC-4464-82CA-2769CEF28163 \
+  /private/tmp/noted-iphone12pro-simulator/Build/Products/Debug-iphonesimulator/Noted.app
+xcrun simctl launch 7D44052B-6FFC-4464-82CA-2769CEF28163 dev.nguyenhoanghai861.Noted
+```
+
+Giữ ad-hoc signing cho simulator: `CODE_SIGNING_ALLOWED=NO` bỏ simulated App Group entitlement và khiến thư viện báo không truy cập được vùng lưu chung. Bản ký ad-hoc đã xác nhận có `group.dev.nguyenhoanghai861.Noted` trong `Noted.app-Simulated.xcent` và mở được màn Thư viện. Không cần đổi App Group hay provisioning cho iPhone thật.
+
+Chạy UI test trên **một simulator riêng cho mỗi phiên** (ví dụ tạo bằng `xcrun simctl create "Test iPhone 12 Pro" com.apple.CoreSimulator.SimDeviceType.iPhone-12-Pro com.apple.CoreSimulator.SimRuntime.iOS-18-6`) và thêm `-parallel-testing-enabled NO`. Hai lệnh `xcodebuild test` cùng lúc trên một simulator sẽ kill runner của nhau (“Test crashed with signal kill”); xem [retest 2026-11-03](evidence/20261103-paper-phase5-6-retest/summary.md).

@@ -1,6 +1,6 @@
 # Phase 01 — Đặc tả đo và bộ so sánh bám sát
 
-Ngày 2026-11-02 · Ưu tiên: cao · Phụ thuộc: không · Trạng thái: chưa bắt đầu · Review: chưa
+Ngày 2026-11-02 · Ưu tiên: cao · Phụ thuộc: không · Trạng thái: hoàn tất · Review: đã rà soát, sửa các lỗi checklist
 
 ## Mục đích
 
@@ -47,13 +47,13 @@ Biến mock raster thành đặc tả đo được, để “98–100%” là co
 
 ## Todo
 
-- [ ] Đo biên 3 phone, cắt ảnh tham chiếu
-- [ ] Viết `paper-ui-spec.md` với số đo pt
-- [ ] Checklist có trọng số + nhãn trọng yếu
-- [ ] `color-probes.json`
-- [ ] `MockFixtures.swift` 3 biến thể, store tách biệt
-- [ ] `compare.sh` chạy thử với ảnh cũ `docs/evidence/20261102-iphone12pro/01-library.png`
-- [ ] `MockFidelityUITests` chụp được 3 màn trên iPhone
+- [x] Đo biên 3 phone, cắt ảnh tham chiếu
+- [x] Viết `paper-ui-spec.md` với số đo pt
+- [x] Checklist có trọng số + nhãn trọng yếu
+- [x] `color-probes.json`
+- [x] `MockFixtures.swift` 3 biến thể, store tách biệt
+- [x] `compare.sh` chạy thử với ảnh cũ `docs/evidence/20261102-iphone12pro/01-library.png`
+- [x] `MockFidelityUITests` chụp được 3 màn trên iPhone
 
 ## Nghiệm thu
 
@@ -65,3 +65,18 @@ Biến mock raster thành đặc tả đo được, để “98–100%” là co
 
 - Mock AI có méo nhẹ (chữ, khoảng cách không đều) → khi số đo mâu thuẫn, chọn giá trị theo lưới 4 pt gần nhất và ghi trong spec.
 - Ảnh cà phê cắt từ mock độ phân giải thấp → chỉ dùng trong fixture DEBUG, không ship Release.
+
+## Kết quả thực hiện 2026-11-02
+
+- Spec: `docs/design-preview/paper-ui-spec.md`, 139 tiêu chí (47 library / 45 collections / 47 capture), trọng số và tiêu chí trọng yếu; ảnh reference rộng1170 và 49 probe màu tổng cộng.
+- Harness: `scripts/ui-fidelity/compare.sh`, CIEDE2000 Python stdlib; 2 test đạt (gồm vector chuẩn, crop, lỗi ảnh ngắn, self compare). Baseline ảnh cũ tạo đủ artifacts `/private/tmp/noted-fidelity-baseline`, màu 1/16. Self compare 16/16,17/17,16/16; ΔE0. SSIM của IM hiện tại trả distortion0 khi giống hệt, chỉ tham khảo.
+- Debug/Release unsigned iPhoneOS build và build-for-testing đạt; coffee chỉ có trong Debug.
+- iPhone thật: 4/4 `MockFidelityUITests` đạt, gồm ba ảnh và test số mục cá nhân trước/sau ba fixture bằng nhau. `.xcresult`: `/private/tmp/noted-paper-phase1-device-retry.xcresult`. Ảnh + summary: `docs/evidence/20261102-paper-phase1/`.
+- Review độc lập: sửa bảng Markdown, ID trùng, trọng yếu capsule/nội dung, phép tính chiều rộng pill. Không còn blocker được tìm thấy.
+
+### Giới hạn và chuyển tiếp
+
+- Đây là bộ đo/baseline, chưa đạt UI98%; không triển khai Phase02 trở đi.
+- Capture fixture seed body hiện hữu; title/collection/tags có constants DEBUG chờ Phase07 hiển thị. ID cố định1/2/3/4 dành cho cream/honey+curl/photo/sage, Phase02 phải xác nhận mapping.
+- Số mục cá nhân không đổi không chứng minh toàn vẹn byte/draft. Không sao chép nội dung cá nhân; auto-review từ chối xuất container vì nhạy cảm, đã dùng kiểm tra UI ít xâm lấn.
+- Lần chạy đầu không cài được runner vì giới hạn3 app free profile. Người dùng đã chọn gỡ Noted cũ `dev.nhhai7.Noted` và dữ liệu của nó; đã gỡ rồi chạy lại thành công. App hiện tại `dev.nguyenhoanghai861.Noted` được giữ.

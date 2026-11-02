@@ -34,24 +34,45 @@ final class PhaseFourAcceptanceUITests: XCTestCase {
         app.descendants(matching: .any).matching(identifier: "item_" + id).firstMatch
     }
 
+    /// `isHittable` raises "Activation point invalid" (instead of returning false) for an
+    /// element whose frame lies entirely off screen, e.g. a scrolled-out filter pill on the
+    /// simulator. Only ask once the element's centre is inside the window and not under the keyboard.
+    private func reachable(_ element: XCUIElement) -> Bool {
+        guard element.exists, !element.frame.isEmpty else { return false }
+        let centre = CGPoint(x: element.frame.midX, y: element.frame.midY)
+        guard app.windows.firstMatch.frame.contains(centre) else { return false }
+        let keyboard = app.keyboards.firstMatch
+        if keyboard.exists, keyboard.frame.contains(centre) { return false }
+        return element.isHittable
+    }
+
     private func filter(_ title: String) {
         let button = app.buttons[title].firstMatch
         let filters = app.scrollViews["libraryFilters"]
         for _ in 0..<5 {
-            if button.exists && button.isHittable { break }
+            if reachable(button) { break }
             filters.swipeLeft()
         }
-        XCTAssertTrue(button.isHittable, "Filter must be reachable: " + title)
+        XCTAssertTrue(reachable(button), "Filter must be reachable: " + title)
         button.tap()
     }
 
     private func scrollTo(_ element: XCUIElement, maximumSwipes: Int = 24) {
         let scroll = app.scrollViews["libraryScroll"]
         for _ in 0..<maximumSwipes {
-            if element.exists && element.isHittable { return }
+            if reachable(element) { return }
             scroll.swipeUp()
         }
-        XCTAssertTrue(element.isHittable, "Expected element was not reachable after scrolling")
+        XCTAssertTrue(reachable(element), "Expected element was not reachable after scrolling")
+    }
+
+    /// The software keyboard (always shown on the simulator) can cover lower editor rows,
+    /// and swiping the form does not dismiss it. Tap the navigation title to dismiss, as the
+    /// test already does after typing title/body.
+    private func dismissKeyboardIfShown() {
+        guard app.keyboards.firstMatch.exists else { return }
+        app.navigationBars["Chỉnh sửa"].staticTexts["Chỉnh sửa"].tap()
+        _ = app.keyboards.firstMatch.waitForNonExistence(timeout: 3)
     }
 
     private func openEditor(_ id: String) {
@@ -66,10 +87,12 @@ final class PhaseFourAcceptanceUITests: XCTestCase {
         let form = app.descendants(matching: .any).matching(identifier: "itemEditorForm").firstMatch
         XCTAssertTrue(form.waitForExistence(timeout: 10))
         for _ in 0..<7 {
-            if element.exists && element.isHittable { return }
+            if reachable(element) { return }
+            dismissKeyboardIfShown()
+            if reachable(element) { return }
             if upwards { form.swipeUp() } else { form.swipeDown() }
         }
-        XCTAssertTrue(element.isHittable, "Editor control must be reachable")
+        XCTAssertTrue(reachable(element), "Editor control must be reachable")
     }
 
     private func openTrash() {
@@ -116,10 +139,10 @@ final class PhaseFourAcceptanceUITests: XCTestCase {
         app.buttons["captureAdd"].tap()
         XCTAssertTrue(app.textViews["captureBody"].waitForExistence(timeout: 10))
         attachScreen("06 Capture note")
-        app.segmentedControls.buttons["Link"].tap()
+        app.buttons["captureMode_link"].tap()
         XCTAssertTrue(app.textFields["captureURL"].waitForExistence(timeout: 10))
         attachScreen("07 Capture link")
-        app.segmentedControls.buttons["Ảnh"].tap()
+        app.buttons["captureMode_photo"].tap()
         XCTAssertTrue(app.buttons["capturePhotos"].waitForExistence(timeout: 10))
         attachScreen("08 Capture image")
         app.buttons["Đóng"].tap()
@@ -166,7 +189,14 @@ final class PhaseFourAcceptanceUITests: XCTestCase {
         body.typeText("Ghim thử trên iPhone")
         let pin = app.switches["capturePinAfterSave"]
         XCTAssertTrue(pin.exists)
-        pin.tap()
+        // The switch element spans the whole labelled row; a centre tap lands on the label,
+        // which does not toggle on iOS 18. Tap the switch side and confirm it turned on.
+        let knob = pin.switches.firstMatch
+        (knob.exists ? knob : pin).tap()
+        // The value updates asynchronously and arrives as a number or string by runtime.
+        let on = NSPredicate { element, _ in "\((element as? XCUIElement)?.value ?? "")" == "1" }
+        XCTAssertEqual(XCTWaiter.wait(for: [expectation(for: on, evaluatedWith: pin)], timeout: 3), .completed,
+                       "Pin-after-save must be on before saving")
         app.buttons["captureSave"].tap()
         XCTAssertTrue(app.buttons["captureAdd"].waitForExistence(timeout: 10))
         filter("Đã ghim")
@@ -280,7 +310,13 @@ final class PhaseFourAcceptanceUITests: XCTestCase {
         item(noteID).tap()
         app.buttons["Tùy chọn nội dung"].tap()
         app.buttons["itemTrash"].tap()
-        app.buttons["Chuyển vào Thùng rác"].tap()
+        // Tapping while the confirmation sheet is still animating in dismisses it without
+        // trashing; then the tab tap is swallowed by the closing sheet. Wait for each state.
+        let confirm = app.buttons["Chuyển vào Thùng rác"]
+        XCTAssertTrue(confirm.waitForExistence(timeout: 5))
+        XCTAssertTrue(confirm.isHittable)
+        confirm.tap()
+        XCTAssertTrue(app.scrollViews["itemDetail"].waitForNonExistence(timeout: 10), "Detail must close after trashing")
         XCTAssertFalse(item(noteID).exists)
         app.buttons["searchTab"].tap()
         let query = app.textFields["searchQuery"]
@@ -299,7 +335,12 @@ final class PhaseFourAcceptanceUITests: XCTestCase {
         item(noteID).tap()
         app.buttons["Tùy chọn nội dung"].tap()
         app.buttons["itemTrash"].tap()
-        app.buttons["Chuyển vào Thùng rác"].tap()
+        XCTAssertTrue(confirm.waitForExistence(timeout: 5))
+        XCTAssertTrue(confirm.isHittable)
+        Thread.sleep(forTimeInterval: 0.6)
+        confirm.tap()
+        XCTAssertTrue(app.scrollViews["itemDetail"].waitForNonExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["libraryOptions"].waitForExistence(timeout: 10))
         openTrash()
         app.buttons["trashDelete"].tap()
         XCTAssertTrue(app.staticTexts["Xóa vĩnh viễn mục này?"].waitForExistence(timeout: 10))
@@ -358,15 +399,15 @@ final class PhaseFourAcceptanceUITests: XCTestCase {
         app.launch()
         XCTAssertTrue(app.staticTexts["Chỗ cho những điều muốn giữ"].waitForExistence(timeout: 20))
         app.buttons["captureAdd"].tap()
-        app.segmentedControls.buttons["Ghi chú"].tap()
+        app.buttons["captureMode_note"].tap()
         let body = app.textViews["captureBody"]
         XCTAssertTrue(body.waitForExistence(timeout: 10))
         body.tap()
         XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 10))
         body.typeText("P4 new empty library note")
-        app.segmentedControls.buttons["Link"].tap()
+        app.buttons["captureMode_link"].tap()
         XCTAssertFalse(app.keyboards.firstMatch.waitForExistence(timeout: 2), "Tapping outside the note editor should dismiss the keyboard")
-        app.segmentedControls.buttons["Ghi chú"].tap()
+        app.buttons["captureMode_note"].tap()
         app.buttons["captureSave"].tap()
         XCTAssertTrue(app.staticTexts["P4 new empty library note"].firstMatch.waitForExistence(timeout: 15))
         XCTAssertFalse(app.keyboards.firstMatch.exists)

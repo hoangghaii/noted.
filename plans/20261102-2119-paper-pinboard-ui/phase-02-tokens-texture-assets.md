@@ -1,6 +1,6 @@
 # Phase 02 — Token, texture giấy, asset vẽ tay
 
-Ngày 2026-11-02 · Ưu tiên: cao · Phụ thuộc: Phase 01 · Trạng thái: chưa bắt đầu · Review: chưa
+Ngày 2026-11-02 · Ưu tiên: cao · Phụ thuộc: Phase 01 · Trạng thái: đã triển khai, đang kiểm chứng · Review: đã review; sửa fixture honey
 
 ## Insight
 
@@ -49,7 +49,7 @@ static func tone(for item: Item) -> PaperTone {
     return stableHash(item.id) % 3 == 0 ? .honey : .cream   // ~1/3 ghi chú honey
 }
 static func curls(_ item: Item) -> Bool {
-    item.kind != "image" && stableHash(item.id) % 8 == 3     // ~1/8, không trùng điều kiện honey
+    item.kind != "image" && stableHash(item.id) % 8 == 3     // ~1/8; có thể trùng honey
 }
 ```
 `stableHash` = FNV-1a trên `uuidString` (không dùng `hashValue` vì đổi mỗi lần chạy). Fixture Phase 01 chọn UUID khớp kết quả mock. Folder: tông theo vị trí chẵn/lẻ (cream, sage, cream, sage).
@@ -63,10 +63,10 @@ static func curls(_ item: Item) -> Bool {
 
 ## Todo
 
-- [ ] Palette light/dark mới + bảng tương phản
-- [ ] PaperGrain tile + script
-- [ ] 9 SVG vẽ tay + preview
-- [ ] `PaperTone`, `stableHash`, `curls` + unit test phân bố (1000 UUID: honey 28–38%, curl 9–16%)
+- [x] Palette light/dark mới + bảng tương phản
+- [x] PaperGrain tile + script
+- [x] 9 SVG vẽ tay + preview
+- [x] `PaperTone`, `stableHash`, `curls` + source unit test phân bố (1000 UUID: honey 28–38%, curl 9–16%); build-for-testing đạt, chạy Swift rule trực tiếp đạt 325/125; XCTest iPhone chưa trả kết quả
 
 ## Nghiệm thu
 
@@ -78,3 +78,12 @@ static func curls(_ item: Item) -> Bool {
 
 - Texture làm giảm tương phản chữ → giữ opacity thấp, đo lại tương phản trên ảnh thật.
 - SVG trong asset catalog cần iOS 13+ và “Preserve Vector Data”; kiểm tra template tint hoạt động trong extension.
+
+## Kết quả triển khai (2026-11-02)
+
+- Catalog thực tế: `Shared/PaperAssets.xcassets`, resource của cả app và Share Extension; không sao chép catalog và không đóng gói AppIcon vào extension.
+- `NotedDesign.PaperTone` nhận UUID/kind để không phụ thuộc SwiftData Item trong extension. Thêm foreground/secondaryForeground; secondaryText trên sage/chip light không đạt 4,5:1 nên dùng primaryText (bảng đầy đủ trong design-guideline).
+- `PaperBackground` và `paperBackground` sẵn sàng cho Phase 04; chưa phủ texture lên màn thật trong phase nền tảng.
+- Sửa UUID fixture ghi chú ý tưởng từ 2 → 203 → **37**: 203 ra honey nhưng không cong; 37 thoả cả honey và curl (hash % 24 == 3) như card vàng mock. Test khẳng định thêm curl. Không thay dữ liệu cá nhân.
+- Review độc lập: một finding fixture tone đã sửa; kiểm tra độc lập 1000 UUID cho honey 325/1000 và curl 125/1000.
+- Xem [báo cáo kiểm chứng](../../docs/evidence/20261102-paper-phase2/summary.md). ΔE trên thiết bị, tint extension và cuộn 60 fps vẫn pending sau khi component dùng texture; không đánh dấu các nghiệm thu này đã đạt.
