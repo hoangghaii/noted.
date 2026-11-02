@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"let p=process.cwd(),f=require('node:fs'),j=require('node:path');while(!f.existsSync(j.join(p,'.agentkit/hooks/adapter.cjs'))){let q=j.dirname(p);if(q===p)process.exit(0);p=q;}process.argv=['node','adapter','claude','search'];require(j.join(p,'.agentkit/hooks/adapter.cjs'));\""
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|apply_patch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"let p=process.cwd(),f=require('node:fs'),j=require('node:path');while(!f.existsSync(j.join(p,'.agentkit/hooks/adapter.cjs'))){let q=j.dirname(p);if(q===p)process.exit(0);p=q;}process.argv=['node','adapter','claude','modularization'];require(j.join(p,'.agentkit/hooks/adapter.cjs'));\""
+          }
+        ]
+      }
+    ]
+  }
+}

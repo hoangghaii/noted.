@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Noted — Bản xem trước thiết kế</title>
+  <style>
+    :root { --ink:#27352c; --muted:#77798b; --blue:#39419a; --blue2:#253f34; --peach:#e6b45b; --paper:#f6f2e9; --line:#e9e7e4; --white:#fff; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:#eceaf0; color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif; }
+    .board { width:1440px; min-height:1120px; margin:auto; padding:50px 62px 48px; background:var(--paper); }
+    .top { display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid #dddbe0; padding-bottom:25px; }
+    .eyebrow { font-size:13px; letter-spacing:.16em; text-transform:uppercase; color:var(--blue); font-weight:750; }
+    h1 { font-size:42px; letter-spacing:-.055em; margin:9px 0 8px; line-height:1.05; }
+    .sub { margin:0; font-size:16px; line-height:1.45; color:#646678; max-width:570px; }
+    .stamp { padding:10px 14px; border:1px solid #d9d5d0; border-radius:9px; font-size:12px; font-weight:700; color:#656578; }
+    .content { display:grid; grid-template-columns:255px 1fr; gap:34px; padding-top:31px; }
+    .brand-col h2,.screens h2 { font-size:14px; letter-spacing:.11em; text-transform:uppercase; color:#656678; margin:0 0 17px; }
+    .icon-large { width:178px; height:178px; border-radius:40px; box-shadow:0 18px 35px #27276628; overflow:hidden; }
+    .logo { width:100%; height:100%; display:block; }
+    .icon-line { display:flex; align-items:center; gap:14px; margin:17px 0 22px; }
+    .icon-mini { width:56px; height:56px; border-radius:13px; overflow:hidden; box-shadow:0 5px 12px #27276625; }
+    .icon-tiny { width:33px; height:33px; border-radius:8px; overflow:hidden; box-shadow:0 2px 5px #27276620; }
+    .size-label { color:var(--muted); font-size:12px; }
+    .brand-name { font-size:29px; font-weight:790; letter-spacing:-.055em; margin:0 0 5px; }
+    .brand-copy { font-size:14px; color:#686a77; line-height:1.48; margin:0 0 22px; }
+    .color { display:flex; align-items:center; gap:9px; margin:10px 0; font-size:12px; color:#676978; }
+    .swatch { width:28px; height:28px; border-radius:8px; border:1px solid #0000000a; }
+    .note { border-top:1px solid #dedbd8; margin-top:23px; padding-top:17px; font-size:12px; line-height:1.55; color:#6e6d77; }
+    .screens-head { display:flex; justify-content:space-between; align-items:baseline; }
+    .screens-head span { color:#85828a; font-size:12px; }
+    .phones { display:flex; align-items:flex-start; gap:19px; }
+    .phone-wrap { width:322px; }
+    .phone { height:694px; border:7px solid #252637; border-radius:41px; background:#fff; overflow:hidden; box-shadow:0 18px 34px #26254223; position:relative; }
+    .phone::before { content:""; position:absolute; z-index:10; width:91px; height:23px; background:#252637; border-radius:0 0 15px 15px; top:0; left:calc(50% - 45px); }
+    .screen { height:100%; background:#faf9f6; padding:32px 18px 0; position:relative; overflow:hidden; }
+    .status { display:flex; justify-content:space-between; padding:0 5px; font-size:13px; font-weight:760; height:29px; }
+    .status-icons { font-size:11px; letter-spacing:2px; }
+    .header-row { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+    .head-title { font-size:29px; font-weight:790; letter-spacing:-.06em; line-height:1.08; margin:0; }
+    .head-sub { font-size:11px; color:var(--muted); margin:5px 0 0; }
+    .circle-btn { width:36px; height:36px; border:1px solid #e1dfe4; border-radius:12px; display:flex; align-items:center; justify-content:center; background:#fff; color:var(--ink); font-size:20px; font-weight:400; }
+    .hero { background:var(--blue2); color:#fff; border-radius:19px; padding:15px; margin-top:18px; min-height:98px; position:relative; overflow:hidden; }
+    .hero::after { content:""; width:110px; height:110px; border:15px solid #fffdf716; border-radius:31px; position:absolute; right:-40px; top:-31px; transform:rotate(24deg); }
+    .hero small { color:#c7c9eb; font-size:10px; font-weight:670; letter-spacing:.05em; }
+    .hero strong { display:block; font-size:17px; letter-spacing:-.035em; margin:4px 0 10px; max-width:190px; line-height:1.18; }
+    .hero-cta { display:inline-block; background:var(--peach); color:#2f2342; font-size:11px; font-weight:800; padding:8px 11px; border-radius:8px; }
+    .section-row { display:flex; justify-content:space-between; align-items:baseline; margin:20px 0 12px; }
+    .section-row strong { font-size:16px; letter-spacing:-.04em; }
+    .section-row span { font-size:11px; color:var(--muted); }
+    .filters { display:flex; gap:6px; overflow:hidden; white-space:nowrap; margin-bottom:13px; }
+    .pill { font-size:10px; font-weight:670; padding:9px 11px; background:#efedf0; border-radius:20px; color:#6d6d7d; }
+    .pill.active { background:var(--blue); color:#fff; }
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+    .card { height:147px; background:#fff; border:1px solid #efedf0; border-radius:15px; padding:12px; box-shadow:0 2px 4px #2f2d5610; overflow:hidden; }
+    .card.illustrated { padding:0; }
+    .thumb { height:75px; background:radial-gradient(circle at 50% 52%, #fff6e9 0 15px,#c4885d 16px 18px,#e7c1a0 19px 32px,#593b37 33px 35px,#d8b490 36px 54px,#f5e5d0 55px); }
+    .card-pad { padding:9px 10px; }
+    .type { font-size:9px; font-weight:800; letter-spacing:.07em; color:var(--blue); text-transform:uppercase; margin-bottom:7px; }
+    .card-title { font-size:13px; line-height:1.2; font-weight:750; letter-spacing:-.025em; }
+    .card-text { color:#8a8b97; font-size:10px; line-height:1.35; margin-top:7px; }
+    .tabbar { position:absolute; bottom:0; left:0; width:100%; height:65px; background:#fff; border-top:1px solid #ebe9ec; display:flex; justify-content:space-around; align-items:center; padding-bottom:7px; }
+    .tab { font-size:9px; color:#898998; text-align:center; width:80px; }
+    .tab b { display:block; font-size:19px; font-weight:500; margin-bottom:2px; }
+    .tab.active { color:var(--blue); font-weight:700; }
+    .search-box { margin-top:21px; background:#fff; border:1px solid #e8e5e9; border-radius:13px; height:42px; display:flex; align-items:center; gap:9px; padding:0 13px; color:#9999a4; font-size:11px; }
+    .search-box span { color:var(--blue); font-size:17px; }
+    .quick { margin-top:22px; }
+    .quick-title { font-size:12px; font-weight:760; margin-bottom:11px; }
+    .quick-chips { display:flex; gap:7px; }
+    .quick-chips span { padding:9px 10px; background:#eeeef7; color:var(--blue2); border-radius:10px; font-size:10px; font-weight:700; }
+    .results { margin-top:29px; }
+    .result-card { background:#fff; border:1px solid #eeecef; border-radius:14px; padding:12px; display:flex; gap:11px; margin-top:9px; }
+    .result-icon { width:35px; height:35px; border-radius:10px; background:#f1eef8; display:flex; align-items:center; justify-content:center; color:var(--blue); font-size:18px; flex:none; }
+    .result-card strong { display:block; font-size:12px; line-height:1.25; }
+    .result-card small { display:block; color:#888896; font-size:10px; margin-top:5px; }
+    .hint { margin-top:19px; padding:11px 12px; background:#f0eef8; border-radius:11px; color:#636486; font-size:10px; line-height:1.4; }
+    .save-screen { background:#f7f6f5; }
+    .sheet-top { display:flex; justify-content:space-between; align-items:center; margin:14px 0 23px; font-size:12px; font-weight:700; color:var(--blue); }
+    .sheet-top strong { font-size:16px; color:var(--ink); letter-spacing:-.035em; }
+    .sheet-top .disabled { color:#a6a4b5; }
+    .mode-tabs { display:flex; padding:4px; background:#ecebf0; border-radius:12px; gap:4px; }
+    .mode-tabs span { flex:1; text-align:center; font-size:11px; font-weight:700; padding:10px 0; color:#737484; }
+    .mode-tabs .active { background:#fff; border-radius:9px; color:var(--blue); box-shadow:0 1px 3px #00000015; }
+    .field-label { font-size:11px; font-weight:760; margin:27px 0 9px; }
+    .editor { height:200px; padding:15px; background:#fff; border:1.5px solid #c7c4df; border-radius:14px; font-size:13px; line-height:1.55; color:#373849; }
+    .cursor { display:inline-block; height:15px; width:1.5px; background:var(--blue); vertical-align:middle; }
+    .paste { display:flex; justify-content:space-between; align-items:center; background:#fff; border:1px solid #efedf0; border-radius:13px; padding:14px; margin-top:14px; color:var(--blue); font-size:12px; font-weight:700; }
+    .offline { display:flex; gap:7px; align-items:center; font-size:10px; color:#797b89; margin:17px 2px; }
+    .primary { position:absolute; bottom:29px; left:18px; right:18px; text-align:center; border-radius:13px; padding:14px; background:var(--peach); font-size:13px; font-weight:800; color:#302719; }
+    .caption { margin:15px 5px 0; font-size:13px; font-weight:760; color:#4e5061; }
+    .caption small { display:block; font-weight:400; color:#888891; margin-top:5px; font-size:11px; line-height:1.35; }
+    .footer { border-top:1px solid #dedbd8; margin-top:29px; padding-top:16px; display:flex; justify-content:space-between; gap:20px; color:#767581; font-size:12px; }
+  </style>
+</head>
+<body>
+<div class="board">
+  <header class="top"><div><div class="eyebrow">Noted · Design preview 01</div><h1>Giữ lại. Tìm thấy.</h1><p class="sub">Một dấu gấp thành chữ N: gợi hành động đánh dấu điều đáng nhớ, đủ rõ khi icon nằm giữa các app trên iPhone.</p></div><div class="stamp">BẢN XEM TRƯỚC · CHƯA ÁP DỤNG</div></header>
+  <div class="content">
+    <aside class="brand-col">
+      <h2>Biểu tượng</h2>
+      <div class="icon-large"><svg class="logo" viewBox="0 0 100 100" aria-label="Icon Noted"><rect width="100" height="100" fill="#285448"/><path d="M24 76V25c0-3 2-5 5-5h8l28 38V24c0-2 2-4 4-4h8v54c0 3-2 5-5 5h-7L37 41v35H24Z" fill="#FFF9ED"/><path d="M65 20h12v21L65 29V20Z" fill="#F39470"/></svg></div>
+      <div class="icon-line"><div class="icon-mini"><svg class="logo" viewBox="0 0 100 100"><rect width="100" height="100" fill="#285448"/><path d="M24 76V25c0-3 2-5 5-5h8l28 38V24c0-2 2-4 4-4h8v54c0 3-2 5-5 5h-7L37 41v35H24Z" fill="#FFF9ED"/><path d="M65 20h12v21L65 29V20Z" fill="#F39470"/></svg></div><div class="icon-tiny"><svg class="logo" viewBox="0 0 100 100"><rect width="100" height="100" fill="#285448"/><path d="M24 76V25c0-3 2-5 5-5h8l28 38V24c0-2 2-4 4-4h8v54c0 3-2 5-5 5h-7L37 41v35H24Z" fill="#FFF9ED"/><path d="M65 20h12v21L65 29V20Z" fill="#F39470"/></svg></div><div class="size-label">56 px / 33 px</div></div>
+      <div class="brand-name">Noted<span style="color:#e6b45b">.</span></div>
+      <p class="brand-copy">Nét gấp màu cam là chi tiết riêng, lặp lại ở nút Lưu và những điểm cần chú ý. Hình khối gọn để đọc tốt ở kích thước nhỏ.</p>
+      <h2>Màu chủ đạo</h2>
+      <div class="color"><i class="swatch" style="background:#285448"></i> Ink blue · #285448</div>
+      <div class="color"><i class="swatch" style="background:#e6b45b"></i> Warm coral · #E6B45B</div>
+      <div class="color"><i class="swatch" style="background:#f6f2e9"></i> Soft paper · #F6F2E9</div>
+      <div class="note">Mẫu dùng nội dung minh họa. Chữ tiếng Việt hiển thị bằng font hệ thống iOS, có dấu đầy đủ. Các tương tác và dữ liệu thật của app chưa thay đổi.</div>
+    </aside>
+    <main class="screens">
+      <div class="screens-head"><h2>Trải nghiệm trên iPhone</h2><span>Đề xuất giao diện · kích thước mô phỏng</span></div>
+      <div class="phones">
+        <div class="phone-wrap"><div class="phone"><div class="screen"><div class="status"><span>9:41</span><span class="status-icons">●●● ▰</span></div><div class="header-row"><div><div class="head-title">Thư viện</div><p class="head-sub">Những điều bạn muốn giữ, luôn ở đây.</p></div><div class="circle-btn">⋯</div></div><div class="hero"><small>NOTED TRÊN IPHONE</small><strong>Một ý hay vừa xuất hiện?</strong><span class="hero-cta">＋&nbsp; Lưu nhanh</span></div><div class="section-row"><strong>Vừa lưu</strong><span>24 mục</span></div><div class="filters"><span class="pill active">Tất cả</span><span class="pill">Inbox</span><span class="pill">Ảnh</span><span class="pill">Link</span><span class="pill">Ghi chú</span></div><div class="grid"><div class="card"><div class="type">✦ Ghi chú</div><div class="card-title">Ý tưởng cho cuối tuần</div><div class="card-text">Một nơi yên tĩnh để đọc sách và viết vài dòng…</div></div><div class="card illustrated"><div class="thumb"></div><div class="card-pad"><div class="type">▧ Ảnh</div><div class="card-title">Quán cà phê mới</div></div></div><div class="card"><div class="type">↗ Liên kết</div><div class="card-title">Cách sắp xếp góc làm việc</div><div class="card-text">designnotes.com</div></div><div class="card"><div class="type">✦ Ghi chú</div><div class="card-title">Những cuốn sách muốn đọc</div><div class="card-text">#sách &nbsp; #cảm hứng</div></div></div><div class="tabbar"><div class="tab active"><b>▦</b>Thư viện</div><div class="tab"><b>⌕</b>Tìm kiếm</div><div class="tab"><b>▤</b>Bộ sưu tập</div></div></div></div><div class="caption">01 · Thư viện<small>Nội dung dẫn mắt từ lời chào đến hành động lưu, rồi đến các mục mới nhất.</small></div></div>
+        <div class="phone-wrap"><div class="phone"><div class="screen"><div class="status"><span>9:41</span><span class="status-icons">●●● ▰</span></div><div class="header-row"><div><div class="head-title">Tìm lại</div><p class="head-sub">Gõ điều bạn còn nhớ.</p></div><div class="circle-btn">⋯</div></div><div class="search-box"><span>⌕</span>Tìm ghi chú, link, chữ trong ảnh…</div><div class="quick"><div class="quick-title">Lọc nhanh</div><div class="quick-chips"><span>▧ &nbsp; Ảnh</span><span>↗ &nbsp; Link</span><span>✦ &nbsp; Ghi chú</span></div></div><div class="results"><div class="section-row"><strong>Mới lưu</strong><span>Xem tất cả</span></div><div class="result-card"><div class="result-icon">✦</div><div><strong>Ý tưởng cho cuối tuần</strong><small>Ghi chú · Hôm nay</small></div></div><div class="result-card"><div class="result-icon">↗</div><div><strong>Cách sắp xếp góc làm việc</strong><small>Liên kết · Hôm qua</small></div></div><div class="result-card"><div class="result-icon">▧</div><div><strong>Quán cà phê mới</strong><small>Ảnh · Thứ bảy</small></div></div></div><div class="hint">⌕ &nbsp; Có thể tìm tiếng Việt có dấu hoặc không dấu.</div><div class="tabbar"><div class="tab"><b>▦</b>Thư viện</div><div class="tab active"><b>⌕</b>Tìm kiếm</div><div class="tab"><b>▤</b>Bộ sưu tập</div></div></div></div><div class="caption">02 · Tìm kiếm<small>Ô nhập liệu nổi bật, bộ lọc dễ chạm và kết quả có loại nội dung rõ ràng.</small></div></div>
+        <div class="phone-wrap"><div class="phone"><div class="screen save-screen"><div class="status"><span>9:41</span><span class="status-icons">●●● ▰</span></div><div class="sheet-top"><span>Đóng</span><strong>Lưu nhanh</strong><span class="disabled">Lưu</span></div><div class="mode-tabs"><span class="active">Ghi chú</span><span>Link</span><span>Ảnh</span></div><div class="field-label">Điều bạn muốn giữ</div><div class="editor">Một ý tưởng nhỏ hôm nay… <span class="cursor"></span></div><div class="paste"><span>▤ &nbsp; Dán nội dung</span><span>›</span></div><div class="offline">◉ &nbsp; Lưu trên iPhone, vẫn dùng được khi offline</div><div class="primary">Lưu ghi chú</div></div></div><div class="caption">03 · Lưu nhanh<small>Chỉ một tác vụ chính. Nút Lưu rõ ràng và bản nháp vẫn được giữ.</small></div></div>
+      </div>
+    </main>
+  </div>
+  <footer class="footer"><span>Hướng A · Dấu gấp / Folded N</span><span>Preview tĩnh cho trao đổi thiết kế · chưa phải ảnh chụp app chạy trên iPhone</span></footer>
+</div>
+</body>
+</html>

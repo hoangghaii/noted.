@@ -1,0 +1,13 @@
+{
+  "deviceName": "Hải - iPhone 12 Pro",
+  "deviceId": "00008101-001A2519266B001E",
+  "platform": "iOS",
+  "osVersion": "27.0.1",
+  "result": "Passed",
+  "totalTestCount": 34,
+  "passedTests": 34,
+  "failedTests": 0,
+  "skippedTests": 0,
+  "recoveryTests": 11,
+  "resultBundle": "/private/tmp/noted-phase2-all-unit-v2.xcresult"
+}

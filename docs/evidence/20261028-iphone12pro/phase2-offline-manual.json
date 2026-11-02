@@ -1,0 +1,22 @@
+{
+  "deviceName": "Hải - iPhone 12 Pro",
+  "deviceId": "00008101-001A2519266B001E",
+  "mode": "physical iPhone, Airplane Mode on, Wi-Fi off per user confirmation",
+  "networkProbe": {
+    "url": "https://www.apple.com/library/test/success.html?noted-offline=20261028-1528-7c1f",
+    "openedWith": "devicectl launch com.apple.mobilesafari --payload-url",
+    "observedByUser": "Safari reported no Internet connection"
+  },
+  "capture": {
+    "noteMarker": "OFFLINE-P2-20261028",
+    "url": "https://example.com/offline-p2-20261028",
+    "imageCountInOneBatch": 3,
+    "observedByUser": "all five items appeared in the library while offline"
+  },
+  "relaunch": {
+    "method": "devicectl device process launch --terminate-existing dev.nhhai7.Noted",
+    "observedByUser": "note, link, and all three images remained; each image opened"
+  },
+  "scope": "Manual UI observations on device; image checksums and a real low-storage fault were not measured",
+  "failedAutomation": "xcodebuild test reinstalled the development app while offline; iOS rejected launch before the test body due to an untrusted Developer App certificate"
+}
