@@ -2,7 +2,7 @@ import XCTest
 
 final class IntelligenceLabelingUITests: XCTestCase {
     func testDebugLabelingScreenShowsLocalLibraryCounts() {
-        let app = XCUIApplication(bundleIdentifier: "dev.nhhai7.Noted")
+        let app = XCUIApplication()
         app.launchArguments = []
         app.launch()
         XCTAssertTrue(app.buttons["libraryOptions"].waitForExistence(timeout: 20))

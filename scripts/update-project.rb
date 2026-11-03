@@ -20,7 +20,7 @@ if File.directory?('NotedGateHost') && !host
   host = project.new_target(:application, 'NotedGateHost', :ios, '17.0')
   host.build_configurations.each do |c|
     c.base_configuration_reference = defaults
-    c.build_settings.merge!({'PRODUCT_BUNDLE_IDENTIFIER'=>'dev.nhhai7.NotedGateHost', 'GENERATE_INFOPLIST_FILE'=>'YES', 'INFOPLIST_KEY_CFBundleDisplayName'=>'Noted Share Check', 'INFOPLIST_KEY_UILaunchScreen_Generation'=>'YES', 'CODE_SIGN_STYLE'=>'Automatic', 'SWIFT_VERSION'=>'5.0', 'TARGETED_DEVICE_FAMILY'=>'1', 'SUPPORTED_PLATFORMS'=>'iphoneos', 'SDKROOT'=>'iphoneos'})
+    c.build_settings.merge!({'PRODUCT_BUNDLE_IDENTIFIER'=>'$(NOTED_BUNDLE_ID)GateHost', 'GENERATE_INFOPLIST_FILE'=>'YES', 'INFOPLIST_KEY_CFBundleDisplayName'=>'Noted Share Check', 'INFOPLIST_KEY_UILaunchScreen_Generation'=>'YES', 'CODE_SIGN_STYLE'=>'Automatic', 'SWIFT_VERSION'=>'5.0', 'TARGETED_DEVICE_FAMILY'=>'1', 'SUPPORTED_PLATFORMS'=>'iphoneos', 'SDKROOT'=>'iphoneos'})
   end
   ui.add_dependency(host)
 end
