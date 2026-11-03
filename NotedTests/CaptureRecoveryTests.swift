@@ -34,6 +34,117 @@ final class CaptureRecoveryTests: XCTestCase {
         return payload
     }
 
+    func testLegacyCaptureDraftDecodesWithEmptyNewFields() throws {
+        let data = Data(#"{"mode":"note","body":"Giữ lại","url":""}"#.utf8)
+        let draft = try JSONDecoder().decode(NoteDraft.self, from: data)
+        XCTAssertEqual(draft.mode, "note")
+        XCTAssertEqual(draft.body, "Giữ lại")
+        XCTAssertEqual(draft.title, "")
+        XCTAssertNil(draft.collectionID)
+        XCTAssertTrue(draft.tags.isEmpty)
+    }
+
+    func testCapturePostOptionsApplyTitleTagsCollectionAndPin() async throws {
+        let (root, queue) = try environment()
+        let store = try LibraryStore(root: root.appendingPathComponent("library"), queue: queue)
+        try store.createCollection("Cảm hứng")
+        let collection = try XCTUnwrap(store.collections.first)
+        let options = PostCaptureOptions(title: "Ý tưởng cuối tuần", tags: ["cảm hứng", "đi chơi"],
+                                         collectionID: collection.id, pin: true)
+        let payloadID = try await store.captureText("Nội dung vẫn nguyên", options: options)
+        XCTAssertTrue(store.isCaptureSettled(payloadID))
+        let saved = try XCTUnwrap(store.items.first)
+        XCTAssertEqual(store.items.count, 1)
+        XCTAssertEqual(saved.title, "Ý tưởng cuối tuần")
+        XCTAssertEqual(saved.body, "Nội dung vẫn nguyên")
+        XCTAssertEqual(saved.tags, ["cảm hứng", "đi chơi"])
+        XCTAssertEqual(saved.collectionID, collection.id)
+        XCTAssertTrue(saved.userEditedTitle)
+        XCTAssertTrue(saved.pinned)
+    }
+
+    func testPhotoCaptureDoesNotApplyHiddenNoteTitle() async throws {
+        let (root, queue) = try environment()
+        let store = try LibraryStore(root: root.appendingPathComponent("library"), queue: queue)
+        let photo = Item(captureID: "photo-test", kind: "image", title: "Tên ảnh", body: "Chú thích")
+        store.context.insert(photo)
+        try store.saveChanges()
+        let options = PostCaptureOptions(title: "Tiêu đề ghi chú cũ", tags: ["ảnh"], mode: "photo")
+        try options.apply(to: [photo], store: store)
+        XCTAssertEqual(photo.title, "Tên ảnh")
+        XCTAssertEqual(photo.tags, ["ảnh"])
+        XCTAssertFalse(photo.userEditedTitle)
+    }
+
+    func testCaptureTagsWithoutCustomTitleLeaveLinkTitleAvailableForMetadata() async throws {
+        let (root, queue) = try environment()
+        let store = try LibraryStore(root: root.appendingPathComponent("library"), queue: queue)
+        try await store.captureLink(try XCTUnwrap(URL(string: "https://example.com/story")),
+                                    options: PostCaptureOptions(tags: ["đọc sau"], mode: "link"))
+        let saved = try XCTUnwrap(store.items.first)
+        XCTAssertEqual(saved.tags, ["đọc sau"])
+        XCTAssertFalse(saved.userEditedTitle)
+    }
+
+    /// M2: the capture's own import fails (or is skipped); options wait and apply on the next import.
+    func testPostCaptureOptionsSurviveDeferredImport() async throws {
+        let (root, queue) = try environment()
+        let store = try LibraryStore(root: root.appendingPathComponent("library"), queue: queue)
+        store.faultInjector = { if $0 == .beforeMetadataSave { throw Injected.stopped } }
+        let payloadID = try await store.captureText("Đến sau", options: PostCaptureOptions(title: "Tiêu đề", tags: ["giữ"], pin: true))
+        XCTAssertTrue(store.items.isEmpty)
+        XCTAssertFalse(store.isCaptureSettled(payloadID))
+        store.faultInjector = nil
+        try await store.importPending()
+        let saved = try XCTUnwrap(store.items.first)
+        XCTAssertEqual(saved.title, "Tiêu đề")
+        XCTAssertEqual(saved.tags, ["giữ"])
+        XCTAssertTrue(saved.pinned)
+        XCTAssertTrue(store.isCaptureSettled(payloadID))
+    }
+
+    /// M2: another ready batch imported in the same run must not block or receive the options.
+    func testPostCaptureOptionsTargetOnlyTheirPayloadWhenOtherBatchesImport() async throws {
+        let (root, queue) = try environment()
+        _ = try imageBatch(queue, count: 2)
+        let store = try LibraryStore(root: root.appendingPathComponent("library"), queue: queue)
+        let payloadID = try await store.captureText("Ghi chú", options: PostCaptureOptions(tags: ["riêng"], pin: true))
+        XCTAssertEqual(store.items.count, 3)
+        XCTAssertTrue(store.isCaptureSettled(payloadID))
+        let note = try XCTUnwrap(store.items.first { $0.kind == "text" })
+        XCTAssertEqual(note.tags, ["riêng"])
+        XCTAssertTrue(note.pinned)
+        for image in store.items where image.kind == "image" {
+            XCTAssertTrue(image.tags.isEmpty)
+            XCTAssertFalse(image.pinned)
+        }
+    }
+
+    /// M2: options are durable, so a relaunch before the import still applies them.
+    func testPostCaptureOptionsSurviveRelaunchBeforeImport() async throws {
+        let (root, queue) = try environment()
+        let libraryRoot = root.appendingPathComponent("library")
+        let first = try LibraryStore(root: libraryRoot, queue: queue)
+        first.faultInjector = { if $0 == .beforeMetadataSave { throw Injected.stopped } }
+        let payloadID = try await first.captureText("Sau khi mở lại", options: PostCaptureOptions(title: "Còn nguyên"))
+        let relaunched = try LibraryStore(root: libraryRoot, queue: queue)
+        try await relaunched.importPending()
+        XCTAssertEqual(relaunched.items.first?.title, "Còn nguyên")
+        XCTAssertTrue(relaunched.isCaptureSettled(payloadID))
+    }
+
+    /// Options for a payload that is no longer queued and produced no item are dropped.
+    func testPostCaptureOptionsForDiscardedBatchAreRemoved() async throws {
+        let (root, queue) = try environment()
+        let libraryRoot = root.appendingPathComponent("library")
+        let store = try LibraryStore(root: libraryRoot, queue: queue)
+        let orphan = UUID()
+        try PostCaptureOptionsStore(url: libraryRoot.appendingPathComponent("pending-capture-options.json"))
+            .save(PostCaptureOptions(tags: ["mồ côi"]), for: orphan)
+        try await store.importPending()
+        XCTAssertNil(PostCaptureOptionsStore(url: libraryRoot.appendingPathComponent("pending-capture-options.json")).all()[orphan])
+    }
+
     func testAfterFileCopyBeforeSaveRetryIsAllOrNothing() async throws {
         let (root, queue) = try environment()
         _ = try imageBatch(queue)

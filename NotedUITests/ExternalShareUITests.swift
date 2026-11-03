@@ -1,8 +1,11 @@
 import XCTest
 
 final class ExternalShareUITests: XCTestCase {
-    private let noted = XCUIApplication(bundleIdentifier: "dev.nguyenhoanghai861.Noted")
-    private let source = XCUIApplication(bundleIdentifier: "dev.nguyenhoanghai861.NotedGateHost")
+    private let noted = XCUIApplication()
+    private let source = XCUIApplication(bundleIdentifier: ExternalShareUITests.gateHostBundleID)
+    // Runner ID is $(NOTED_BUNDLE_ID).UITests; the host is $(NOTED_BUNDLE_ID)GateHost.
+    private static let gateHostBundleID = Bundle(for: ExternalShareUITests.self).bundleIdentifier!
+        .replacingOccurrences(of: ".UITests", with: "") + "GateHost"
     private var runID = ""
 
     override func setUpWithError() throws {
@@ -17,9 +20,11 @@ final class ExternalShareUITests: XCTestCase {
     }
 
     override func tearDownWithError() throws {
-        if testRun?.hasSucceeded == false {
+        // hasSucceeded is still false while tearDown runs; failureCount reflects real failures.
+        if (testRun?.failureCount ?? 0) > 0 {
             screenshot("External Share failure")
-            for app in [source, noted, XCUIApplication(bundleIdentifier: "com.apple.UIKit.ShareUIService")] {
+            // The share service exits after the sheet closes; snapshotting a stopped app throws.
+            for app in [source, noted, XCUIApplication(bundleIdentifier: "com.apple.UIKit.ShareUIService")] where app.state != .notRunning {
                 let attachment = XCTAttachment(string: app.debugDescription)
                 attachment.name = "Hierarchy " + app.label
                 attachment.lifetime = .keepAlways

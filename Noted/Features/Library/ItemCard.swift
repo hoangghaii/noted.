@@ -44,7 +44,7 @@ struct ItemCardGrid: View {
     private var columns: Int { typeSize.isAccessibilitySize ? 1 : 2 }
 
     var body: some View {
-        LazyVStack(spacing: 12) {
+        LazyVStack(spacing: 14) { // v3 row gap 13.3 pt; column gap stays 12 (L30)
             ForEach(Array(stride(from: 0, to: items.count, by: columns)), id: \.self) { start in
                 HStack(alignment: .top, spacing: 12) {
                     ForEach(Array(items[start..<min(start + columns, items.count)])) { item in
@@ -63,7 +63,7 @@ struct ItemCardGrid: View {
                                 }
                             } label: {
                                 Image(systemName: "ellipsis")
-                                    .font(.system(size: 17, weight: .semibold))
+                                    .scaledFont(14.5, weight: .semibold, relativeTo: .subheadline) // v3 glyph ≈13.7 pt wide
                                     .foregroundStyle(item.kind == "image" ? .white : NotedDesign.tone(for: item.id, kind: item.kind).foreground)
                                     .shadow(color: item.kind == "image" ? .black.opacity(0.7) : .clear, radius: 2)
                                     .frame(width: 44, height: 44)
@@ -123,38 +123,42 @@ struct ItemCard: View {
                 } else {
                     // v3: icon 14 pt from the top, title starts ~46 pt down.
                     sketch.image.resizable().scaledToFit().frame(width: 24, height: 24)
-                        .padding(.horizontal, 12).padding(.top, 13).padding(.bottom, 9)
+                        .padding(.horizontal, 12).padding(.top, 10).padding(.bottom, 9) // v3 link card icon at +14.7 pt
                 }
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(item.displayTitle)
-                        .font(.system(size: item.kind == "image" ? 13 : 15.5, weight: .semibold))
-                        .lineLimit(2)
-                    if item.kind != "image", !excerpt.isEmpty {
-                        // v3 fits ~26 characters per line in a half-width card.
-                        Text(excerpt).font(.system(size: 12.5)).lineSpacing(2.5)
-                            .foregroundStyle(tone.secondaryForeground)
-                            .lineLimit(item.kind == "link" ? 3 : 5)
-                    }
-                    if item.kind == "link" {
-                        // v3 puts the external-link mark after the domain.
-                        HStack(spacing: 6) {
-                            Text(URL(string: item.originalURL)?.host ?? item.originalURL).lineLimit(1)
-                            Image(systemName: "arrow.up.right.square").accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 0) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(item.displayTitle)
+                            .scaledFont(item.kind == "image" ? 11.5 : 15.5, weight: .semibold, relativeTo: item.kind == "image" ? .caption2 : .subheadline) // v3 photo title ≈11.5 pt (measured)
+                            .lineLimit(2)
+                        if item.kind != "image", !excerpt.isEmpty {
+                            // v3 fits ~26 characters per line in a half-width card.
+                            Text(excerpt).scaledFont(12.5, relativeTo: .footnote).lineSpacing(1.8) // v3 line pitch ≈16.8 pt
+                                .foregroundStyle(tone.secondaryForeground)
+                                .lineLimit(item.kind == "link" ? 3 : 5)
                         }
-                        .font(.caption).foregroundStyle(tone.secondaryForeground)
+                        if item.kind == "link" {
+                            // v3 puts the external-link mark after the domain.
+                            HStack(spacing: 6) {
+                                Text(URL(string: item.originalURL)?.host ?? item.originalURL).lineLimit(1)
+                                Image(systemName: "arrow.up.right.square").accessibilityHidden(true)
+                            }
+                            .font(.caption).foregroundStyle(tone.secondaryForeground)
+                        }
                     }
                     Spacer(minLength: 0)
+                    // v3: ~10 pt from the last text line to the date, ~8 pt below it (measured).
                     VStack(alignment: .leading, spacing: 4) {
                         Text(dateLabel)
                         if item.pinned { Label("Đã ghim", systemImage: "pin.fill") }
                     }
-                    .font(.caption2).foregroundStyle(tone.secondaryForeground)
+                    .font(.caption2).foregroundStyle(tone.secondaryForeground) // v3 date ≈11 pt (ink 70.3 pt wide)
+                    .padding(.top, item.kind == "image" ? 4 : 10) // v3 photo card: date 9 pt under the title
                 }
-                .padding(.leading, 12).padding(.trailing, 8).padding(.bottom, 12)
-                .padding(.top, item.kind == "image" ? 10 : 0)
+                .padding(.leading, 12).padding(.trailing, 8).padding(.bottom, 8)
+                .padding(.top, item.kind == "image" ? 7 : 0)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             }
-            .frame(maxWidth: .infinity, minHeight: 180, maxHeight: .infinity, alignment: .topLeading)
+            .frame(maxWidth: .infinity, minHeight: 174, maxHeight: .infinity, alignment: .topLeading) // v3 row 2: 174 pt
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .contentShape(RoundedRectangle(cornerRadius: NotedDesign.Radius.card))

@@ -1,5 +1,5 @@
-// Bundle identifiers are fixed for this app. Do not change after storing personal data.
-NOTED_BUNDLE_ID = dev.nguyenhoanghai861.Noted
-NOTED_APP_GROUP_ID = group.dev.nguyenhoanghai861.Noted
-// Local.xcconfig supplies DEVELOPMENT_TEAM from the selected Xcode account.
+// Bundle ID, App Group and team come from .env via scripts/configure-env.py → Local.xcconfig.
+// Placeholder fallbacks only; never ship with these. Keep IDs stable per device once data is stored.
+NOTED_BUNDLE_ID = com.example.Noted
+NOTED_APP_GROUP_ID = group.com.example.Noted
 #include? "Local.xcconfig"

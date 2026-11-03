@@ -33,12 +33,12 @@ final class NotedDesignTests: XCTestCase {
         }
     }
 
-    func testThousandNotesHaveSparseCurlsAndHoney() {
+    func testThousandNotesHaveQuarterCurlsAndHoney() {
         let ids = (0..<1000).map(id)
         let honey = ids.filter { NotedDesign.tone(for: $0, kind: "text") == .honey }.count
         let curls = ids.filter { NotedDesign.curls(for: $0, kind: "text") }.count
         XCTAssertTrue((280...380).contains(honey), "Honey: \(honey)/1000")
-        XCTAssertTrue((90...160).contains(curls), "Curls: \(curls)/1000")
+        XCTAssertTrue((200...300).contains(curls), "Curls: \(curls)/1000")
         for value in ids {
             XCTAssertEqual(NotedDesign.tone(for: value, kind: "image"), .cream)
             XCTAssertFalse(NotedDesign.curls(for: value, kind: "image"))

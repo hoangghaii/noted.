@@ -14,6 +14,32 @@ Biên nội dung được kiểm tra trực quan tại pixel nền trong viền 
 
 Ảnh chuẩn rộng 1170px = 390pt. Tọa độ dưới đây là pt từ đỉnh crop, độc lập status bar. Mock có méo và ba khung không cùng chiều rộng; lấy biên trong ở vùng thân thẳng (bo góc không dùng đo chiều rộng). Các số frame làm tròn gần lưới 4pt khi hợp lý, dung sai ±2pt; không coi ước lượng font từ raster là xác định font gốc. Font dùng SF Pro native, đo lại bằng bounding box chữ hoa khi nghiệm thu.
 
+## Đo lại 2026-11-03 (Phase 08)
+
+Đo mock v3 và ảnh iPhone 12 Pro thật bằng cùng một công cụ (flood-fill vùng màu → bounding box; với chữ, so chiều rộng của cùng chuỗi). Khung hình học trong bảng khớp mock (ví dụ hero 14.7,93.3,363×111; pill Lưu nhanh 33,147,144×40; folder tab 39,180,72×15), nên giữ nguyên. Chỉ sửa các giá trị ước lượng ở Phase 01 mà phép đo bác bỏ:
+
+| ID | Cũ | Mới | Bằng chứng trên mock |
+|---|---|---|---|
+| L03/L04 | 16 | 14 | Hero x 14.7–378, filter 15–379, card tới 378 |
+| C03/C04 | 16 | 16 (giữ) | Folder 16.3–377, nút tạo 18.7–372.7 |
+| Q03/Q04 | 16 | 20 | Ô Tiêu đề/Bộ sưu tập/Thẻ 20.7–370.7 |
+| L38 | 16 semibold | 15.5 semibold | “Một góc yên tĩnh” rộng 117.7 pt (máy 15.5 pt: 119.7) |
+| L39 | 14 | 12.5, pitch ≈16.8 | Ngắt dòng trùng mock (~26 ký tự/dòng); 5 dòng pitch 16.8 pt |
+| C30 | 20 semibold | 19 semibold | “Cảm hứng” rộng 88.3 pt, máy 19 pt cũng 88.3 |
+| L42 | 13 medium | 11.5 semibold | “Buổi sáng ở Đà Lạt” rộng 99.7 pt (máy 13 pt: 115) |
+| L25 | h40 | h≈37 | Filter mock cao 36.3–38 |
+| C26/C27 | 64×14, offset 20,−14 | 72×15, offset 22,−15 | Tab 4 thư mục đo 70.3–71.7 × 14.7–15.3, x 38.7–39 (folder 16.3), y −15.3 |
+| Q11 | icon nút 20 | glyph X ≈12.3 pt (SF 17 semibold) | Mực chữ X 12.3×12.3; máy 13.3 |
+| L11 | icon nút 20 | glyph ⋯ ≈17 pt rộng | Mực ⋯ 17 pt; máy 16 |
+| L18 | radius 16 | 13 | Fit cung góc trái trên hero: mock 13.0 (máy 12 → 13.2) |
+| L40 | ngày 12 | 11 | “12 thg 4, 2024” rộng 70.3 pt (máy 11 pt: 74.7, 12 pt: 80.7) |
+| L37 | menu card 20 | glyph ⋯ ≈13.7 rộng | Mực ⋯ trên card 13.7 pt |
+| Q25 | icon chế độ 22 | glyph ≈18×13.7 | Icon Link 18×13.7, Ảnh 19.3×13.7 |
+| C20 | icon tạo 20 | plus ≈15 | Plus trước nhãn rộng ~15 pt |
+| L33 | card ảnh cao 170 | 174 | Hàng 2 mock: card ảnh và card link cùng cao 174 |
+
+Phần tử neo đáy màn hình (tab bar L45/C38, nút Lưu Q43) không so được theo y tuyệt đối: nội dung trên iPhone 12 Pro cao 763 pt, mock chỉ 738 pt. Q43 là sai khác đã duyệt (plan, quyết định 5).
+
 ## Cách chấm
 
 Mỗi dòng dưới là một tiêu chí, trạng thái ban đầu **chưa đo**. Dòng trọng yếu có trọng số 3, các dòng khác trọng số 1. Điểm màn = Σ trọng số đạt / Σ toàn bộ trọng số ×100; tiêu chí chưa đo tính chưa đạt. Cần ≥98% mỗi màn và toàn bộ dòng trọng yếu đạt. Hình học ±2pt; màu ΔE2000 ≤3 từ trung bình 5×5px; hình dạng/nội dung/thứ tự phải đúng. SSIM chỉ tham khảo. Các ngoại lệ đã duyệt (thứ tự collection, icon card theo loại, ngày tuyệt đối, tùy chọn mở rộng) không trừ điểm.
@@ -24,29 +50,29 @@ Mỗi dòng dưới là một tiêu chí, trạng thái ban đầu **chưa đo**
 |---|---|---|---|---|---|
 | L01 | Nền nội dung | toàn màn | cream theo probes | 3 [trọng yếu] | Chưa đo |
 | L02 | Thứ tự cấu trúc | trên xuống | theo bảng hình học | 3 [trọng yếu] | Chưa đo |
-| L03 | Lề trái | x | 16 | 3 [trọng yếu] | Chưa đo |
-| L04 | Lề phải | trailing | 16 | 3 [trọng yếu] | Chưa đo |
+| L03 | Lề trái | x | 14 (đo lại 2026-11-03) | 3 [trọng yếu] | Chưa đo |
+| L04 | Lề phải | trailing | 14 (đo lại 2026-11-03) | 3 [trọng yếu] | Chưa đo |
 | L05 | Tiêu đề | font | 34 bold / capture 28 bold | 1 | Chưa đo |
 | L06 | Màu chữ chính | ink | theo ảnh | 3 [trọng yếu] | Chưa đo |
 | L07 | Chữ phụ | font | 17 regular | 1 | Chưa đo |
 | L08 | Nội dung chữ | text | nguyên văn mock và ngoại lệ plan | 3 [trọng yếu] | Chưa đo |
 | L09 | Nút đóng/menu | shape | Circle | 3 [trọng yếu] | Chưa đo |
 | L10 | Nút đóng/menu | hit target | 44×44 | 1 | Chưa đo |
-| L11 | Icon nút | size | 20 | 1 | Chưa đo |
+| L11 | Icon nút | size | glyph ⋯ ≈17 rộng (đo lại 2026-11-03) | 1 | Chưa đo |
 | L12 | Nền nút | color | probe nút | 3 [trọng yếu] | Chưa đo |
 | L13 | Khoảng cách dọc | grid | 4pt, sai số ±2pt | 1 | Chưa đo |
 | L14 | Texture | opacity | so trực quan cạnh ảnh | 1 | Chưa đo |
 | L15 | Độ tương phản | text | đọc được ở 100% | 1 | Chưa đo |
 | L16 | Header | frame | 20,12,350,68 | 1 | Chưa đo |
 | L17 | Hero | frame | 14,93,364,112 | 1 | Chưa đo |
-| L18 | Hero | radius | 16 | 1 | Chưa đo |
+| L18 | Hero | radius | 13 (đo lại 2026-11-03) | 1 | Chưa đo |
 | L19 | Hero title | frame/font | 34,118 / 19 medium | 1 | Chưa đo |
 | L20 | Hero bulb | frame | 280,108,64,80 | 1 | Chưa đo |
-| L21 | Lưu nhanh | frame | 32,147,144,40 | 1 | Chưa đo |
+| L21 | Lưu nhanh | frame | 32,147,144,40 — chiều cao 44 (vùng chạm) là sai khác đã duyệt | 1 | Chưa đo |
 | L22 | Lưu nhanh | shape | Capsule | 3 [trọng yếu] | Chưa đo |
 | L23 | Vừa lưu | frame/font | 20,225 / 19 semibold | 1 | Chưa đo |
 | L24 | 12 mục | frame/font | 326,230 / 14 | 1 | Chưa đo |
-| L25 | Filter | frame | 14,256,364,40 | 1 | Chưa đo |
+| L25 | Filter | frame | 14,256,364,37 (đo lại 2026-11-03) | 1 | Chưa đo |
 | L26 | Filter widths | width | 85.75 mỗi pill + 3 khoảng 7 = 364; 4 pill bằng nhau | 3 [trọng yếu] | Chưa đo |
 | L27 | Filter | shape | Capsule | 3 [trọng yếu] | Chưa đo |
 | L28 | Filter labels | text | Tất cả, Inbox, Ảnh, Link | 3 [trọng yếu] | Chưa đo |
@@ -54,18 +80,18 @@ Mỗi dòng dưới là một tiêu chí, trạng thái ban đầu **chưa đo**
 | L30 | Grid | gap | 12 | 3 [trọng yếu] | Chưa đo |
 | L31 | Card top left | frame | 14,306,174,186 | 1 | Chưa đo |
 | L32 | Card top right | frame | 202,306,176,186 | 1 | Chưa đo |
-| L33 | Card bottom left | frame | 14,505,174,170 | 1 | Chưa đo |
+| L33 | Card bottom left | frame | 14,505,174,174 (đo lại 2026-11-03) | 1 | Chưa đo |
 | L34 | Card bottom right | frame | 202,505,176,174 | 1 | Chưa đo |
 | L35 | Card | radius | 12 | 1 | Chưa đo |
 | L36 | Card icon | size | 24 | 1 | Chưa đo |
-| L37 | Card menu | size | 20 | 1 | Chưa đo |
-| L38 | Card title | font | 16 semibold | 1 | Chưa đo |
-| L39 | Card body | font | 14 regular | 1 | Chưa đo |
-| L40 | Card date | font | 12 regular | 1 | Chưa đo |
+| L37 | Card menu | size | glyph ⋯ ≈13.7 rộng (đo lại 2026-11-03) | 1 | Chưa đo |
+| L38 | Card title | font | 15.5 semibold (đo lại 2026-11-03) | 1 | Chưa đo |
+| L39 | Card body | font | 12.5 regular, line pitch ≈16.8 (đo lại 2026-11-03) | 1 | Chưa đo |
+| L40 | Card date | font | 11 regular (đo lại 2026-11-03) | 1 | Chưa đo |
 | L41 | Photo | height | 119 | 1 | Chưa đo |
-| L42 | Photo title | font | 13 medium | 1 | Chưa đo |
+| L42 | Photo title | font | 11.5 semibold (đo lại 2026-11-03) | 1 | Chưa đo |
 | L43 | Link domain | text | vietcetera.com | 1 | Chưa đo |
-| L44 | Fold | density | 1/8 tối đa, honey card trong fixture | 3 [trọng yếu] | Chưa đo |
+| L44 | Fold | density | ~1/4 (quyết định 2026-11-03), honey card trong fixture; 4 card đầu như mock | 3 [trọng yếu] | Chưa đo |
 | L45 | Tab bar | frame | 0,684,390,54 | 1 | Chưa đo |
 | L46 | Tab icon | size | 24 | 1 | Chưa đo |
 | L47 | Tab labels | font | 12 | 3 [trọng yếu] | Chưa đo |
@@ -93,17 +119,17 @@ Mỗi dòng dưới là một tiêu chí, trạng thái ban đầu **chưa đo**
 | C17 | Create pill | frame | 18,108,354,48 | 1 | Chưa đo |
 | C18 | Create pill | shape | Capsule | 3 [trọng yếu] | Chưa đo |
 | C19 | Create label | font | 17 regular | 1 | Chưa đo |
-| C20 | Create icon | size | 20 | 1 | Chưa đo |
+| C20 | Create icon | size | ≈15 (đo lại 2026-11-03) | 1 | Chưa đo |
 | C21 | Folder 1 | frame | 18,195,358,98 | 1 | Chưa đo |
 | C22 | Folder 2 | frame | 18,320,358,98 | 1 | Chưa đo |
 | C23 | Folder 3 | frame | 18,444,358,98 | 1 | Chưa đo |
 | C24 | Folder 4 | frame | 18,570,358,100 | 1 | Chưa đo |
 | C25 | Folder | radius | 12 | 1 | Chưa đo |
-| C26 | Folder tab | size | 64×14 | 1 | Chưa đo |
-| C27 | Folder tab | offset | 20,-14 | 1 | Chưa đo |
+| C26 | Folder tab | size | 72×15 (đo lại 2026-11-03) | 1 | Chưa đo |
+| C27 | Folder tab | offset | 22,-15 (đo lại 2026-11-03) | 1 | Chưa đo |
 | C28 | Folder tab | color | honey | 3 [trọng yếu] | Chưa đo |
 | C29 | Folder icon | size | 64×60 | 1 | Chưa đo |
-| C30 | Folder title | font | 20 semibold | 1 | Chưa đo |
+| C30 | Folder title | font | 19 semibold (đo lại 2026-11-03) | 1 | Chưa đo |
 | C31 | Folder count | font | 14 regular | 1 | Chưa đo |
 | C32 | Folder chevron | size | 16 | 1 | Chưa đo |
 | C33 | Folder cream | color | probes 6/7 | 3 [trọng yếu] | Chưa đo |
@@ -126,15 +152,15 @@ Mỗi dòng dưới là một tiêu chí, trạng thái ban đầu **chưa đo**
 |---|---|---|---|---|---|
 | Q01 | Nền nội dung | toàn màn | cream theo probes | 3 [trọng yếu] | Chưa đo |
 | Q02 | Thứ tự cấu trúc | trên xuống | theo bảng hình học | 3 [trọng yếu] | Chưa đo |
-| Q03 | Lề trái | x | 16 | 3 [trọng yếu] | Chưa đo |
-| Q04 | Lề phải | trailing | 16 | 3 [trọng yếu] | Chưa đo |
+| Q03 | Lề trái | x | 20 (đo lại 2026-11-03) | 3 [trọng yếu] | Chưa đo |
+| Q04 | Lề phải | trailing | 20 (đo lại 2026-11-03) | 3 [trọng yếu] | Chưa đo |
 | Q05 | Tiêu đề | font | 34 bold / capture 28 bold | 1 | Chưa đo |
 | Q06 | Màu chữ chính | ink | theo ảnh | 3 [trọng yếu] | Chưa đo |
 | Q07 | Chữ phụ | font | 17 regular | 1 | Chưa đo |
 | Q08 | Nội dung chữ | text | nguyên văn mock và ngoại lệ plan | 3 [trọng yếu] | Chưa đo |
 | Q09 | Nút đóng/menu | shape | Circle | 3 [trọng yếu] | Chưa đo |
 | Q10 | Nút đóng/menu | hit target | 44×44 | 1 | Chưa đo |
-| Q11 | Icon nút | size | 20 | 1 | Chưa đo |
+| Q11 | Icon nút | size | glyph ≈12.3 (đo lại 2026-11-03) | 1 | Chưa đo |
 | Q12 | Nền nút | color | probe nút | 3 [trọng yếu] | Chưa đo |
 | Q13 | Khoảng cách dọc | grid | 4pt, sai số ±2pt | 1 | Chưa đo |
 | Q14 | Texture | opacity | so trực quan cạnh ảnh | 1 | Chưa đo |
@@ -148,7 +174,7 @@ Mỗi dòng dưới là một tiêu chí, trạng thái ban đầu **chưa đo**
 | Q22 | Mode widths | width | 115,115,115 chuẩn hóa bằng nhau | 3 [trọng yếu] | Chưa đo |
 | Q23 | Mode | shape | Capsule | 3 [trọng yếu] | Chưa đo |
 | Q24 | Mode labels | text | Ghi chú, Link, Ảnh | 3 [trọng yếu] | Chưa đo |
-| Q25 | Mode icon | size | 22 | 1 | Chưa đo |
+| Q25 | Mode icon | size | glyph ≈18×13.7 (đo lại 2026-11-03) | 1 | Chưa đo |
 | Q26 | Title label | frame/font | 22,171 / 15 | 1 | Chưa đo |
 | Q27 | Title field | frame | 20,197,352,42 | 1 | Chưa đo |
 | Q28 | Title field | radius | 10 | 1 | Chưa đo |

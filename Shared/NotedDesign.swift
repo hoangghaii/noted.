@@ -19,6 +19,7 @@ enum NotedDesign {
         static let primaryText = adaptive(light: 0x1E2A23, dark: 0xF3F0E7)
         static let secondaryText = adaptive(light: 0x6B6A62, dark: 0xB6BFAF)
         static let border = adaptive(light: 0xDEDFD3, dark: 0x455044)
+        static let handle = adaptive(light: 0xBBB6A8, dark: 0x5B6558)
         static let error = adaptive(light: 0xA33F36, dark: 0xF3A499)
         static let errorSoft = adaptive(light: 0xFBECE7, dark: 0x462E29)
 
@@ -75,7 +76,8 @@ enum NotedDesign {
     }
 
     static func curls(for id: UUID, kind: String) -> Bool {
-        kind != "image" && stableHash(id) % 8 == 3
+        // ~1/4 of notes (user decision 2026-11-03, was 1/8); v3 fixture cards keep their curl state.
+        kind != "image" && stableHash(id) % 4 == 3
     }
 
     static func folderTone(at index: Int) -> PaperTone { index.isMultiple(of: 2) ? .cream : .sage }

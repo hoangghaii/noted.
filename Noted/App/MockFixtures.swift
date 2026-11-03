@@ -42,7 +42,7 @@ enum MockFixtures {
         if variant == .collections { try seedCollections(store) }
         else { try seedLibrary(store) }
         if variant == .capture {
-            try NoteDraftStore.save(NoteDraft(mode: "note", body: captureBody, url: ""))
+            try NoteDraftStore.save(NoteDraft(mode: "note", body: captureBody, url: "", title: captureTitle, collectionID: captureCollectionID, tags: captureTags))
         }
         try Data().write(to: marker, options: .atomic)
         return store

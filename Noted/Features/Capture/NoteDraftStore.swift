@@ -4,6 +4,27 @@ struct NoteDraft: Codable {
     var mode = "note"
     var body = ""
     var url = ""
+    var title = ""
+    var collectionID: UUID?
+    var tags: [String] = []
+
+    init(mode: String = "note", body: String = "", url: String = "", title: String = "",
+         collectionID: UUID? = nil, tags: [String] = []) {
+        self.mode = mode; self.body = body; self.url = url; self.title = title
+        self.collectionID = collectionID; self.tags = tags
+    }
+
+    private enum CodingKeys: String, CodingKey { case mode, body, url, title, collectionID, tags }
+
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        mode = try values.decodeIfPresent(String.self, forKey: .mode) ?? "note"
+        body = try values.decodeIfPresent(String.self, forKey: .body) ?? ""
+        url = try values.decodeIfPresent(String.self, forKey: .url) ?? ""
+        title = try values.decodeIfPresent(String.self, forKey: .title) ?? ""
+        collectionID = try values.decodeIfPresent(UUID.self, forKey: .collectionID)
+        tags = try values.decodeIfPresent([String].self, forKey: .tags) ?? []
+    }
 }
 
 enum NoteDraftStore {

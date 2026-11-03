@@ -15,3 +15,9 @@ Implementation direction for sparse curls: select a small stable subset of eligi
 ## Revision 3
 
 Preview: noted-paper-ui-mock-v3.png. Built-in imagegen targeted edit: Quick Capture modes are three independent equal-width capsule buttons, with visible gaps and no enclosing segmented background. Selected mode uses forest fill; other modes use pale neutral fill. Enforce actual Capsule geometry and equal flexible widths in SwiftUI implementation; raster output is a visual reference only.
+
+## Implementation status (2026-11-03)
+
+Mock v3 is implemented natively in SwiftUI (plan `plans/archived/20261102-2119-paper-pinboard-ui/`). The pinboard icon is in the production asset catalog. Measured fidelity on a physical iPhone 12 Pro, critical criteria and approved deviations are in [the Phase 08 report](../evidence/20261103-paper-phase8/summary.md).
+
+The curl rule changed from the proposed ~1/8 to ~1/4 of notes at the user's request (stable `UUID` hash, still never on photos, controls, hero panels or editor fields). The Quick Capture body field has no curl, matching v3.

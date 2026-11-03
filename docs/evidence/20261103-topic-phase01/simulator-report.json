@@ -1,0 +1,59 @@
+{
+  "buildVersion" : "1.0 (1)",
+  "candidates" : [
+    {
+      "confusion" : [
+
+      ],
+      "engineVersion" : "keyword-topic-name-v1",
+      "holdoutCorrect" : 0,
+      "holdoutEvaluated" : 0,
+      "holdoutPredicted" : 0,
+      "name" : "Topic-name keyword baseline",
+      "status" : "insufficient calibration labels"
+    },
+    {
+      "confusion" : [
+
+      ],
+      "engineVersion" : "nl-contextual-5C45D94E-BAB4-4927-94B6-8B5745C46289-r1-mean-v1",
+      "holdoutCorrect" : 0,
+      "holdoutEvaluated" : 0,
+      "holdoutPredicted" : 0,
+      "name" : "Apple NL contextual",
+      "status" : "assets unavailable; no automatic download"
+    },
+    {
+      "confusion" : [
+
+      ],
+      "engineVersion" : "vision-unavailable",
+      "holdoutCorrect" : 0,
+      "holdoutEvaluated" : 0,
+      "holdoutPredicted" : 0,
+      "name" : "Vision feature-print 1-NN",
+      "status" : "insufficient labeled calibration\/holdout images"
+    }
+  ],
+  "counts" : {
+    "calibration" : 0,
+    "holdout" : 0,
+    "image" : 0,
+    "imageWithOCR" : 0,
+    "imageWithoutOCR" : 0,
+    "labeled" : 0,
+    "link" : 0,
+    "note" : 12,
+    "total" : 12
+  },
+  "generatedAt" : "2026-11-03T08:03:01Z",
+  "notes" : [
+    "Label gate unmet: need at least 150 labels, 10 per topic, and a nonempty holdout; metrics are exploratory.",
+    "No E5 native tokenizer\/vector parity, tag precision, or semantic recall@10 is measured here."
+  ],
+  "platform" : "Version 27.0 (Build 24A434) simulator",
+  "schemaVersion" : 1,
+  "sufficientLabelsForGate" : false,
+  "visionFailures" : 0,
+  "visionProcessed" : 0
+}

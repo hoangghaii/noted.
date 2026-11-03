@@ -2,7 +2,7 @@ import XCTest
 
 /// Uses a DEBUG-only isolated library. Never mutates the personal library or shared queue.
 final class PhaseFourAcceptanceUITests: XCTestCase {
-    private let app = XCUIApplication(bundleIdentifier: "dev.nguyenhoanghai861.Noted")
+    private let app = XCUIApplication()
     private let noteID = "00000000-0000-0000-0000-000000000001"
     private let imageID = "00000000-0000-0000-0000-000000000002"
     private let brokenID = "00000000-0000-0000-0000-000000000003"
@@ -145,7 +145,7 @@ final class PhaseFourAcceptanceUITests: XCTestCase {
         app.buttons["captureMode_photo"].tap()
         XCTAssertTrue(app.buttons["capturePhotos"].waitForExistence(timeout: 10))
         attachScreen("08 Capture image")
-        app.buttons["Đóng"].tap()
+        app.buttons["captureClose"].tap()
 
         openTrash()
         XCTAssertTrue(app.staticTexts["Thùng rác trống"].waitForExistence(timeout: 10))
@@ -187,8 +187,23 @@ final class PhaseFourAcceptanceUITests: XCTestCase {
         XCTAssertTrue(body.waitForExistence(timeout: 10))
         body.tap()
         body.typeText("Ghim thử trên iPhone")
+        // "Tùy chọn khác" sits at the bottom edge, under the keyboard and the pinned save bar.
+        // Dismiss the keyboard (tap the sheet title) and scroll until the header clears the save bar.
+        app.staticTexts["Lưu nhanh"].firstMatch.tap()
+        _ = app.keyboards.firstMatch.waitForNonExistence(timeout: 3)
+        let more = app.buttons["captureMoreOptions"]
+        let saveBar = app.buttons["captureSave"]
+        let form = app.scrollViews.containing(.textView, identifier: "captureBody").firstMatch
+        for _ in 0..<4 where !(reachable(more) && more.frame.maxY < saveBar.frame.minY) { form.swipeUp() }
+        XCTAssertTrue(reachable(more) && more.frame.maxY < saveBar.frame.minY, "Tùy chọn khác must clear the save bar")
+        more.tap()
         let pin = app.switches["capturePinAfterSave"]
-        XCTAssertTrue(pin.exists)
+        // "Tùy chọn khác" expands with an animation; wait instead of reading existence immediately.
+        XCTAssertTrue(pin.waitForExistence(timeout: 5))
+        // The options open below the fold; a tap behind the pinned save bar would save instead of toggling.
+        let clearOfSave = { self.reachable(pin) && pin.frame.maxY < saveBar.frame.minY }
+        for _ in 0..<4 where !clearOfSave() { form.swipeUp() }
+        XCTAssertTrue(clearOfSave(), "Pin switch must be above the save bar before tapping")
         // The switch element spans the whole labelled row; a centre tap lands on the label,
         // which does not toggle on iOS 18. Tap the switch side and confirm it turned on.
         let knob = pin.switches.firstMatch
@@ -201,6 +216,47 @@ final class PhaseFourAcceptanceUITests: XCTestCase {
         XCTAssertTrue(app.buttons["captureAdd"].waitForExistence(timeout: 10))
         filter("Đã ghim")
         XCTAssertTrue(app.staticTexts["Ghim thử trên iPhone"].waitForExistence(timeout: 10))
+    }
+
+    func testCaptureDraftAndMetadataSurviveRelaunch() throws {
+        let titleText = "P7 capture " + UUID().uuidString.prefix(8)
+        let bodyText = "Nội dung Phase 7"
+        app.buttons["captureAdd"].tap()
+        let title = app.textFields["captureTitle"]
+        let body = app.textViews["captureBody"]
+        XCTAssertTrue(title.waitForExistence(timeout: 10))
+        title.tap()
+        title.typeText(titleText)
+        body.tap()
+        body.typeText(bodyText)
+        app.buttons["captureClose"].tap()
+        app.terminate()
+        app.launch()
+        XCTAssertTrue(app.buttons["captureAdd"].waitForExistence(timeout: 20))
+        app.buttons["captureAdd"].tap()
+        XCTAssertEqual(title.value as? String, titleText)
+        XCTAssertEqual(body.value as? String, bodyText)
+
+        let form = app.scrollViews.containing(.textView, identifier: "captureBody").firstMatch
+        let collection = app.buttons["captureCollection"]
+        for _ in 0..<6 where !reachable(collection) { form.swipeUp() }
+        XCTAssertTrue(reachable(collection))
+        collection.tap()
+        app.buttons["P4 collection"].tap()
+        let tags = app.textFields["captureTags"]
+        for _ in 0..<6 where !reachable(tags) { form.swipeUp() }
+        XCTAssertTrue(reachable(tags))
+        tags.tap()
+        tags.typeText("p7tag,")
+        let save = app.buttons["captureSave"]
+        XCTAssertTrue(save.isHittable, "Save must remain reachable with the keyboard shown")
+        save.tap()
+        let note = app.staticTexts[titleText].firstMatch
+        XCTAssertTrue(note.waitForExistence(timeout: 15))
+        note.tap()
+        XCTAssertTrue(app.staticTexts[bodyText].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.staticTexts["#p7tag"].exists)
+        XCTAssertTrue(app.staticTexts["P4 collection"].exists)
     }
 
     func testPaginationFiltersOrderingAndPinAfterRelaunch() throws {
@@ -277,10 +333,13 @@ final class PhaseFourAcceptanceUITests: XCTestCase {
         let incoming = app.buttons["fixtureStageIncoming"]
         revealEditor(incoming, upwards: true)
         incoming.tap()
-        XCTAssertEqual(app.staticTexts["fixtureImportCount"].label, "57")
+        // The count row sits below the stage button and may be off-screen (lazy List) on taller layouts.
+        let count = app.staticTexts["fixtureImportCount"]
+        revealEditor(count, upwards: true)
+        XCTAssertEqual(count.label, "57")
         XCUIDevice.shared.press(.home)
         app.activate()
-        let count = app.staticTexts["fixtureImportCount"]
+        revealEditor(count, upwards: true)
         expectation(for: NSPredicate(format: "label == '58'"), evaluatedWith: count)
         waitForExpectations(timeout: 20)
         revealEditor(title, upwards: false)

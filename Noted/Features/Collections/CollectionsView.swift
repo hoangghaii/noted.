@@ -22,6 +22,9 @@ struct CollectionsView: View {
                             .font(.body)
                             .foregroundStyle(NotedDesign.Palette.secondaryText)
                     }
+                    // v3 header text starts ~4 pt inside the folder column and ~2.5 pt higher (measured).
+                    .padding(.leading, 4)
+                    .padding(.top, -2.5)
                     Spacer(minLength: 0)
                     if let onManageData, let onShowTrash {
                         Menu {
@@ -29,7 +32,7 @@ struct CollectionsView: View {
                             Button("Thùng rác", systemImage: "trash", action: onShowTrash)
                         } label: {
                             Image(systemName: "ellipsis")
-                                .font(.system(size: 20, weight: .semibold))
+                                .scaledFont(20, weight: .semibold, relativeTo: .title3)
                                 .foregroundStyle(NotedDesign.Palette.primaryText)
                                 .frame(width: 44, height: 44)
                                 .background(NotedDesign.Palette.chip, in: Circle())
@@ -40,13 +43,14 @@ struct CollectionsView: View {
                 }
                 Button { name = ""; showCreate = true } label: {
                     Label("Tạo bộ sưu tập", systemImage: "plus")
-                        .font(.system(size: 17))
+                        .scaledFont(17, relativeTo: .body)
                         .frame(minHeight: 48)
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(NotedButtonStyle(role: .soft))
                 .accessibilityIdentifier("collectionCreate")
-                .padding(.top, NotedDesign.Spacing.sm)
+                .padding(.horizontal, 2) // v3 create pill: 18.7–372.7 pt
+                .padding(.top, NotedDesign.Spacing.sm + 2.5)
                 if store.collections.isEmpty {
                     ContentUnavailableView(
                         "Nhóm những điều liên quan",
@@ -126,12 +130,12 @@ private struct FolderCard: View {
                     .frame(width: 66, height: 66)
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(name).font(.system(size: 19, weight: .semibold)).lineLimit(2)
-                    Text("\(count) mục").font(.system(size: 14))
+                    Text(name).scaledFont(19, weight: .semibold, relativeTo: .title3).lineLimit(2)
+                    Text("\(count) mục").scaledFont(14, relativeTo: .footnote)
                         .foregroundStyle(NotedDesign.Palette.secondaryText)
                 }
                 Spacer(minLength: 0)
-                Image(systemName: "chevron.right").font(.system(size: 16, weight: .medium))
+                Image(systemName: "chevron.right").scaledFont(16, weight: .medium, relativeTo: .callout)
                     .accessibilityHidden(true)
             }
             .foregroundStyle(NotedDesign.Palette.primaryText)

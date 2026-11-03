@@ -81,6 +81,27 @@ final class PaperComponentsUITests: XCTestCase {
         assertEqualPills(["note", "link", "photo"].map { "captureMode_" + $0 },
                          container: app.otherElements["captureMode"])
     }
+
+    /// Code review M3: sizes measured from the mock must still follow Dynamic Type.
+    func testMeasuredTextSizesScaleWithDynamicType() {
+        func heights(_ variant: String, _ labels: [String], large: Bool) -> [CGFloat] {
+            launch(variant, large: large)
+            return labels.map { label in
+                let text = app.staticTexts[label].firstMatch
+                XCTAssertTrue(text.waitForExistence(timeout: 20), label)
+                return text.frame.height
+            }
+        }
+        for (variant, labels) in [("capture", ["Lưu nhanh", "Tiêu đề"]), ("library", ["Một góc yên tĩnh"]), ("collections", ["Cảm hứng"])] {
+            let regular = heights(variant, labels, large: false)
+            app.terminate()
+            let large = heights(variant, labels, large: true)
+            app.terminate()
+            for (label, pair) in zip(labels, zip(regular, large)) {
+                XCTAssertGreaterThan(pair.1, pair.0 * 1.15, "\(label) must grow at XXXL (\(pair.0) → \(pair.1))")
+            }
+        }
+    }
     func testPaperRowsDateAndCardMenu() {
         launch("library")
         let noteID = "00000000-0000-0000-0000-000000000001"

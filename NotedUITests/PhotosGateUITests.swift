@@ -5,7 +5,7 @@ extension PhaseOneUITests {
     /// Adds one synthetic fixture using add-only permission, then shares that newest image
     /// from Photos. Does not delete assets or request library read permission.
     @objc func testPhotosImageShare() throws {
-        let noted = XCUIApplication(bundleIdentifier: "dev.nguyenhoanghai861.Noted")
+        let noted = XCUIApplication()
         let photos = XCUIApplication(bundleIdentifier: "com.apple.mobileslideshow")
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
         defer {
