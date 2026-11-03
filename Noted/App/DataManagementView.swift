@@ -32,6 +32,16 @@ struct DataManagementView: View {
                     LabeledContent("Bộ sưu tập", value: "\(store.collections.count)")
                     LabeledContent("Ảnh gốc", value: ByteCountFormatter.string(fromByteCount: store.items.flatMap(\.attachments).reduce(0) { $0 + $1.size }, countStyle: .file))
                 }
+                #if DEBUG
+                Section {
+                    NavigationLink("Gán nhãn chủ đề") { IntelligenceLabelingView(store: store) }
+                        .accessibilityIdentifier("intelligenceLabeling")
+                } header: {
+                    Text("Đánh giá AI · DEBUG")
+                } footer: {
+                    Text("Nhãn đánh giá lưu riêng trên máy, không thay đổi Thư viện.")
+                }
+                #endif
                 Section {
                     Button { Task { await makeExport() } } label: {
                         Label("Xuất backup", systemImage: "square.and.arrow.up")

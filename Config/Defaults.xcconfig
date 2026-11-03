@@ -1,5 +1,5 @@
 // Bundle identifiers are fixed for this app. Do not change after storing personal data.
-NOTED_BUNDLE_ID = dev.nguyenhoanghai861.Noted
-NOTED_APP_GROUP_ID = group.dev.nguyenhoanghai861.Noted
+NOTED_BUNDLE_ID = dev.nhhai7.Noted
+NOTED_APP_GROUP_ID = group.dev.nhhai7.Noted
 // Local.xcconfig supplies DEVELOPMENT_TEAM from the selected Xcode account.
 #include? "Local.xcconfig"

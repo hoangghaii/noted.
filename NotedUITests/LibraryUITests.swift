@@ -1,7 +1,7 @@
 import XCTest
 
 final class LibraryUITests: XCTestCase {
-    private let app = XCUIApplication(bundleIdentifier: "dev.nguyenhoanghai861.Noted")
+    private let app = XCUIApplication(bundleIdentifier: "dev.nhhai7.Noted")
 
     override func setUpWithError() throws {
         continueAfterFailure = false
@@ -101,8 +101,17 @@ final class LibraryUITests: XCTestCase {
         local.tap()
         let save = app.buttons.matching(NSPredicate(format: "label == 'Save' OR label == 'Lưu' OR label == 'Move' OR label == 'Di chuyển'")).firstMatch
         XCTAssertTrue(save.waitForExistence(timeout: 10))
-        save.tap()
+        // On iOS 27 the picker can drop a Save tap while it is still navigating to the local folder.
+        // A successful Save dismisses the picker, so tapping again only while it is still shown cannot export twice.
         let result = app.staticTexts["backupResult"]
+        for _ in 0..<3 where !result.exists {
+            let enabled = expectation(for: NSPredicate(format: "isEnabled == true AND isHittable == true"), evaluatedWith: save)
+            wait(for: [enabled], timeout: 10)
+            save.tap()
+            if result.waitForExistence(timeout: 8) || !save.exists { break }
+        }
+        // "Kết quả" is the last List section; on a 844 pt screen it renders only after scrolling.
+        for _ in 0..<4 where !result.waitForExistence(timeout: 3) { app.swipeUp() }
         XCTAssertTrue(result.waitForExistence(timeout: 15))
         XCTAssertTrue(result.label.hasPrefix("Đã xuất"), result.label)
         let fileName = try XCTUnwrap(result.label.split(whereSeparator: \.isWhitespace)

@@ -18,7 +18,7 @@ final class ShareViewController: UIViewController {
             hosting.view.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
         hosting.didMove(toParent: self)
-        preferredContentSize = CGSize(width: 360, height: 440)
+        preferredContentSize = CGSize(width: 360, height: 480)
     }
 }
 
@@ -95,48 +95,45 @@ private struct ShareGateView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: NotedDesign.Spacing.base) {
-                    HStack(spacing: NotedDesign.Spacing.md) {
-                        Image(systemName: saved ? "checkmark" : "tray.and.arrow.down.fill")
-                            .font(.title3.weight(.semibold))
-                            .foregroundStyle(NotedDesign.Palette.brand)
-                            .frame(width: 48, height: 48)
-                            .background(NotedDesign.Palette.brandSoft, in: RoundedRectangle(cornerRadius: NotedDesign.Radius.input))
-                            .accessibilityHidden(true)
+                    HStack(alignment: .top, spacing: NotedDesign.Spacing.md) {
                         VStack(alignment: .leading, spacing: NotedDesign.Spacing.xs) {
                             Text(saved ? "Đã lưu trên iPhone" : "Lưu vào Noted.")
-                                .font(NotedDesign.TypeStyle.title)
+                                .scaledFont(28, weight: .bold, relativeTo: .title)
                                 .foregroundStyle(NotedDesign.Palette.primaryText)
                             Text(saved ? "Mở Noted. để xem nội dung." : "Lưu trên máy, không cần chọn thư mục.")
                                 .font(NotedDesign.TypeStyle.caption)
                                 .foregroundStyle(NotedDesign.Palette.secondaryText)
                         }
+                        Spacer(minLength: 0)
+                        CircleIconButton(symbol: "xmark", label: "Hủy") {
+                            context?.cancelRequest(withError: CocoaError(.userCancelled))
+                        }
+                        .disabled(busy || saved)
+                        .accessibilityIdentifier("shareCancel")
                     }
 
                     if !saved {
-                        HStack(alignment: .top, spacing: NotedDesign.Spacing.md) {
-                            Image(systemName: preview.symbol)
-                                .font(.headline)
-                                .foregroundStyle(NotedDesign.Palette.brand)
-                                .frame(width: 32, height: 32)
-                                .background(NotedDesign.Palette.brandSoft, in: RoundedRectangle(cornerRadius: NotedDesign.Radius.thumbnail))
-                                .accessibilityHidden(true)
-                            VStack(alignment: .leading, spacing: NotedDesign.Spacing.xs) {
-                                Text(preview.summary)
-                                    .font(NotedDesign.TypeStyle.heading)
-                                    .foregroundStyle(NotedDesign.Palette.primaryText)
-                                Text(preview.detail)
-                                    .font(.subheadline)
-                                    .foregroundStyle(NotedDesign.Palette.secondaryText)
-                                    .lineLimit(3)
+                        PaperCard(tone: .cream) {
+                            HStack(alignment: .top, spacing: NotedDesign.Spacing.md) {
+                                Image(systemName: preview.symbol)
+                                    .font(.headline)
+                                    .foregroundStyle(NotedDesign.Palette.brand)
+                                    .frame(width: 32, height: 32)
+                                    .background(NotedDesign.Palette.brandSoft, in: RoundedRectangle(cornerRadius: NotedDesign.Radius.thumbnail))
+                                    .accessibilityHidden(true)
+                                VStack(alignment: .leading, spacing: NotedDesign.Spacing.xs) {
+                                    Text(preview.summary)
+                                        .font(NotedDesign.TypeStyle.heading)
+                                        .foregroundStyle(NotedDesign.Palette.primaryText)
+                                    Text(preview.detail)
+                                        .font(.subheadline)
+                                        .foregroundStyle(NotedDesign.Palette.secondaryText)
+                                        .lineLimit(3)
+                                }
+                                Spacer(minLength: 0)
                             }
-                            Spacer(minLength: 0)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(NotedDesign.Spacing.base)
-                        .background(NotedDesign.Palette.surface, in: RoundedRectangle(cornerRadius: NotedDesign.Radius.card))
-                        .overlay {
-                            RoundedRectangle(cornerRadius: NotedDesign.Radius.card)
-                                .strokeBorder(NotedDesign.Palette.border)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(NotedDesign.Spacing.base)
                         }
                         .accessibilityElement(children: .combine)
                         .accessibilityIdentifier("sharePreview")
@@ -176,28 +173,19 @@ private struct ShareGateView: View {
                     }
                 } label: {
                     Text(saved ? "Xong" : "Lưu")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(NotedDesign.Palette.accentText)
-                        .frame(maxWidth: .infinity, minHeight: 48)
-                        .background(NotedDesign.Palette.accent, in: Capsule())
+                        .frame(maxWidth: .infinity)
                         .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
-                .opacity(busy || (!saved && (preflightError != nil || !previewReady || previewLoadError != nil)) ? 0.45 : 1)
+                .buttonStyle(NotedButtonStyle(role: .primary, prominent: true))
                 .disabled(busy || (!saved && (preflightError != nil || !previewReady || previewLoadError != nil)))
                 .accessibilityIdentifier("shareSave")
                 .padding(.horizontal, NotedDesign.Spacing.lg)
                 .padding(.vertical, NotedDesign.Spacing.md)
-                .background(NotedDesign.Palette.paper)
+                .paperBackground()
             }
-            .background(NotedDesign.Palette.paper)
+            .paperBackground()
             .tint(NotedDesign.Palette.brand)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Hủy") { context?.cancelRequest(withError: CocoaError(.userCancelled)) }
-                        .disabled(busy || saved)
-                }
-            }
+            .toolbar(.hidden, for: .navigationBar)
             .task { await preparePreview() }
         }
     }

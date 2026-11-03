@@ -1,6 +1,6 @@
 # Noted design foundations — Paper pinboard
 
-Status: Phases 01–04 are implemented in the app icon, shared SwiftUI tokens, components, Library, Search, Collections, Capture, Share Extension, Trash and backup. Phase 05 has physical iPhone 12 Pro screenshots and behavior evidence in [the 2026-11-02 device report](evidence/20261102-iphone12pro/ui-redesign-summary.md). The [interactive component lab](design-preview/component-lab.html) was reviewed in Chrome at desktop and responsive 400 px. Native iOS controls and personal data differ from the HTML sample; no numerical visual similarity percentage has been measured.
+Status (2026-11-03): the paper pinboard plan Phases 01–08 are implemented in the app icon, shared SwiftUI tokens, components, Library, Search, Collections, Capture, Share Extension, Trash and backup. Physical iPhone 12 Pro acceptance and the measured mock-fidelity scores are in [the Phase 08 report](evidence/20261103-paper-phase8/summary.md). Earlier Phase 05 device evidence is in [the 2026-11-02 device report](evidence/20261102-iphone12pro/ui-redesign-summary.md). The [interactive component lab](design-preview/component-lab.html) is a design artifact; native controls and personal data differ from its sample.
 
 ## Identity — Giấy & Rừng (2026-11-02)
 
@@ -53,13 +53,13 @@ Use `onBrand` on selected brand-filled controls, `accentText` on honey actions, 
 
 ## Verification boundary
 
-The HTML/CSS/JavaScript prototype is a design artifact with sample data. Browser layout and interactions were checked in Chrome; the icon, main screens and Share preview have physical iPhone evidence in the linked report. Native sheet/navigation chrome and real content can differ from the sample. Full VoiceOver, dark mode and a pixel-based 98–100% comparison have not been measured.
+The HTML/CSS/JavaScript prototype is a design artifact with sample data. Browser layout and interactions were checked in Chrome; the icon, main screens and Share preview have physical iPhone evidence in the linked report. Native sheet/navigation chrome and real content can differ from the sample. Full VoiceOver and dark mode have not been accepted on device. The ≥98% mock comparison is measured per criterion in the Phase 08 report.
 
 ## Paper pinboard foundations (2026-11-02, Phase 02)
 
 `Shared/NotedDesign.swift` is the source of truth. Shared paper assets are compiled into both app and extension. `paperBackground` supplies static tiled grain: a neutral 50% grey tile (sd ≈ 13/255) composited with soft light (pages/cards 0.35, hero 1.0), so token colours and ΔE probes are preserved while the speckle shows; callers clip to their component shape. `Shared/NotedPaperUI.swift` supplies PaperCard (tone/grain/curl), EqualWidthPillGroup, NotedPill, CircleIconButton, PaperField, TagChip and the shared NotedButtonStyle. Library filters show four equal pills before scrolling; capture modes use three equal pills. Standard pills have a 36 pt visual capsule inside a 44 pt minimum hit area; mode pills use 44 pt. Dimensions grow with Dynamic Type. Primary prominent buttons are 50 pt; soft buttons use sage and regular text. Tab icons are 24 pt with 12 pt labels on the bar token, without a hairline. Screen-wide adoption continues in later phases. Texture does not generate noise during rendering.
 
-`PaperTone` uses FNV-1a over canonical `UUID.uuidString`: links sage, images cream, one third of notes honey. Non-image curls use hash % 8 == 3; this can overlap honey (the original plan's non-overlap comment was mathematically incorrect). Folder tones alternate cream/sage by displayed index. Honey retains a light background in dark mode and uses `PaperTone.foreground` (`accentText`) for readable text. Do not use dark-theme primaryText on honey.
+`PaperTone` uses FNV-1a over canonical `UUID.uuidString`: links sage, images cream, one third of notes honey. Non-image curls use hash % 4 == 3 (~1/4 of notes, user decision 2026-11-03; previously % 8). This can overlap honey. The first four mock-fixture cards keep the v3 state: only the honey idea note curls. Folder tones alternate cream/sage by displayed index. Honey retains a light background in dark mode and uses `PaperTone.foreground` (`accentText`) for readable text. Do not use dark-theme primaryText on honey.
 
 The nine `NotedDesign.Sketch` images use template rendering. SVG sources and preview live under `design-preview/assets/sketch/`; `scripts/ui-fidelity/make-grain.sh` regenerates the seeded tile.
 
@@ -112,6 +112,47 @@ The two light pairs secondaryText/toneSage (4.23:1) and secondaryText/chip (4.41
 
 ### Collections and supporting screens (Phase 06)
 
-Collection rows use app-only folder cards with a honey tab (64×14 pt), cream/sage bodies alternating by displayed index, 60 pt sketch icons and a name/count stack. Names remain sorted by the store. Folder motifs fold Vietnamese diacritics and match inspiration/reading/private/travel keywords, falling back to the stable UUID hash across four motifs; no model field is added.
+Collection rows use app-only folder cards with a honey tab (72×15 pt at 22,−15 from the card, measured on v3), cream/sage bodies alternating by displayed index, 66 pt sketch icons and a name/count stack (19 pt semibold / 14 pt). Names remain sorted by the store. Folder motifs fold Vietnamese diacritics and match inspiration/reading/private/travel keywords, falling back to the stable UUID hash across four motifs; no model field is added.
 
 Collections exposes the same Backup/Trash destinations as Library. Detail uses paper surfaces and tag chips; the editor retains native Form behavior with PaperField inputs and capsule/circle actions. Native alert/control touches must bypass the window keyboard-dismiss observer so saving an alert works in one tap.
+
+### Quick Capture, Share Extension and fidelity tuning (Phases 07–08, 2026-11-03)
+
+Values below were measured on mock v3 and on the physical iPhone 12 Pro with the same tool (`docs/evidence/20261103-paper-phase8/measure.py`). Where they differ from earlier estimates, `design-preview/paper-ui-spec.md` records the re-measurement and its evidence.
+
+- **Side margins per screen:** Library 14 pt, Collections 16 pt, Capture sheet 20 pt.
+  - Header text (titles, subtitles, “Vừa lưu”) sits ~4–6 pt inside the card/hero column.
+- **Library type:**
+  - Title 34 bold; subtitle 17.
+  - Hero title 19 medium, with a 13 pt hero corner; bulb artwork ~80 pt.
+  - “Vừa lưu” 19 semibold; count 13.
+  - Card title 15.5 semibold (photo title 11.5); excerpt 12.5 with line pitch ≈16.8; date 11; card menu glyph ~14.5.
+- **Library grid:**
+  - Columns 12 pt apart, rows 14 pt apart, minimum card height 174 pt.
+  - The card icon sits 10 pt from the top; the date sits 10 pt below the text and 8 pt above the card edge.
+- **Card shadow:** offset 0,2 with radius 2 (CSS blur 4), shared by every `PaperCard`.
+- **Quick Capture sheet:**
+  - Header: a drawn 48×5 handle at 17 pt (the system handle is hidden); a 40 pt close circle with a 44 pt hit target; title 28 bold at ~48 pt.
+  - Mode pills: equal-width, 44 pt tall, with 17.5 pt symbols.
+  - Fields:
+    - Tiêu đề (42 pt, `PaperField`).
+    - Nội dung: plain 15 pt label and a 182 pt cream `PaperCard`, with no border and no curl.
+    - Bộ sưu tập: a bordered field with a chevron pointing right.
+    - Thẻ: one row with a tag icon, compact sage chips with a small xmark, and an inline input.
+  - “Tùy chọn khác” (pin after save, paste, character count, offline note, clear draft):
+    - Always starts just below the first screenful.
+    - Scrolls its content into view when opened.
+  - Draft warnings show above the save bar so they are always visible.
+  - Title, tags, collection and pin are stored with the capture payload (`PostCaptureOptions`) and applied when that batch imports. They are never lost when the import is deferred or the app relaunches.
+- **Save button:** prominent primary buttons (Capture and Share Extension save) use an 18 pt semibold label in a 50 pt honey capsule. The capture save bar is pinned with `safeAreaInset(spacing: 0)`; the default inset spacing exposed a white band.
+- **Approved deviations from the raster mock** (plan decisions 5–7):
+  - Pinned save bar.
+  - 44 pt Lưu nhanh pill instead of 40.
+  - Bottom-anchored tab bar sits lower, because the device is 25 pt taller than the mock.
+- **Residual differences:**
+  - Folder icon and bulb artwork proportions are flatter than the AI raster.
+  - The sheet top inset is set by the system `.large` detent.
+- **Dynamic Type:** measured sizes use `scaledFont(_:weight:relativeTo:)` from `Shared/NotedPaperUI.swift`.
+  - At the default size (L) the value is exactly the measured point size.
+  - At other sizes it scales like the given text style (title, title3, body, subheadline, callout, footnote, caption2).
+  - Do not add new `.system(size:)` text. Use a semantic style, or `scaledFont` for measured sizes.

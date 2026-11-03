@@ -36,14 +36,17 @@ struct LibraryView: View {
             VStack(alignment: .leading, spacing: NotedDesign.Spacing.base) {
                 if collectionID == nil {
                     HStack(alignment: .center, spacing: NotedDesign.Spacing.base) {
-                        VStack(alignment: .leading, spacing: NotedDesign.Spacing.xs) {
+                        // v3: header text column ~5.5 pt inside the hero/card edge; title 2.3 pt lower, subtitle 17 pt.
+                        VStack(alignment: .leading, spacing: 1.7) {
                             Text("Thư viện")
                                 .font(NotedDesign.TypeStyle.display)
                                 .foregroundStyle(NotedDesign.Palette.primaryText)
                             Text("Những điều bạn muốn giữ.")
-                                .font(.subheadline)
+                                .scaledFont(17, relativeTo: .body)
                                 .foregroundStyle(NotedDesign.Palette.secondaryText)
                         }
+                        .padding(.leading, 5.5)
+                        .padding(.top, 2.3)
                         Spacer(minLength: 0)
                         if let onManageData, let onShowTrash {
                             Menu {
@@ -63,9 +66,9 @@ struct LibraryView: View {
                     if let onCapture {
                         // v3 hero: ~111 pt, one-line 19 pt title; the bulb sits on the right
                         // without taking width from the text (overlay, not an HStack column).
-                        VStack(alignment: .leading, spacing: 10) {
+                        VStack(alignment: .leading, spacing: 5.3) {
                             Text("Một ý hay vừa xuất hiện?")
-                                .font(.system(size: 19, weight: .medium))
+                                .scaledFont(19, weight: .medium, relativeTo: .title3)
                                 .foregroundStyle(NotedDesign.Palette.heroText)
                             Button(action: onCapture) {
                                 Label("Lưu nhanh", systemImage: "plus")
@@ -73,17 +76,21 @@ struct LibraryView: View {
                             .buttonStyle(NotedButtonStyle(role: .primary))
                             .accessibilityIdentifier("captureAdd")
                         }
-                        .padding(.leading, 18).padding(.trailing, 88).padding(.top, 18).padding(.bottom, 16)
+                        // v3 hero title ink at 36.3,116.7; the pill keeps its centre (spacing absorbs the shift).
+                        .padding(.leading, 20.6).padding(.trailing, 88).padding(.top, 22.7).padding(.bottom, 16)
                         .frame(maxWidth: .infinity, minHeight: 111, alignment: .leading)
                         .overlay(alignment: .trailing) {
                             NotedDesign.Sketch.lightbulb.image.resizable().scaledToFit()
-                                .frame(width: 76, height: 76)
+                                // v3 bulb with rays ≈69×80, centred at x 317.5; our artwork is squatter, so match width.
+                                .frame(width: 80, height: 80)
                                 .foregroundStyle(NotedDesign.Palette.heroText)
-                                .padding(.trailing, 14)
+                                .padding(.trailing, 23.5)
                                 .accessibilityHidden(true)
                         }
                         .paperBackground(NotedDesign.Palette.hero, isHero: true)
                         .clipShape(RoundedRectangle(cornerRadius: NotedDesign.Radius.card))
+                        // v3 hero top is at 93.3 pt (measured); the section below keeps its position.
+                        .padding(.top, 2.5)
                     }
                 } else {
                     Text("Nội dung trong bộ sưu tập này.")
@@ -111,13 +118,15 @@ struct LibraryView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     HStack(alignment: .firstTextBaseline) {
                         Text("Vừa lưu")
-                            .font(NotedDesign.TypeStyle.heading)
+                            .scaledFont(19, weight: .semibold, relativeTo: .title3)
                             .foregroundStyle(NotedDesign.Palette.primaryText)
                         Spacer()
                         Text("\(items.count) mục")
-                            .font(.caption.monospacedDigit())
+                            .scaledFont(13, relativeTo: .footnote).monospacedDigit()
                             .foregroundStyle(NotedDesign.Palette.secondaryText)
                     }
+                    // v3: “Vừa lưu” starts 5.5 pt in, “N mục” ends 3.6 pt in from the card edge.
+                    .padding(.leading, 5.5).padding(.trailing, 3.6)
                     EqualWidthPillGroup(count: 6, visibleCount: 4, accessibilityID: "libraryFilters") { index in
                         let choice = [LibraryFilter.all, .inbox, .images, .links, .notes, .pinned][index]
                         NotedPill(title: choice.rawValue, selected: filter == choice) { filter = choice }
@@ -125,7 +134,7 @@ struct LibraryView: View {
                     }
                     .padding(.top, 8)
                 }
-                .padding(.top, 4)
+                .padding(.top, 1.5)
                 if items.isEmpty {
                     ContentUnavailableView(
                         filter == .all ? "Chỗ cho những điều muốn giữ" : "Chưa có mục phù hợp",
@@ -147,7 +156,8 @@ struct LibraryView: View {
                     }
                 }
             }
-            .padding(.horizontal, NotedDesign.Spacing.base)
+            // v3 library content spans 14.7–378 pt (hero, filters, cards measured): ~14 pt margins.
+            .padding(.horizontal, 14)
             .padding(.top, 8)
             .padding(.bottom, NotedDesign.Spacing.base + 88)
         }

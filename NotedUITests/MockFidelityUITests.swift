@@ -26,6 +26,11 @@ final class MockFidelityUITests: XCTestCase {
         attachment.name = "v3-" + variant
         attachment.lifetime = .keepAlways
         add(attachment)
+        // Element frames for the weighted geometry checklist (paper-ui-spec.md), evidence only.
+        let frames = XCTAttachment(string: app.debugDescription)
+        frames.name = "v3-" + variant + "-hierarchy"
+        frames.lifetime = .keepAlways
+        add(frames)
     }
 
     func testPersonalLibraryCountIsUnchanged() {

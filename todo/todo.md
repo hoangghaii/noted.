@@ -6,6 +6,5 @@
 - [x] App cần update lại UI, UI quá đơn giản và icon
 - [x] Các pill button k có kích thước tương đồng
 - [x] Update lại color của app (đang sử dụng các màu mà nhìn phát biết luôn AI làm, quá đồng lập)
+- [x] Tạo env chứa các key cá nhân
 - [ ] Có thêm AI để tự phân loại note
-- [ ] List k có group nhóm lại
-- [ ] Tạo env chứa các key cá nhân

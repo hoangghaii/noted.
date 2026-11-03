@@ -1,42 +1,61 @@
-# Noted — Nhóm nội dung theo chủ đề
+# Noted — Lớp AI trên máy: chủ đề, tiêu đề/tóm tắt, tag, tìm theo nghĩa
 
-Ngày 2026-10-29. Trạng thái: chỉ lập kế hoạch, chưa triển khai. Ưu tiên: cao.
+Tạo 2026-10-29, viết lại 2026-11-03 sau brainstorm. Trạng thái: Phase 01 đang triển khai trên simulator; chưa nghiệm thu. Ưu tiên: cao. Bản cũ (4 phase, chỉ phân nhóm): [archive v1](../archive/20261029-1623-smart-topic-groups-v1/plan.md).
 
-## Mục tiêu và trải nghiệm
+## Mục tiêu
 
-Sau pill filter hiện có, hiển thị các section theo ý nghĩa: Cà phê, Tìm việc, Carepath, Kiếm thêm thu nhập, Hài hước… Mỗi section có tên, số mục khớp bộ lọc, thu gọn/mở rộng và Xem thêm. Một mục hiển thị một lần trong nhóm chính; có thể có chủ đề phụ trong chi tiết. Giữ collection thủ công, pin, Inbox và Trash như hiện tại.
+Thêm lớp AI chạy offline trên iPhone 12 Pro, chi phí 0 đồng:
+1. **Phân nhóm theo chủ đề** trong Thư viện/Tìm kiếm (section Cà phê · 3, Tìm việc · 2, Carepath…), áp sau pill filter/search.
+2. **Tiêu đề/tóm tắt tự động**: ghi vào tiêu đề còn trống; tiêu đề người dùng đã sửa (`userEditedTitle`) luôn giữ.
+3. **Gợi ý tag**: chip gợi ý, người dùng bấm mới lưu vào `item.tags`.
+4. **Tìm kiếm theo nghĩa**: kết hợp tìm từ khóa hiện có, chạy offline.
+5. **Gợi ý chủ đề/tag ngay trong Share Extension**.
 
-Nhóm được xác định trên thư viện, rồi lấy giao với kết quả filter/search; không chạy AI hoặc tạo lại nhóm khi đổi pill. Ví dụ pill Link chỉ cho thấy link thuộc Cà phê và các nhóm khác; nhóm rỗng ẩn. Không đủ bằng chứng → Chưa phân nhóm. Nội dung vừa lưu xuất hiện ngay, AI xử lý sau. Người dùng có thể đổi nhóm, đổi tên, hợp nhất, loại đề xuất và tắt nhóm tự động.
+Ngoài phạm vi: chatbot, backend/proxy, đồng bộ, vector DB, LLM trên máy (chỉ ghi nhận là hướng tương lai), API trả phí.
 
-## Quyết định và phụ thuộc
+## Quyết định đã chốt (với người dùng, 2026-11-03)
 
-- Người dùng xác nhận: ưu tiên offline; nếu không khả thi có thể dùng API AI. Đây là cho phép hướng API, chưa có provider/key/ngân sách cụ thể.
-- iPhone mục tiêu: iPhone 12 Pro; Apple Intelligence không phải engine khả dụng trên máy này theo [yêu cầu Apple](https://support.apple.com/en-mide/121115). Không mặc định API Apple hoạt động chỉ vì chạy iOS mới.
-- Thử embedding đa ngôn ngữ nhỏ chạy local trước; candidate [multilingual-e5-small](https://huggingface.co/intfloat/multilingual-e5-small) và [multilingual MiniLM](https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2). Đây là candidate, chưa chuyển Core ML hoặc benchmark trên máy. Kiểm tra license/tokenizer/pooling/model revision trước đóng gói.
-- Apple [NLEmbedding](https://developer.apple.com/documentation/naturallanguage/nlembedding) trả model theo ngôn ngữ/runtime; không giả định tiếng Việt có sentence embeddings.
-- Embedding tìm mức tương đồng; không tự đặt tên nhóm tốt hoặc hiểu mọi meme. Tên nhóm lấy từ chủ đề được mô tả, từ khóa đại diện và người dùng xác nhận; không cần LLM lớn chỉ để đặt tên.
-- Hướng local được chọn nếu qua gate phase 1. Nếu không, API xử lý text tối thiểu đã chọn, cache kết quả trên máy; offline vẫn xem/tìm nhóm cũ, mục mới chờ xử lý. Không âm thầm chuyển local → cloud.
-- Text nguồn: title/body/tags/OCR; URL dùng title/domain, loại query/fragment khỏi dữ liệu AI mặc định. Không tải trang web thêm chỉ để phân nhóm. Ảnh không chữ/URL không mô tả được để Chưa phân nhóm; chưa có vision AI trong phạm vi.
-- Không đổi original, không dùng collectionID làm topic ID. Tính fingerprint từ dữ liệu nội dung thực, không dùng updatedAt vì pin/trash cũng cập nhật trường đó.
-- Một single-writer SwiftData; snapshot immutable cho inference; kết quả gắn itemID + fingerprint + engineVersion. Cache là dữ liệu dẫn xuất, rebuild được; sửa tay phải được giữ qua backup.
-- Không cần vector DB, backend, chatbot, hay semantic search mới trong phạm vi này. API provider nếu chọn mới xác định có cần proxy; không tự triển khai server.
+- **Topic là khái niệm mới, do AI quản lý**: mỗi mục có 1 nhóm chính và tối đa 2 chủ đề phụ; người dùng sửa/gộp/đổi tên/tạo được. **Tag**: AI chỉ gợi ý. **Collection**: giữ thủ công, AI không động vào.
+- Ngân sách 0 đồng → mọi tính năng chính chạy **local**. API miễn phí chỉ là tùy chọn, mặc định tắt, chỉ dùng để sinh câu văn (Phase 06). Không âm thầm gửi dữ liệu.
+- Tỷ lệ thư viện ước lượng: ảnh 50% / link 40% / ghi chú 10%. Vì vậy phải dùng **Vision của Apple** (nhãn ảnh + feature print), không chỉ đọc OCR.
+- Chấp nhận app nặng thêm ≥120 MB nếu phải đóng gói model embedding.
+- Todo “List k có group nhóm lại” đã bỏ vì trùng mục tiêu 1.
+
+## Quyết định kiến trúc
+
+- **Một nền embedding dùng chung**: vector tính một lần, cache theo `itemID + fingerprint + engineVersion`, phục vụ phân nhóm, gợi ý tag và tìm theo nghĩa.
+- **Dữ liệu AI đặt ở store riêng** `intelligence.store`, có `ModelContainer` và schema version riêng. `library.store` (schema v1, `ModelStore` đang từ chối mọi version khác) **không đổi schema**. Ngoại lệ duy nhất: tiêu đề AI ghi vào `Item.title` có sẵn. Xóa store AI thì rebuild được; phần người dùng sửa tay đi vào backup.
+- Fingerprint tính từ nội dung (title nếu do người dùng viết, body, URL đã bỏ query/fragment, OCR, nhãn Vision). Không dùng `updatedAt`, vì pin/trash cũng cập nhật trường này.
+- `IntelligenceRunner` chạy tuần tự sau `EnrichmentRunner`, chỉ khi app đang mở. Commit qua single-writer, bỏ kết quả cũ khi fingerprint đổi.
+- Tiêu đề/tóm tắt mặc định là **trích xuất** (og:title/og:description, câu đầu, dòng OCR nổi bật), không phải sinh văn bản.
+- Share Extension không nạp model (giới hạn bộ nhớ), chỉ tra bảng nhỏ do app chính xuất vào App Group.
 
 ## Các phase
 
-| Phase | Trạng thái | Đầu ra |
-|---|---|---|
-| [01 — Engine và chất lượng](phase-01-engine-and-quality.md) | Pending | Fixture, benchmark local, chọn local/API có bằng chứng |
-| [02 — Dữ liệu và pipeline](phase-02-topic-data-and-pipeline.md) | Pending; phụ thuộc 01 | Topic ổn định, cache/retry, sửa tay và backup |
-| [03 — Giao diện nhóm](phase-03-grouped-library-ui.md) | Pending; phụ thuộc 02 | Filter/search → section theo chủ đề, loading và correction |
-| [04 — Nghiệm thu iPhone](phase-04-device-acceptance.md) | Pending; phụ thuộc 03 | Kiểm chứng dữ liệu, offline, chất lượng và cài đè |
+| Phase | Trạng thái | Phụ thuộc | Đầu ra |
+|---|---|---|---|
+| [01 — Spike engine & bộ đánh giá](phase-01-engine-spike-and-evaluation.md) | In progress; gate iPhone chưa đo | — | Chọn engine bằng số đo trên iPhone, gán nhãn dữ liệu thật, đếm số mục thư viện |
+| [02 — Kho AI & pipeline](phase-02-intelligence-store-and-pipeline.md) | Pending | 01 | `intelligence.store`, runner, cache vector, backup v2 |
+| [03 — Chủ đề & giao diện nhóm](phase-03-topics-and-grouped-ui.md) | Pending | 02, plan UI giấy Phase 08 | Section theo chủ đề, khởi tạo topic, học từ sửa tay, quản lý topic |
+| [04 — Tiêu đề, tóm tắt, tag & Share](phase-04-titles-tags-and-share.md) | Pending | 02 | og:description, tiêu đề trống, chip tag, gợi ý trong Share Extension |
+| [05 — Tìm kiếm theo nghĩa](phase-05-semantic-search.md) | Pending | 02 | Kết hợp từ khóa + vector, offline |
+| [06 — (Tùy chọn) API miễn phí](phase-06-optional-free-api.md) | Pending, có thể bỏ | 04 | Viết lại tiêu đề/tóm tắt, mặc định tắt |
+| [07 — Nghiệm thu iPhone](phase-07-device-acceptance.md) | Pending | 03–05 (06 nếu làm) | Evidence chất lượng/tài nguyên/offline/backup |
+
+Phase 03, 04, 05 có thể làm song song sau 02. Phase 03 chỉ đụng tới màn Thư viện/Tìm kiếm sau khi plan [Giấy & Bảng ghim](../20261102-2119-paper-pinboard-ui/plan.md) nghiệm thu xong, để khỏi làm lại.
 
 ## Cơ sở nguồn hiện tại
 
-LibraryView.swift và SearchView.swift đang lọc/sắp xếp rồi render grid phẳng. Item có title/body/URL/tags/OCR nhưng chưa có topic/embedding. LibraryStore là writer chính. EnrichmentRunner xử lý OCR/preview tuần tự khi app hoạt động. ModelStore/BackupManifest/BackupService cần được đánh giá migration trước thêm schema.
+- `Item` có title/body/originalURL/tags/ocrText/userEditedTitle; chưa có topic/embedding.
+- `EnrichmentRunner` chạy OCR/preview tuần tự, so revision bằng `updatedAt`.
+- `LinkMetadataService` chỉ lấy `<title>`, giới hạn 512 KB.
+- `SearchService` so chuỗi đã chuẩn hóa.
+- `ShareGatePayload` có `schemaVersion` optional. `BackupManifest` đang ở version 1.
 
 ## Giả định và câu hỏi còn mở
 
-- Carepath là tên chủ đề riêng của người dùng; không suy đoán nó đồng nghĩa Tìm việc. Cho khai báo mô tả và ví dụ.
-- Hài hước và Vui nhộn ban đầu là hai nhãn có thể hợp nhất nếu người dùng muốn; không gộp âm thầm.
-- Chưa có tập nội dung thực đã gán nhãn. Phase 1 cần người dùng xác nhận các ví dụ mơ hồ, không dùng mock làm bằng chứng chất lượng trên dữ liệu thật.
-- Ngưỡng chất lượng/tài nguyên dưới đây là mục tiêu đề xuất để ra quyết định, chưa là kết quả đo. Nếu cần API: provider, ngân sách, lưu giữ dữ liệu và nơi cấu hình key còn mở; không chặn nghiên cứu offline.
+- Chưa biết số mục thư viện; Phase 01 sẽ đếm. Nếu có < ~50 mục, việc tự khám phá nhóm sẽ yếu, khi đó dựa vào topic người dùng khai báo.
+- `NLContextualEmbedding` hỗ trợ tiếng Việt và chất lượng vector câu **chưa xác minh**.
+- Carepath là chủ đề riêng của người dùng; cần mô tả + ví dụ từ người dùng.
+- Mọi ngưỡng trong các phase là mục tiêu đề xuất, chưa phải kết quả đo.
+- Phase 06: nhà cung cấp miễn phí chọn lúc triển khai, theo điều khoản hiện hành (không dùng dữ liệu để huấn luyện, có hạn mức free). Hiện chưa có tên cụ thể.
