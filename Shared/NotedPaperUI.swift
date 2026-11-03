@@ -152,6 +152,19 @@ struct CircleIconButton: View {
     }
 }
 
+extension ToolbarContent {
+    /// iOS 26 wraps every toolbar item in a shared Liquid Glass capsule. Items that already draw
+    /// their own paper chip (NotedButtonStyle, CircleIconButton…) would otherwise show two outlines.
+    @ToolbarContentBuilder
+    func notedOwnBackground() -> some ToolbarContent {
+        if #available(iOS 26.0, *) {
+            sharedBackgroundVisibility(.hidden)
+        } else {
+            self
+        }
+    }
+}
+
 struct PaperCard<Content: View>: View {
     var tone: NotedDesign.PaperTone = .cream
     var curl = false

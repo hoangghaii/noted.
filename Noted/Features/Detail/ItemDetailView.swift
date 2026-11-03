@@ -101,7 +101,7 @@ struct ItemDetailView: View {
                         .frame(width: 44, height: 44)
                         .background(NotedDesign.Palette.chip, in: Circle())
                 }.accessibilityLabel("Tùy chọn nội dung")
-            }
+            }.notedOwnBackground()
         }
         .sheet(isPresented: $showEditor) { ItemEditor(item: item, store: store) }
         .confirmationDialog("Chuyển vào Thùng rác?", isPresented: $confirmTrash) {
@@ -212,7 +212,7 @@ private struct ItemEditor: View {
             .accessibilityIdentifier("itemEditorForm")
             .navigationTitle("Chỉnh sửa").navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { CircleIconButton(symbol: "xmark", label: "Đóng") { dismiss() } }
+                ToolbarItem(placement: .cancellationAction) { CircleIconButton(symbol: "xmark", label: "Đóng") { dismiss() } }.notedOwnBackground()
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Lưu") {
                         do {
@@ -223,8 +223,8 @@ private struct ItemEditor: View {
                             try? FileManager.default.removeItem(at: DetailDraftStore.path(item.id))
                             dismiss()
                         } catch { self.error = error.localizedDescription }
-                    }.buttonStyle(NotedButtonStyle(role: .primary)).accessibilityIdentifier("editSave")
-                }
+                    }.buttonStyle(NotedButtonStyle(role: .primary)).fixedSize().accessibilityIdentifier("editSave")
+                }.notedOwnBackground()
             }
             .onChange(of: draft.title) { _, _ in persist() }
             .onChange(of: draft.body) { _, _ in persist() }
