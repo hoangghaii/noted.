@@ -1,5 +1,6 @@
 import XCTest
 import UIKit
+import CoreML
 @testable import Noted
 
 final class IntelligenceEngineTests: XCTestCase {
@@ -10,6 +11,15 @@ final class IntelligenceEngineTests: XCTestCase {
         XCTAssertEqual(EmbeddingMath.cosine(vector, vector) ?? -1, 1, accuracy: 0.0001)
         XCTAssertNil(EmbeddingMath.cosine([1], [1, 0]))
         XCTAssertThrowsError(try EmbeddingMath.normalized([0, 0]))
+    }
+
+    func testMeanCenteringSeparatesVectorsInANarrowCone() throws {
+        let a = UUID(), b = UUID()
+        let raw = [a: try EmbeddingMath.normalized([1, 0.1]), b: try EmbeddingMath.normalized([1, -0.1])]
+        XCTAssertGreaterThan(EmbeddingMath.cosine(raw[a]!, raw[b]!)!, 0.97)
+        let centered = EmbeddingMath.meanCentered(raw)
+        XCTAssertEqual(EmbeddingMath.cosine(centered[a]!, centered[b]!)!, -1, accuracy: 0.0001)
+        XCTAssertEqual(EmbeddingMath.meanCentered([a: [1, 0]])[a]!, [1, 0])
     }
 
     func testBaselineNormalizesVietnameseAndRejectsAmbiguity() {
@@ -96,11 +106,12 @@ final class IntelligenceEngineTests: XCTestCase {
         XCTAssertTrue(IntelligenceResourceProbe.cycled([Int]()).isEmpty)
     }
 
-    func testReportSchemaV2CarriesResourceFieldsWithoutLabels() throws {
+    func testReportSchemaV3CarriesResourceFieldsWithoutLabels() throws {
         let samples = [IntelligenceSpikeSample(id: UUID(), kind: "text", text: "cà phê sáng", hasOriginalText: true,
                                                imageURL: nil, hasOCR: false, gold: nil, desiredTags: [], split: nil)]
         let report = IntelligenceSpikeEvaluator.evaluate(samples)
-        XCTAssertEqual(report.schemaVersion, 2)
+        XCTAssertEqual(report.schemaVersion, 3)
+        XCTAssertEqual(report.dataSource, "library")
         XCTAssertNil(report.visionColdMilliseconds)
         let contextual = try XCTUnwrap(report.candidates.first { $0.name == "Apple NL contextual" })
         // Resource numbers require downloaded assets; without them nothing may be reported as measured.
@@ -109,6 +120,98 @@ final class IntelligenceEngineTests: XCTestCase {
             XCTAssertNotNil(contextual.batch50Milliseconds)
         } else {
             XCTAssertNil(contextual.batch50Milliseconds)
+        }
+    }
+
+    func testSyntheticCorpusIsBalancedAndNeverPassesGate() {
+        let samples = IntelligenceSyntheticCorpus.samples()
+        XCTAssertGreaterThanOrEqual(samples.count, 150)
+        XCTAssertEqual(Set(samples.map(\.id)).count, samples.count)
+        XCTAssertTrue(samples.allSatisfy { ["text", "link"].contains($0.kind) && $0.imageURL == nil })
+        let topics = Dictionary(grouping: samples, by: { $0.gold ?? "" })
+        XCTAssertEqual(Set(topics.keys), ["Cà phê", "Tìm việc", "Carepath", "Kiếm thêm thu nhập", "Hài hước", "Không rõ"])
+        for (topic, rows) in topics {
+            XCTAssertGreaterThanOrEqual(rows.filter { $0.split == "holdout" }.count, 1, topic)
+            XCTAssertGreaterThanOrEqual(rows.filter { $0.split == "calibration" }.count, 10, topic)
+        }
+        let report = IntelligenceSpikeEvaluator.evaluate(samples, dataSource: IntelligenceSyntheticCorpus.version)
+        XCTAssertEqual(report.dataSource, IntelligenceSyntheticCorpus.version)
+        XCTAssertFalse(report.sufficientLabelsForGate)
+        XCTAssertTrue(report.notes.contains { $0.contains("cannot satisfy the Phase 01 gate") })
+        XCTAssertEqual(report.visionFailures, 0)
+    }
+
+    /// Opt-in device measurement: `TEST_RUNNER_NOTED_SPIKE_REPORT=1 xcodebuild test ...`.
+    /// Downloads Apple's NL asset if missing, then prints the synthetic-corpus report.
+    func testSyntheticSpikeReportOnDevice() async throws {
+        guard ProcessInfo.processInfo.environment["NOTED_SPIKE_REPORT"] == "1" else {
+            throw XCTSkip("Set TEST_RUNNER_NOTED_SPIKE_REPORT=1 to run the device spike report")
+        }
+        if let engine = ContextualEmbeddingEngine(), !engine.hasAvailableAssets {
+            _ = try await engine.requestAssets()
+        }
+        let samples = IntelligenceSyntheticCorpus.samples()
+        let report = IntelligenceSpikeEvaluator.evaluate(samples, dataSource: IntelligenceSyntheticCorpus.version)
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        encoder.dateEncodingStrategy = .iso8601
+        print("NOTED_SPIKE_REPORT_JSON " + String(decoding: try encoder.encode(report), as: UTF8.self))
+    }
+
+    // MARK: E5 parity (files copied by devicectl; skipped when absent)
+
+    private func e5File(_ name: String) throws -> URL {
+        let url = CoreMLEmbeddingEngine.defaultDirectory.appendingPathComponent(name)
+        guard FileManager.default.fileExists(atPath: url.path) else { throw XCTSkip("E5 spike file absent: \(name)") }
+        return url
+    }
+
+    func testE5NativeTokenizerMatchesPythonTokenIDs() throws {
+        let fixture = try e5File("token-fixture.json")
+        let tokenizer = try XLMRobertaTokenizer(tokenizerJSON: try e5File("tokenizer.json"))
+        struct Record: Decodable { let id: Int; let text: String; let ids: [Int32] }
+        struct File: Decodable { let records: [Record] }
+        let records = try JSONDecoder().decode(File.self, from: Data(contentsOf: fixture)).records
+        XCTAssertGreaterThan(records.count, 150)
+        var mismatches = [String]()
+        for record in records where tokenizer.tokenize(record.text) != record.ids {
+            mismatches.append("#\(record.id) native=\(tokenizer.tokenize(record.text).prefix(16)) python=\(record.ids.prefix(16))")
+        }
+        XCTAssertTrue(mismatches.isEmpty, "\(mismatches.count)/\(records.count) mismatches:\n" + mismatches.prefix(10).joined(separator: "\n"))
+    }
+
+    func testE5DeviceVectorsMatchPythonReference() throws {
+        let reference = try e5File("reference-vectors.json")
+        struct Vector: Decodable { let id: String; let text: String; let input_ids: [Int32]; let attention_mask: [Int32]; let vector: [Float] }
+        struct File: Decodable { let vectors: [Vector] }
+        let vectors = try JSONDecoder().decode(File.self, from: Data(contentsOf: reference)).vectors
+        let environment = ProcessInfo.processInfo.environment
+        let variants = environment["NOTED_E5_VARIANTS"]?.split(separator: ",").map(String.init) ?? ["fp16", "int8"]
+        let units = Self.computeUnits(environment["NOTED_E5_UNITS"])
+        for variant in variants {
+            guard let engine = CoreMLEmbeddingEngine(variant: variant, computeUnits: units) else {
+                throw XCTSkip("E5 \(variant) model absent")
+            }
+            print("NOTED_E5_PARITY \(variant) units=\(environment["NOTED_E5_UNITS"] ?? "cpuAndNeuralEngine")")
+            let tokenizer = try engine.tokenizerForTesting()
+            for record in vectors {
+                let encoding = tokenizer.encode(record.text, maxLength: CoreMLEmbeddingEngine.maxTokens)
+                XCTAssertEqual(encoding.inputIDs, record.input_ids, "\(variant) \(record.id) token IDs")
+                XCTAssertEqual(encoding.attentionMask, record.attention_mask, "\(variant) \(record.id) mask")
+                let native = try engine.embed(encoding: encoding)
+                let cosine = try XCTUnwrap(EmbeddingMath.cosine(native, record.vector))
+                print("NOTED_E5_PARITY \(variant) \(record.id) cosine=\(cosine)")
+                XCTAssertGreaterThanOrEqual(cosine, 0.99, "\(variant) \(record.id)")
+            }
+        }
+    }
+
+    static func computeUnits(_ name: String?) -> MLComputeUnits {
+        switch name {
+        case "cpuOnly": .cpuOnly
+        case "cpuAndGPU": .cpuAndGPU
+        case "all": .all
+        default: .cpuAndNeuralEngine
         }
     }
 

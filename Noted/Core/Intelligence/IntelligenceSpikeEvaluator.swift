@@ -62,6 +62,8 @@ struct IntelligenceSpikeReport: Codable, Sendable {
     let generatedAt: Date
     let platform: String
     let buildVersion: String
+    /// "library" or a synthetic corpus version; synthetic labels never satisfy the gate.
+    let dataSource: String
     let counts: Counts
     let sufficientLabelsForGate: Bool
     let candidates: [Candidate]
@@ -138,14 +140,16 @@ enum IntelligenceSpikeEvaluator {
     }
 
     /// Evaluates locally. Call from a detached task with snapshots, never with SwiftData models.
-    static func evaluate(_ samples: [IntelligenceSpikeSample]) -> IntelligenceSpikeReport {
+    static func evaluate(_ samples: [IntelligenceSpikeSample],
+                         dataSource: String = "library") -> IntelligenceSpikeReport {
+        let isSynthetic = dataSource != "library"
         let labeled = samples.filter { $0.gold != nil }
         let calibration = labeled.filter { $0.split == "calibration" }
         let holdout = labeled.filter { $0.split == "holdout" }
         let topicCounts = Dictionary(grouping: labeled.filter { $0.gold != unknown }, by: { $0.gold! }).mapValues(\.count)
         let holdoutCounts = Dictionary(grouping: holdout.filter { $0.gold != unknown }, by: { $0.gold! }).mapValues(\.count)
         let calibrationCounts = Dictionary(grouping: calibration.filter { $0.gold != unknown }, by: { $0.gold! }).mapValues(\.count)
-        let sufficient = labeled.count >= 150 && topicCounts.values.allSatisfy { $0 >= 10 }
+        let sufficient = !isSynthetic && labeled.count >= 150 && topicCounts.values.allSatisfy { $0 >= 10 }
             && !topicCounts.isEmpty && topicCounts.keys.allSatisfy {
                 (holdoutCounts[$0] ?? 0) >= 1 && (calibrationCounts[$0] ?? 0) >= 2
             }
@@ -169,7 +173,9 @@ enum IntelligenceSpikeEvaluator {
                                  threshold: nil, margin: nil, predictions: baselinePredictions, timings: [])
 
         var notes = [String]()
-        if !sufficient { notes.append("Label gate unmet: need at least 150 labels, 10 per topic, and a nonempty holdout; metrics are exploratory.") }
+        if isSynthetic {
+            notes.append("Synthetic corpus \(dataSource): assistant-written items and labels; not user data, cannot satisfy the Phase 01 gate.")
+        } else if !sufficient { notes.append("Label gate unmet: need at least 150 labels, 10 per topic, and a nonempty holdout; metrics are exploratory.") }
         var visionTimings = [Double]()
         var visionFailures = 0
         var visionProcessed = 0
@@ -218,16 +224,21 @@ enum IntelligenceSpikeEvaluator {
         }
 
         let contextual = evaluateContextual(enriched)
+        let e5Engines = ["fp16", "int8"].compactMap { CoreMLEmbeddingEngine(variant: $0) }
+        let e5 = e5Engines.flatMap { engine in
+            evaluateTextEngine(engine, name: "E5 small \(engine.variant)", load: engine.load, samples: enriched)
+        }
+        if e5Engines.isEmpty { notes.append("E5 model files absent on this device; E5 not measured.") }
         let nearestImage = evaluateImageNearestNeighbor(samples, featurePrints: featurePrints,
                                                         baselinePredictions: baselinePredictions,
                                                         engineVersion: visionVersion)
-        notes.append("No E5 native tokenizer/vector parity, tag precision, or semantic recall@10 is measured here.")
+        notes.append("Tag precision and semantic recall@10 are not measured here; E5 parity is checked by device tests.")
         return IntelligenceSpikeReport(
-            schemaVersion: 2, generatedAt: Date(),
+            schemaVersion: 3, generatedAt: Date(),
             platform: "\(ProcessInfo.processInfo.operatingSystemVersionString)\(isSimulator ? " simulator" : " device")",
             buildVersion: "\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "unknown") (\(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "unknown"))",
-            counts: counts, sufficientLabelsForGate: sufficient,
-            candidates: [baseline, contextual, nearestImage], visionProcessed: visionProcessed,
+            dataSource: dataSource, counts: counts, sufficientLabelsForGate: sufficient,
+            candidates: [baseline] + contextual + e5 + [nearestImage], visionProcessed: visionProcessed,
             visionFailures: visionFailures, visionP95Milliseconds: p95(visionWarm),
             visionColdMilliseconds: visionCold, visionMemoryDeltaMegabytes: visionMemory, notes: notes
         )
@@ -241,22 +252,29 @@ enum IntelligenceSpikeEvaluator {
         #endif
     }
 
-    private static func evaluateContextual(_ samples: [IntelligenceSpikeSample]) -> IntelligenceSpikeReport.Candidate {
+    private static func evaluateContextual(_ samples: [IntelligenceSpikeSample]) -> [IntelligenceSpikeReport.Candidate] {
+        let name = "Apple NL contextual"
         guard let engine = ContextualEmbeddingEngine() else {
-            return candidate(name: "Apple NL contextual", engineVersion: "unavailable", status: "Vietnamese model unavailable",
-                             threshold: nil, margin: nil, predictions: [], timings: [])
+            return [candidate(name: name, engineVersion: "unavailable", status: "Vietnamese model unavailable",
+                              threshold: nil, margin: nil, predictions: [])]
         }
         guard engine.hasAvailableAssets else {
-            return candidate(name: "Apple NL contextual", engineVersion: engine.engineVersion, status: "assets unavailable; no automatic download",
-                             threshold: nil, margin: nil, predictions: [], timings: [])
+            return [candidate(name: name, engineVersion: engine.engineVersion, status: "assets unavailable; no automatic download",
+                              threshold: nil, margin: nil, predictions: [])]
         }
+        return evaluateTextEngine(engine, name: name, load: engine.load, samples: samples)
+    }
+
+    /// Embeds every text sample once, then scores raw and mean-centered vectors.
+    static func evaluateTextEngine(_ engine: TextEmbeddingEngine, name: String, load: () throws -> Void,
+                                   samples: [IntelligenceSpikeSample]) -> [IntelligenceSpikeReport.Candidate] {
         let footprintBefore = IntelligenceResourceProbe.physicalFootprintBytes()
         let coldLoad: Double
         do {
-            coldLoad = try IntelligenceResourceProbe.milliseconds { try engine.load() }
+            coldLoad = try IntelligenceResourceProbe.milliseconds(load)
         } catch {
-            return candidate(name: "Apple NL contextual", engineVersion: engine.engineVersion, status: "model load failed",
-                             threshold: nil, margin: nil, predictions: [], timings: [])
+            return [candidate(name: name, engineVersion: engine.engineVersion, status: "model load failed: \(error)",
+                              threshold: nil, margin: nil, predictions: [])]
         }
         var vectors: [UUID: [Float]] = [:]
         var errors = 0
@@ -275,11 +293,23 @@ enum IntelligenceSpikeEvaluator {
             coldLoad: coldLoad, timings: timings,
             memoryDelta: IntelligenceResourceProbe.megabytes(from: footprintBefore,
                                                              to: IntelligenceResourceProbe.physicalFootprintBytes()))
+        return [
+            classify(name: name, engineVersion: engine.engineVersion, samples: samples, vectors: vectors,
+                     errors: errors, resources: resources),
+            // Uses all item vectors (no labels), as the app could at runtime.
+            classify(name: "\(name) · mean-centered", engineVersion: "\(engine.engineVersion)-centered",
+                     samples: samples, vectors: EmbeddingMath.meanCentered(vectors), errors: errors, resources: resources)
+        ]
+    }
+
+    private static func classify(name: String, engineVersion: String, samples: [IntelligenceSpikeSample],
+                                 vectors: [UUID: [Float]], errors: Int,
+                                 resources: TextResources) -> IntelligenceSpikeReport.Candidate {
         let calibration = samples.filter { $0.split == "calibration" && $0.gold != nil && vectors[$0.id] != nil }
         let knownCalibration = calibration.filter { $0.gold != unknown }
         let holdout = samples.filter { $0.split == "holdout" && $0.gold != nil }
         guard !knownCalibration.isEmpty else {
-            return candidate(name: "Apple NL contextual", engineVersion: engine.engineVersion,
+            return candidate(name: name, engineVersion: engineVersion,
                              status: "resources measured; no usable calibration vectors; \(errors) embedding errors",
                              threshold: nil, margin: nil, predictions: [], resources: resources)
         }
@@ -287,7 +317,8 @@ enum IntelligenceSpikeEvaluator {
             (sample: sample, ranked: rank(vectors[sample.id]!, prototypes: prototypes(
                 knownCalibration.filter { $0.id != sample.id }, vectors)))
         }
-        let grid: [(Float, Float)] = (0...18).flatMap { a in (0...10).map { b in (Float(a) * 0.05, Float(b) * 0.02) } }
+        // Centered cosines sit far lower than raw ones, so the grid spans both ranges.
+        let grid: [(Float, Float)] = (0...19).flatMap { a in (0...10).map { b in (Float(a) * 0.05, Float(b) * 0.02) } }
         var best: (threshold: Float, margin: Float, correct: Int, predicted: Int)?
         for (threshold, margin) in grid {
             let predictions = rankings.map { row -> (IntelligenceSpikeSample, String?) in
@@ -301,7 +332,7 @@ enum IntelligenceSpikeEvaluator {
             }
         }
         guard let selected = best else {
-            return candidate(name: "Apple NL contextual", engineVersion: engine.engineVersion,
+            return candidate(name: name, engineVersion: engineVersion,
                              status: "no calibration threshold reached 85% precision; \(errors) embedding errors",
                              threshold: nil, margin: nil, predictions: [], resources: resources)
         }
@@ -311,12 +342,12 @@ enum IntelligenceSpikeEvaluator {
                 predict(rank($0, prototypes: centers), threshold: selected.threshold, margin: selected.margin)
             })
         }
-        return candidate(name: "Apple NL contextual", engineVersion: engine.engineVersion,
+        return candidate(name: name, engineVersion: engineVersion,
                          status: "exploratory holdout; \(errors) embedding errors", threshold: selected.threshold,
                          margin: selected.margin, predictions: predictions, resources: resources)
     }
 
-    private struct TextResources {
+    struct TextResources {
         let coldLoad: Double
         let timings: [Double]
         let memoryDelta: Double?

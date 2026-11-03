@@ -107,13 +107,6 @@ struct IntelligenceLabelingView: View {
                 }
 
                 Section {
-                    Button("Tải model Natural Language tiếng Việt") {
-                        Task { await requestContextualAssets() }
-                    }
-                    .disabled(isRequestingAssets || isEvaluating)
-                    .accessibilityIdentifier("intelligenceRequestAssets")
-                    if isRequestingAssets { ProgressView("Đang tải model của Apple…") }
-                    if let assetStatus { Text(assetStatus).font(.footnote) }
                     Button("Chạy đánh giá local") {
                         Task { await evaluate() }
                     }
@@ -122,7 +115,8 @@ struct IntelligenceLabelingView: View {
                     if isEvaluating { ProgressView("Đang đo, hãy giữ app mở…") }
                     if let report = evaluationReport {
                         Text("\(report.counts.labeled) nhãn · \(report.counts.holdout) holdout · \(report.visionProcessed) ảnh Vision")
-                        Text(report.sufficientLabelsForGate ? "Đã đủ số nhãn tối thiểu; còn phải xem quality gate." : "Chưa đủ nhãn để kết luận chất lượng.")
+                        Text(report.dataSource != "library" ? "Bộ mẫu tổng hợp do AI viết; không dùng để nghiệm thu gate."
+                             : report.sufficientLabelsForGate ? "Đã đủ số nhãn tối thiểu; còn phải xem quality gate." : "Chưa đủ nhãn để kết luận chất lượng.")
                             .font(.footnote).foregroundStyle(.secondary)
                     }
                     if let reportURL {
@@ -131,6 +125,19 @@ struct IntelligenceLabelingView: View {
                         }
                         .accessibilityIdentifier("intelligenceExportReport")
                     }
+                    // Kept below the results so running/exporting stays in the same place.
+                    Button("Tải model Natural Language tiếng Việt") {
+                        Task { await requestContextualAssets() }
+                    }
+                    .disabled(isRequestingAssets || isEvaluating)
+                    .accessibilityIdentifier("intelligenceRequestAssets")
+                    if isRequestingAssets { ProgressView("Đang tải model của Apple…") }
+                    if let assetStatus { Text(assetStatus).font(.footnote) }
+                    Button("Chạy trên bộ mẫu tổng hợp") {
+                        Task { await evaluate(synthetic: true) }
+                    }
+                    .disabled(isEvaluating)
+                    .accessibilityIdentifier("intelligenceRunSynthetic")
                 } header: {
                     Text("Đo trên máy · DEBUG")
                 } footer: {
@@ -266,16 +273,20 @@ struct IntelligenceLabelingView: View {
     }
 
     @MainActor
-    private func evaluate() async {
+    private func evaluate(synthetic: Bool = false) async {
         guard !isEvaluating, error == nil else { return }
         isEvaluating = true
         defer { isEvaluating = false }
-        let samples = IntelligenceSpikeEvaluator.snapshots(store: store, labels: labels)
+        let samples = synthetic ? IntelligenceSyntheticCorpus.samples()
+            : IntelligenceSpikeEvaluator.snapshots(store: store, labels: labels)
+        let source = synthetic ? IntelligenceSyntheticCorpus.version : "library"
         let report = await Task.detached(priority: .utility) {
-            IntelligenceSpikeEvaluator.evaluate(samples)
+            IntelligenceSpikeEvaluator.evaluate(samples, dataSource: source)
         }.value
         do {
-            let url = labelURL.deletingLastPathComponent().appendingPathComponent("report.json")
+            // Separate files so a synthetic run never overwrites the real-library report.
+            let url = labelURL.deletingLastPathComponent()
+                .appendingPathComponent(synthetic ? "report-synthetic.json" : "report.json")
             try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
             let encoder = JSONEncoder()
             encoder.outputFormatting = [.prettyPrinted, .sortedKeys]

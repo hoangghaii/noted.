@@ -1,6 +1,6 @@
 # Noted — Lớp AI trên máy: chủ đề, tiêu đề/tóm tắt, tag, tìm theo nghĩa
 
-Tạo 2026-10-29, viết lại 2026-11-03 sau brainstorm. Trạng thái: Phase 01 đang triển khai trên simulator; chưa nghiệm thu. Ưu tiên: cao. Bản cũ (4 phase, chỉ phân nhóm): [archive v1](../archive/20261029-1623-smart-topic-groups-v1/plan.md).
+Tạo 2026-10-29, viết lại 2026-11-03 sau brainstorm. Trạng thái: Phase 01 đang triển khai trên iPhone thật; đã đo tài nguyên, chưa có nhãn, chưa nghiệm thu. Ưu tiên: cao. Bản cũ (4 phase, chỉ phân nhóm): [archive v1](../archive/20261029-1623-smart-topic-groups-v1/plan.md).
 
 ## Mục tiêu
 
@@ -34,7 +34,7 @@ Ngoài phạm vi: chatbot, backend/proxy, đồng bộ, vector DB, LLM trên má
 
 | Phase | Trạng thái | Phụ thuộc | Đầu ra |
 |---|---|---|---|
-| [01 — Spike engine & bộ đánh giá](phase-01-engine-spike-and-evaluation.md) | In progress; gate iPhone chưa đo | — | Chọn engine bằng số đo trên iPhone, gán nhãn dữ liệu thật, đếm số mục thư viện |
+| [01 — Spike engine & bộ đánh giá](phase-01-engine-spike-and-evaluation.md) | In progress; E5 int8 dẫn đầu trên bộ tổng hợp, chờ người dùng gán nhãn 73 mục thật ([handoff](phase-01-engine-spike-and-evaluation.md#handoff-2026-11-03--tiếp-tục-2026-11-04)) | — | Chọn engine bằng số đo trên iPhone, gán nhãn dữ liệu thật, đếm số mục thư viện |
 | [02 — Kho AI & pipeline](phase-02-intelligence-store-and-pipeline.md) | Pending | 01 | `intelligence.store`, runner, cache vector, backup v2 |
 | [03 — Chủ đề & giao diện nhóm](phase-03-topics-and-grouped-ui.md) | Pending | 02, plan UI giấy Phase 08 | Section theo chủ đề, khởi tạo topic, học từ sửa tay, quản lý topic |
 | [04 — Tiêu đề, tóm tắt, tag & Share](phase-04-titles-tags-and-share.md) | Pending | 02 | og:description, tiêu đề trống, chip tag, gợi ý trong Share Extension |
