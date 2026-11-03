@@ -1,6 +1,6 @@
 # Phase 01 — đánh giá engine chủ đề
 
-Ngày 2026-11-03. **Trạng thái: đang triển khai spike; chưa chọn engine, chưa qua quality/resource gate.**
+Ngày 2026-11-03. **Trạng thái: đang triển khai spike; chưa chọn engine. Đã có số đếm và số đo tài nguyên trên iPhone thật (xem [mục iPhone](#iphone-12-pro-thật-2026-11-03)); quality gate chưa đo vì chưa có nhãn.**
 
 ## Phạm vi và dữ liệu
 
@@ -32,6 +32,72 @@ Apple ghi `NLContextualEmbedding.languages` có tiếng Việt từ iOS 17, như
 - UI test màn gán nhãn DEBUG và chạy/xuất báo cáo local: **1/1** trên simulator sau khi ký ad hoc App Group entitlement cho bản build tạm và chạy `test-without-building`. `xcresult`: `/private/tmp/noted-topic-final3-ui.xcresult`. Lần test trước với app unsigned không thể mở thư viện; không tính là pass.
 - Verify lại 2026-11-03 trên simulator **mới, sạch** `iPhone 12 Pro (Topic P01 Verify)` `94FA34A3-E6CC-41A5-A46B-D7AEF98C6C71` (iOS 27.0), DerivedData riêng: `NotedTests` **57 test, 56 pass, 1 skip Vision (Espresso), 0 fail**; `IntelligenceLabelingUITests` 1/1 (scheme `Noted-DeviceGate`); Release build thành công và binary không chứa chuỗi màn gán nhãn; Python 3/3. Lưu ý: project đặt `SUPPORTED_PLATFORMS = iphoneos`, nên lệnh simulator phải có `-sdk iphonesimulator`, nếu không sẽ build ra binary máy thật và cài lên simulator thất bại.
 - Môi trường hiện có Python 3.14, thiếu torch/transformers/coremltools và model E5 chưa cached. Recipe chưa chạy conversion; không có số cosine native/reference.
+
+## iPhone 12 Pro thật (2026-11-03)
+
+Máy `Hải - iPhone 12 Pro` (iPhone13,3), iOS 27.0.1 (24A446), Noted 1.0 (1) Debug, bundle `dev.nguyenhoanghai861.Noted`, thư viện nhập từ `.notedbackup`. Báo cáo `report.json` schema v2 lấy ra bằng `xcrun devicectl device copy from --domain-type appDataContainer`; chỉ có số đếm/số đo, không có nội dung hay ID. Không đưa file vào repo.
+
+**Thư viện thật: 73 mục** — 27 ảnh (37%; cả 27 có OCR, 0 ảnh không OCR), 20 link (27%), 26 ghi chú (36%); 0 nhãn. Tỷ lệ khác ước lượng 50/40/10 trong plan. 73 mục < 150 nên gate nhãn (≥150, ≥10/nhóm) **không thể đạt** với thư viện hiện tại; theo plan, nhóm tự khám phá sẽ yếu và nên dựa vào topic người dùng khai báo. Chưa có ảnh không chữ nên không đo được việc Vision giảm “Chưa phân nhóm” cho loại này.
+
+| Phép đo (gate) | Kết quả | Gate |
+|---|---|---|
+| NL contextual cold load, chỉ `load()` (≤3 s) | 55,6 ms | Đạt |
+| NL warm p95 / mục, 50 lượt lặp trên 73 mục (≤300 ms) | 37,1 ms; batch 50 tổng 1,18 s; 0 lỗi | Đạt |
+| Vision cold, ảnh đầu (tham khảo) | 175,7 / 209,2 ms (2 lượt) | — |
+| Vision warm p95 / ảnh, 50 lượt lặp trên 27 ảnh (≤500 ms) | 98,6 / 106,4 ms (2 lượt), 0 lỗi | Đạt |
+| Memory delta Vision (≤250 MB) | +40,6 / +38,8 MB `phys_footprint` | Đạt |
+| Memory delta NL (≤250 MB) | −18,7 MB — **không tin cậy**: đo sau Vision nên lẫn bộ nhớ Vision được giải phóng; chưa đo peak | Chưa kết luận |
+| Batch 50 không làm chậm thao tác lưu | Chưa đo (evaluator chạy trong màn DEBUG, không song song thao tác lưu) | Chưa đo |
+
+- `engineVersion`: `nl-contextual-5C45D94E-BAB4-4927-94B6-8B5745C46289-r1-mean-v1`, `vision-classify-r2-feature-r2-v1`.
+- Asset NL tiếng Việt tải được qua nút **Tải model Natural Language tiếng Việt** (người dùng bấm). Sau đó hai lượt chạy qua UI test (mỗi lượt cài lại app bằng `xcodebuild test`) lại báo `assets unavailable`. Chưa xác định nguyên nhân (cài lại app hay lý do khác); Phase 02 không được giả định asset luôn có và phải xử lý trạng thái vắng asset.
+- Số đo tài nguyên **không** chứng minh chất lượng phân nhóm; chưa có precision/coverage/confusion vì 0 nhãn.
+- Test trên máy: `IntelligenceEngineTests` 9/9 (Vision feature print pass, không skip như simulator); `IntelligenceLabelingUITests` 1/1 (scheme `Noted-DeviceGate`).
+
+## Bộ mẫu tổng hợp trên iPhone (2026-11-03) — không phải dữ liệu người dùng
+
+`IntelligenceSyntheticCorpus` (`synthetic-corpus-v1`, chỉ DEBUG, không ghi vào `library.store`): 175 mục do AI viết kèm nhãn do AI đặt, gồm 141 ghi chú và 34 link, không có ảnh. Mỗi nhóm có 30 mục, riêng “Không rõ” có 25. Dữ liệu trộn Việt có dấu, không dấu, tiếng Anh, kiểu OCR và có các ca khó (Java/CoffeeScript → Không rõ; bán cà phê → Kiếm thêm thu nhập; Carepath sát Tìm việc). Calibration 140 mục, holdout 35 mục, cùng `splitSeed`. Kết quả này chỉ cho biết engine có phân biệt được các chủ đề theo cách viết của bộ mẫu hay không; **không dùng để nghiệm thu gate** (`sufficientLabelsForGate = false`).
+
+| Candidate (holdout 35) | Ngưỡng | Precision | Coverage | Ghi chú |
+|---|---|---|---|---|
+| Baseline tên topic (không phải AI) | — | 3/3 = 100% | 8,6% | Chỉ bắt được khi chữ trùng tên topic |
+| NL contextual mean-pool | cosine ≥0,90, margin 0,02 | 8/10 = 80% | 28,6% | Dưới gate 85% / 70% |
+
+- Confusion NL trên holdout: đúng Cà phê 3, Hài hước 3, Kiếm thêm thu nhập 2. Sai: một mục Không rõ → Carepath và một mục Không rõ → Cà phê. Toàn bộ Carepath (6) và Tìm việc (7) thành unknown; link gần như luôn unknown.
+- Ngưỡng chọn được rất cao (0,90) nên vector mean-pool của NL có thể rất giống nhau giữa các chủ đề. Đây là suy luận, chưa đo phân bố cosine.
+- Tài nguyên (lượt này): NL cold load 80,4 ms, warm p95 20,8 ms, batch 50 mất 0,95 s, memory +0,9 MB.
+- Holdout chỉ 35 mục, mỗi nhóm 5–7 mục, nên sai số lớn. Dù vậy, **NL contextual mean-pool không đạt gate ngay cả trên dữ liệu tổng hợp tương đối sạch**. Đây là tín hiệu bất lợi cho candidate này; quyết định cuối vẫn cần nhãn thật.
+
+## Mean-centering và E5 trên iPhone (2026-11-03) — bộ mẫu tổng hợp
+
+Mean-centering: trừ vector trung bình của toàn bộ mục (không dùng nhãn) rồi chuẩn hóa lại, áp dụng cho mọi engine chữ. E5 `multilingual-e5-small` ở revision pin `fd1525a`, convert bằng `export.py` (Python 3.11.14, coremltools 8.3.0, torch 2.5.1, transformers 4.44.2). Model chạy trên máy qua `CoreMLEmbeddingEngine` với tokenizer native `XLMRobertaTokenizer`. File model được copy vào Application Support của bản Debug, không đóng gói vào app.
+
+**Parity:**
+- Token ID của tokenizer native khớp Python **187/187** bản ghi (175 mục tổng hợp và 12 ca biên: emoji, full-width, NFD, ligature, CJK, zero-width, chuỗi 300 ký tự, chuỗi rỗng).
+- Vector trên iPhone so với PyTorch: fp16 cosine 0,99989–1,0004; int8 0,99984–1,0002. Ngưỡng yêu cầu ≥0,99.
+- Compute units: int8 với `.all`/`.cpuAndGPU` bị `LLVM ERROR: out of memory`; `.cpuOnly` cho vector NaN; chỉ `.cpuAndNeuralEngine` đạt parity.
+
+**Chất lượng** (holdout 35 mục, **dữ liệu tổng hợp, không dùng để nghiệm thu**):
+
+| Candidate | Ngưỡng / margin | Precision | Coverage |
+|---|---|---|---|
+| Baseline tên topic (không phải AI) | — | 100% (3/3) | 8,6% |
+| NL contextual | 0,90 / 0,02 | 80% (8/10) | 28,6% |
+| NL contextual mean-centered | 0,35 / 0,06 | 85,7% (12/14) | 40% |
+| E5 fp16 hoặc int8, vector gốc | 0 / 0,02 | 100% (1/1) | 2,9% |
+| **E5 fp16 hoặc int8, mean-centered** | 0,10 / 0,04 | **83,3% (25/30)** | **85,7%** |
+
+- E5 fp16 và int8 cho kết quả giống hệt nhau trên holdout này.
+- Lỗi của E5 mean-centered: cả 3 mục “Không rõ” trong holdout bị gán vào chủ đề (Cà phê 2, Carepath 1); 2 mục Tìm việc thành Carepath. Ngoài ra Hài hước 2, Kiếm thêm thu nhập 2 và Tìm việc 1 trả về unknown.
+- E5 dạng vector gốc gần như không dự đoán, vì cosine giữa các mục đều cao. Mean-centering là bước bắt buộc với E5.
+
+**Tài nguyên E5 trên iPhone:**
+- Cold load (parse tokenizer 16 MB + load model): int8 735 ms, fp16 755 ms. Gate ≤3 s.
+- Warm p95: int8 3,1 ms/mục, fp16 3,4 ms/mục; batch 50 mục int8 mất 146 ms. Gate ≤300 ms.
+- Memory delta khoảng +16,7 MB. Không tin cậy vì đo sau NL và chưa đo peak.
+- Dung lượng `.mlmodelc`: int8 113 MB, fp16 224 MB, cộng tokenizer 16 MB.
+
+**Kết luận tạm:** E5 int8 mean-centered là candidate tốt nhất. Coverage vượt gate và precision sát 85%, nhưng chỉ trên dữ liệu tổng hợp với holdout 35 mục. Chưa chọn engine: cần nhãn thật để đo precision/confusion, cần đo thêm memory peak và ảnh hưởng tới thao tác lưu.
 
 ## Quy trình đo trước quyết định
 

@@ -74,6 +74,8 @@ struct IntelligenceLabelingView: View {
     @State private var isEvaluating = false
     @State private var evaluationReport: IntelligenceSpikeReport?
     @State private var reportURL: URL?
+    @State private var isRequestingAssets = false
+    @State private var assetStatus: String?
     private let topics = ["Cà phê", "Tìm việc", "Carepath", "Kiếm thêm thu nhập", "Hài hước", "Không rõ", "Chủ đề khác…"]
 
     private var items: [Item] {
@@ -113,7 +115,8 @@ struct IntelligenceLabelingView: View {
                     if isEvaluating { ProgressView("Đang đo, hãy giữ app mở…") }
                     if let report = evaluationReport {
                         Text("\(report.counts.labeled) nhãn · \(report.counts.holdout) holdout · \(report.visionProcessed) ảnh Vision")
-                        Text(report.sufficientLabelsForGate ? "Đã đủ số nhãn tối thiểu; còn phải xem quality gate." : "Chưa đủ nhãn để kết luận chất lượng.")
+                        Text(report.dataSource != "library" ? "Bộ mẫu tổng hợp do AI viết; không dùng để nghiệm thu gate."
+                             : report.sufficientLabelsForGate ? "Đã đủ số nhãn tối thiểu; còn phải xem quality gate." : "Chưa đủ nhãn để kết luận chất lượng.")
                             .font(.footnote).foregroundStyle(.secondary)
                     }
                     if let reportURL {
@@ -122,6 +125,19 @@ struct IntelligenceLabelingView: View {
                         }
                         .accessibilityIdentifier("intelligenceExportReport")
                     }
+                    // Kept below the results so running/exporting stays in the same place.
+                    Button("Tải model Natural Language tiếng Việt") {
+                        Task { await requestContextualAssets() }
+                    }
+                    .disabled(isRequestingAssets || isEvaluating)
+                    .accessibilityIdentifier("intelligenceRequestAssets")
+                    if isRequestingAssets { ProgressView("Đang tải model của Apple…") }
+                    if let assetStatus { Text(assetStatus).font(.footnote) }
+                    Button("Chạy trên bộ mẫu tổng hợp") {
+                        Task { await evaluate(synthetic: true) }
+                    }
+                    .disabled(isEvaluating)
+                    .accessibilityIdentifier("intelligenceRunSynthetic")
                 } header: {
                     Text("Đo trên máy · DEBUG")
                 } footer: {
@@ -230,17 +246,47 @@ struct IntelligenceLabelingView: View {
         }
     }
 
+    /// Downloads only Apple's model asset; no library content leaves the device.
     @MainActor
-    private func evaluate() async {
+    private func requestContextualAssets() async {
+        guard !isRequestingAssets else { return }
+        guard let engine = ContextualEmbeddingEngine() else {
+            assetStatus = "iOS không có model tiếng Việt cho NLContextualEmbedding."
+            return
+        }
+        guard !engine.hasAvailableAssets else {
+            assetStatus = "Model đã có trên máy."
+            return
+        }
+        isRequestingAssets = true
+        defer { isRequestingAssets = false }
+        do {
+            switch try await engine.requestAssets() {
+            case .available: assetStatus = "Đã tải model. Chạy lại đánh giá để đo."
+            case .notAvailable: assetStatus = "Apple báo model hiện không có cho máy này."
+            case .error: assetStatus = "Tải model lỗi."
+            @unknown default: assetStatus = "Kết quả tải model không xác định."
+            }
+        } catch {
+            assetStatus = "Tải model lỗi: \(error.localizedDescription)"
+        }
+    }
+
+    @MainActor
+    private func evaluate(synthetic: Bool = false) async {
         guard !isEvaluating, error == nil else { return }
         isEvaluating = true
         defer { isEvaluating = false }
-        let samples = IntelligenceSpikeEvaluator.snapshots(store: store, labels: labels)
+        let samples = synthetic ? IntelligenceSyntheticCorpus.samples()
+            : IntelligenceSpikeEvaluator.snapshots(store: store, labels: labels)
+        let source = synthetic ? IntelligenceSyntheticCorpus.version : "library"
         let report = await Task.detached(priority: .utility) {
-            IntelligenceSpikeEvaluator.evaluate(samples)
+            IntelligenceSpikeEvaluator.evaluate(samples, dataSource: source)
         }.value
         do {
-            let url = labelURL.deletingLastPathComponent().appendingPathComponent("report.json")
+            // Separate files so a synthetic run never overwrites the real-library report.
+            let url = labelURL.deletingLastPathComponent()
+                .appendingPathComponent(synthetic ? "report-synthetic.json" : "report.json")
             try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
             let encoder = JSONEncoder()
             encoder.outputFormatting = [.prettyPrinted, .sortedKeys]

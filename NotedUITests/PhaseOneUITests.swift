@@ -2,7 +2,7 @@ import XCTest
 
 /// Run only with a physical iPhone destination. Existing shared data is never cleared.
 final class PhaseOneUITests: XCTestCase {
-    private let app = XCUIApplication()
+    private let app = XCUIApplication(bundleIdentifier: "dev.nguyenhoanghai861.Noted")
     private var runID = ""
 
     override func setUpWithError() throws {

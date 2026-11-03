@@ -1,7 +1,7 @@
 import XCTest
 
 final class LibraryUITests: XCTestCase {
-    private let app = XCUIApplication()
+    private let app = XCUIApplication(bundleIdentifier: "dev.nguyenhoanghai861.Noted")
 
     override func setUpWithError() throws {
         continueAfterFailure = false

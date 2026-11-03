@@ -47,9 +47,13 @@ struct IntelligenceSpikeReport: Codable, Sendable {
         let precision: Double?
         let coverage: Double?
         let coverageForTextItems: Double?
-        /// First embedding includes load plus inference, not isolated model load time.
+        /// Explicit model load only (schema v2); inference is timed separately.
         let coldStartMilliseconds: Double?
         let warmP95Milliseconds: Double?
+        /// Total time for a 50-embedding batch, cycling library items when fewer exist.
+        let batch50Milliseconds: Double?
+        /// Process physical footprint after load + batch minus before load.
+        let memoryDeltaMegabytes: Double?
         let unknownReductionForTextlessImages: Double?
         let confusion: [Confusion]
     }
@@ -58,13 +62,52 @@ struct IntelligenceSpikeReport: Codable, Sendable {
     let generatedAt: Date
     let platform: String
     let buildVersion: String
+    /// "library" or a synthetic corpus version; synthetic labels never satisfy the gate.
+    let dataSource: String
     let counts: Counts
     let sufficientLabelsForGate: Bool
     let candidates: [Candidate]
     let visionProcessed: Int
     let visionFailures: Int
     let visionP95Milliseconds: Double?
+    /// First image analysis, which includes Vision model warm-up.
+    let visionColdMilliseconds: Double?
+    let visionMemoryDeltaMegabytes: Double?
     let notes: [String]
+}
+
+/// Device resource sampling for the Phase 01 gate.
+enum IntelligenceResourceProbe {
+    static let batchSize = 50
+
+    /// Same metric Xcode's memory gauge reports (`phys_footprint`).
+    static func physicalFootprintBytes() -> UInt64? {
+        var info = task_vm_info_data_t()
+        var count = mach_msg_type_number_t(MemoryLayout<task_vm_info_data_t>.size / MemoryLayout<integer_t>.size)
+        let result = withUnsafeMutablePointer(to: &info) {
+            $0.withMemoryRebound(to: integer_t.self, capacity: Int(count)) {
+                task_info(mach_task_self_, task_flavor_t(TASK_VM_INFO), $0, &count)
+            }
+        }
+        return result == KERN_SUCCESS ? info.phys_footprint : nil
+    }
+
+    static func megabytes(from before: UInt64?, to after: UInt64?) -> Double? {
+        guard let before, let after else { return nil }
+        return (Double(after) - Double(before)) / 1_048_576
+    }
+
+    /// Cycles inputs so a small library still yields `batchSize` timed runs.
+    static func cycled<T>(_ values: [T], count: Int = batchSize) -> [T] {
+        guard !values.isEmpty else { return [] }
+        return (0..<count).map { values[$0 % values.count] }
+    }
+
+    static func milliseconds(_ work: () throws -> Void) rethrows -> Double {
+        let start = ProcessInfo.processInfo.systemUptime
+        try work()
+        return (ProcessInfo.processInfo.systemUptime - start) * 1_000
+    }
 }
 
 enum IntelligenceSpikeEvaluator {
@@ -97,14 +140,16 @@ enum IntelligenceSpikeEvaluator {
     }
 
     /// Evaluates locally. Call from a detached task with snapshots, never with SwiftData models.
-    static func evaluate(_ samples: [IntelligenceSpikeSample]) -> IntelligenceSpikeReport {
+    static func evaluate(_ samples: [IntelligenceSpikeSample],
+                         dataSource: String = "library") -> IntelligenceSpikeReport {
+        let isSynthetic = dataSource != "library"
         let labeled = samples.filter { $0.gold != nil }
         let calibration = labeled.filter { $0.split == "calibration" }
         let holdout = labeled.filter { $0.split == "holdout" }
         let topicCounts = Dictionary(grouping: labeled.filter { $0.gold != unknown }, by: { $0.gold! }).mapValues(\.count)
         let holdoutCounts = Dictionary(grouping: holdout.filter { $0.gold != unknown }, by: { $0.gold! }).mapValues(\.count)
         let calibrationCounts = Dictionary(grouping: calibration.filter { $0.gold != unknown }, by: { $0.gold! }).mapValues(\.count)
-        let sufficient = labeled.count >= 150 && topicCounts.values.allSatisfy { $0 >= 10 }
+        let sufficient = !isSynthetic && labeled.count >= 150 && topicCounts.values.allSatisfy { $0 >= 10 }
             && !topicCounts.isEmpty && topicCounts.keys.allSatisfy {
                 (holdoutCounts[$0] ?? 0) >= 1 && (calibrationCounts[$0] ?? 0) >= 2
             }
@@ -128,19 +173,24 @@ enum IntelligenceSpikeEvaluator {
                                  threshold: nil, margin: nil, predictions: baselinePredictions, timings: [])
 
         var notes = [String]()
-        if !sufficient { notes.append("Label gate unmet: need at least 150 labels, 10 per topic, and a nonempty holdout; metrics are exploratory.") }
+        if isSynthetic {
+            notes.append("Synthetic corpus \(dataSource): assistant-written items and labels; not user data, cannot satisfy the Phase 01 gate.")
+        } else if !sufficient { notes.append("Label gate unmet: need at least 150 labels, 10 per topic, and a nonempty holdout; metrics are exploratory.") }
         var visionTimings = [Double]()
         var visionFailures = 0
         var visionProcessed = 0
         var visionWords: [UUID: String] = [:]
         var featurePrints: [UUID: VNFeaturePrintObservation] = [:]
         var visionVersion = "vision-unavailable"
+        var analyzedURLs = [URL]()
+        let visionFootprintBefore = IntelligenceResourceProbe.physicalFootprintBytes()
         for sample in image {
             guard let url = sample.imageURL else { visionFailures += 1; continue }
             let start = ProcessInfo.processInfo.systemUptime
             do {
                 let signal = try ImageSignals.analyze(url: url)
                 visionTimings.append((ProcessInfo.processInfo.systemUptime - start) * 1_000)
+                analyzedURLs.append(url)
                 visionProcessed += 1
                 visionWords[sample.id] = signal.labels.prefix(5).map(\.name).joined(separator: " ")
                 featurePrints[sample.id] = signal.featurePrint
@@ -150,6 +200,19 @@ enum IntelligenceSpikeEvaluator {
             }
         }
         if visionFailures > 0 { notes.append("Vision failures: \(visionFailures); no image-quality claim can use those samples.") }
+        // Warm timing reruns already-decoded library images up to the batch size.
+        let visionCold = visionTimings.first
+        var visionWarm = [Double]()
+        for url in IntelligenceResourceProbe.cycled(analyzedURLs) {
+            if let elapsed = try? IntelligenceResourceProbe.milliseconds({ _ = try ImageSignals.analyze(url: url) }) {
+                visionWarm.append(elapsed)
+            }
+        }
+        let visionMemory = IntelligenceResourceProbe.megabytes(
+            from: visionFootprintBefore, to: IntelligenceResourceProbe.physicalFootprintBytes())
+        if !analyzedURLs.isEmpty && analyzedURLs.count < IntelligenceResourceProbe.batchSize {
+            notes.append("Resource batches cycle \(analyzedURLs.count) images to \(IntelligenceResourceProbe.batchSize) runs.")
+        }
         // Vision labels enrich text only after signals are available. Original text
         // presence is retained separately for the text-only coverage calculation.
         let enriched = samples.map { sample in
@@ -161,17 +224,23 @@ enum IntelligenceSpikeEvaluator {
         }
 
         let contextual = evaluateContextual(enriched)
+        let e5Engines = ["fp16", "int8"].compactMap { CoreMLEmbeddingEngine(variant: $0) }
+        let e5 = e5Engines.flatMap { engine in
+            evaluateTextEngine(engine, name: "E5 small \(engine.variant)", load: engine.load, samples: enriched)
+        }
+        if e5Engines.isEmpty { notes.append("E5 model files absent on this device; E5 not measured.") }
         let nearestImage = evaluateImageNearestNeighbor(samples, featurePrints: featurePrints,
                                                         baselinePredictions: baselinePredictions,
                                                         engineVersion: visionVersion)
-        notes.append("No E5 native tokenizer/vector parity, tag precision, or semantic recall@10 is measured here.")
+        notes.append("Tag precision and semantic recall@10 are not measured here; E5 parity is checked by device tests.")
         return IntelligenceSpikeReport(
-            schemaVersion: 1, generatedAt: Date(),
+            schemaVersion: 3, generatedAt: Date(),
             platform: "\(ProcessInfo.processInfo.operatingSystemVersionString)\(isSimulator ? " simulator" : " device")",
             buildVersion: "\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "unknown") (\(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "unknown"))",
-            counts: counts, sufficientLabelsForGate: sufficient,
-            candidates: [baseline, contextual, nearestImage], visionProcessed: visionProcessed,
-            visionFailures: visionFailures, visionP95Milliseconds: p95(visionTimings), notes: notes
+            dataSource: dataSource, counts: counts, sufficientLabelsForGate: sufficient,
+            candidates: [baseline] + contextual + e5 + [nearestImage], visionProcessed: visionProcessed,
+            visionFailures: visionFailures, visionP95Milliseconds: p95(visionWarm),
+            visionColdMilliseconds: visionCold, visionMemoryDeltaMegabytes: visionMemory, notes: notes
         )
     }
 
@@ -183,38 +252,73 @@ enum IntelligenceSpikeEvaluator {
         #endif
     }
 
-    private static func evaluateContextual(_ samples: [IntelligenceSpikeSample]) -> IntelligenceSpikeReport.Candidate {
+    private static func evaluateContextual(_ samples: [IntelligenceSpikeSample]) -> [IntelligenceSpikeReport.Candidate] {
+        let name = "Apple NL contextual"
         guard let engine = ContextualEmbeddingEngine() else {
-            return candidate(name: "Apple NL contextual", engineVersion: "unavailable", status: "Vietnamese model unavailable",
-                             threshold: nil, margin: nil, predictions: [], timings: [])
+            return [candidate(name: name, engineVersion: "unavailable", status: "Vietnamese model unavailable",
+                              threshold: nil, margin: nil, predictions: [])]
         }
         guard engine.hasAvailableAssets else {
-            return candidate(name: "Apple NL contextual", engineVersion: engine.engineVersion, status: "assets unavailable; no automatic download",
-                             threshold: nil, margin: nil, predictions: [], timings: [])
+            return [candidate(name: name, engineVersion: engine.engineVersion, status: "assets unavailable; no automatic download",
+                              threshold: nil, margin: nil, predictions: [])]
+        }
+        return evaluateTextEngine(engine, name: name, load: engine.load, samples: samples)
+    }
+
+    /// Embeds every text sample once, then scores raw and mean-centered vectors.
+    static func evaluateTextEngine(_ engine: TextEmbeddingEngine, name: String, load: () throws -> Void,
+                                   samples: [IntelligenceSpikeSample]) -> [IntelligenceSpikeReport.Candidate] {
+        let footprintBefore = IntelligenceResourceProbe.physicalFootprintBytes()
+        let coldLoad: Double
+        do {
+            coldLoad = try IntelligenceResourceProbe.milliseconds(load)
+        } catch {
+            return [candidate(name: name, engineVersion: engine.engineVersion, status: "model load failed: \(error)",
+                              threshold: nil, margin: nil, predictions: [])]
         }
         var vectors: [UUID: [Float]] = [:]
-        var timings = [Double]()
         var errors = 0
-        for sample in samples where !sample.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            let start = ProcessInfo.processInfo.systemUptime
-            do {
-                vectors[sample.id] = try engine.embed(sample.text, role: .passage)
-                timings.append((ProcessInfo.processInfo.systemUptime - start) * 1_000)
-            } catch { errors += 1 }
+        let texts = samples.filter { !$0.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+        for sample in texts {
+            do { vectors[sample.id] = try engine.embed(sample.text, role: .passage) } catch { errors += 1 }
         }
+        // Resource timings use a fixed-size batch so they do not depend on label count.
+        var timings = [Double]()
+        for sample in IntelligenceResourceProbe.cycled(texts) {
+            if let elapsed = try? IntelligenceResourceProbe.milliseconds({ _ = try engine.embed(sample.text, role: .passage) }) {
+                timings.append(elapsed)
+            }
+        }
+        let resources = TextResources(
+            coldLoad: coldLoad, timings: timings,
+            memoryDelta: IntelligenceResourceProbe.megabytes(from: footprintBefore,
+                                                             to: IntelligenceResourceProbe.physicalFootprintBytes()))
+        return [
+            classify(name: name, engineVersion: engine.engineVersion, samples: samples, vectors: vectors,
+                     errors: errors, resources: resources),
+            // Uses all item vectors (no labels), as the app could at runtime.
+            classify(name: "\(name) · mean-centered", engineVersion: "\(engine.engineVersion)-centered",
+                     samples: samples, vectors: EmbeddingMath.meanCentered(vectors), errors: errors, resources: resources)
+        ]
+    }
+
+    private static func classify(name: String, engineVersion: String, samples: [IntelligenceSpikeSample],
+                                 vectors: [UUID: [Float]], errors: Int,
+                                 resources: TextResources) -> IntelligenceSpikeReport.Candidate {
         let calibration = samples.filter { $0.split == "calibration" && $0.gold != nil && vectors[$0.id] != nil }
         let knownCalibration = calibration.filter { $0.gold != unknown }
         let holdout = samples.filter { $0.split == "holdout" && $0.gold != nil }
         guard !knownCalibration.isEmpty else {
-            return candidate(name: "Apple NL contextual", engineVersion: engine.engineVersion,
-                             status: "no usable calibration vectors; \(errors) embedding errors",
-                             threshold: nil, margin: nil, predictions: [], timings: timings)
+            return candidate(name: name, engineVersion: engineVersion,
+                             status: "resources measured; no usable calibration vectors; \(errors) embedding errors",
+                             threshold: nil, margin: nil, predictions: [], resources: resources)
         }
         let rankings = calibration.map { sample in
             (sample: sample, ranked: rank(vectors[sample.id]!, prototypes: prototypes(
                 knownCalibration.filter { $0.id != sample.id }, vectors)))
         }
-        let grid: [(Float, Float)] = (0...18).flatMap { a in (0...10).map { b in (Float(a) * 0.05, Float(b) * 0.02) } }
+        // Centered cosines sit far lower than raw ones, so the grid spans both ranges.
+        let grid: [(Float, Float)] = (0...19).flatMap { a in (0...10).map { b in (Float(a) * 0.05, Float(b) * 0.02) } }
         var best: (threshold: Float, margin: Float, correct: Int, predicted: Int)?
         for (threshold, margin) in grid {
             let predictions = rankings.map { row -> (IntelligenceSpikeSample, String?) in
@@ -228,9 +332,9 @@ enum IntelligenceSpikeEvaluator {
             }
         }
         guard let selected = best else {
-            return candidate(name: "Apple NL contextual", engineVersion: engine.engineVersion,
+            return candidate(name: name, engineVersion: engineVersion,
                              status: "no calibration threshold reached 85% precision; \(errors) embedding errors",
-                             threshold: nil, margin: nil, predictions: [], timings: timings)
+                             threshold: nil, margin: nil, predictions: [], resources: resources)
         }
         let centers = prototypes(knownCalibration, vectors)
         let predictions = holdout.map { sample in
@@ -238,10 +342,15 @@ enum IntelligenceSpikeEvaluator {
                 predict(rank($0, prototypes: centers), threshold: selected.threshold, margin: selected.margin)
             })
         }
-        return candidate(name: "Apple NL contextual", engineVersion: engine.engineVersion,
+        return candidate(name: name, engineVersion: engineVersion,
                          status: "exploratory holdout; \(errors) embedding errors", threshold: selected.threshold,
-                         margin: selected.margin, predictions: predictions,
-                         timings: Array(timings.dropFirst()), coldLoad: timings.first)
+                         margin: selected.margin, predictions: predictions, resources: resources)
+    }
+
+    struct TextResources {
+        let coldLoad: Double
+        let timings: [Double]
+        let memoryDelta: Double?
     }
 
     /// One nearest labeled image, with its distance cutoff chosen by calibration leave-one-out.
@@ -337,8 +446,9 @@ enum IntelligenceSpikeEvaluator {
 
     private static func candidate(name: String, engineVersion: String, status: String, threshold: Float?, margin: Float?,
                                   predictions: [(sample: IntelligenceSpikeSample, predicted: String?)],
-                                  timings: [Double], coldLoad: Double? = nil,
+                                  timings: [Double] = [], resources: TextResources? = nil,
                                   unknownReduction: Double? = nil) -> IntelligenceSpikeReport.Candidate {
+        let timings = resources?.timings ?? timings
         let evaluated = predictions.count
         let predicted = predictions.filter { $0.predicted != nil }.count
         let correct = predictions.filter { $0.predicted == $0.sample.gold }.count
@@ -361,8 +471,10 @@ enum IntelligenceSpikeEvaluator {
                      precision: predicted > 0 ? Double(correct) / Double(predicted) : nil,
                      coverage: evaluated > 0 ? Double(predicted) / Double(evaluated) : nil,
                      coverageForTextItems: textRows.isEmpty ? nil : Double(textPredicted) / Double(textRows.count),
-                     coldStartMilliseconds: coldLoad,
+                     coldStartMilliseconds: resources?.coldLoad,
                      warmP95Milliseconds: p95(timings),
+                     batch50Milliseconds: timings.count == IntelligenceResourceProbe.batchSize ? timings.reduce(0, +) : nil,
+                     memoryDeltaMegabytes: resources?.memoryDelta,
                      unknownReductionForTextlessImages: unknownReduction,
                      confusion: confusion)
     }

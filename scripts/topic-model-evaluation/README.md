@@ -22,3 +22,15 @@ The export requests only safetensors, tokenizer and config files at the pinned c
 Expected native JSON: `{"vectors": [{"id": "vi-coffee", "input_ids": [...], "attention_mask": [...], "vector": [0.1, ...]}, ...]}`. The comparer requires matching token IDs and masks. No personal text should be committed. Model files and local outputs belong in `/tmp`, not the repository.
 
 The reference encoder uses `query: ` for queries, `passage: ` for stored text, attention-mask mean pooling, and L2 normalization. Token length is fixed at 128 for this spike, below the model's 512-token maximum. Long-item chunking and score aggregation still require measurement against labeled data.
+
+## Device spike (2026-11-03, iPhone 12 Pro)
+
+Python 3.11 was not installed system-wide; an isolated interpreter works: `uv venv --python 3.11 <venv>` then `uv pip install --python <venv>/bin/python -r requirements.txt`.
+
+1. Token-ID fixture over the synthetic corpus plus edge cases (synthetic text only):
+   `<venv>/bin/python -I scripts/topic-model-evaluation/token_fixture.py Noted/Core/Intelligence/IntelligenceSyntheticCorpus.swift <hf-cache snapshot dir> <out>/token-fixture.json`
+2. Compile: `xcrun coremlcompiler compile <out>/e5-int8.mlpackage <device-dir>` (same for fp16), and add `tokenizer.json`, `reference-vectors.json`, `token-fixture.json`.
+3. Copy each file to the Debug app: `xcrun devicectl device copy to --device <UDID> --domain-type appDataContainer --domain-identifier <bundle id> --source <file> --destination "Library/Application Support/IntelligenceEvaluation/e5/<relative path>"`.
+4. Run `IntelligenceEngineTests` on the device. The parity tests skip when files are absent; `TEST_RUNNER_NOTED_SPIKE_REPORT=1` also prints the synthetic-corpus report.
+
+`CoreMLEmbeddingEngine` uses `.cpuAndNeuralEngine`: on iPhone 12 Pro the int8 model hit `LLVM ERROR: out of memory` with `.all`/`.cpuAndGPU`, and `.cpuOnly` returned NaN vectors.
