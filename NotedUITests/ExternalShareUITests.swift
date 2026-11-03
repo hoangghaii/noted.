@@ -1,8 +1,8 @@
 import XCTest
 
 final class ExternalShareUITests: XCTestCase {
-    private let noted = XCUIApplication(bundleIdentifier: "dev.nhhai7.Noted")
-    private let source = XCUIApplication(bundleIdentifier: "dev.nhhai7.NotedGateHost")
+    private let noted = XCUIApplication(bundleIdentifier: "dev.nguyenhoanghai861.Noted")
+    private let source = XCUIApplication(bundleIdentifier: "dev.nguyenhoanghai861.NotedGateHost")
     private var runID = ""
 
     override func setUpWithError() throws {

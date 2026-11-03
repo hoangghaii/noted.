@@ -74,6 +74,8 @@ struct IntelligenceLabelingView: View {
     @State private var isEvaluating = false
     @State private var evaluationReport: IntelligenceSpikeReport?
     @State private var reportURL: URL?
+    @State private var isRequestingAssets = false
+    @State private var assetStatus: String?
     private let topics = ["Cà phê", "Tìm việc", "Carepath", "Kiếm thêm thu nhập", "Hài hước", "Không rõ", "Chủ đề khác…"]
 
     private var items: [Item] {
@@ -105,6 +107,13 @@ struct IntelligenceLabelingView: View {
                 }
 
                 Section {
+                    Button("Tải model Natural Language tiếng Việt") {
+                        Task { await requestContextualAssets() }
+                    }
+                    .disabled(isRequestingAssets || isEvaluating)
+                    .accessibilityIdentifier("intelligenceRequestAssets")
+                    if isRequestingAssets { ProgressView("Đang tải model của Apple…") }
+                    if let assetStatus { Text(assetStatus).font(.footnote) }
                     Button("Chạy đánh giá local") {
                         Task { await evaluate() }
                     }
@@ -227,6 +236,32 @@ struct IntelligenceLabelingView: View {
             if index < items.count - 1 { select(index + 1) }
         } catch {
             self.error = "Không lưu được nhãn: \(error.localizedDescription)"
+        }
+    }
+
+    /// Downloads only Apple's model asset; no library content leaves the device.
+    @MainActor
+    private func requestContextualAssets() async {
+        guard !isRequestingAssets else { return }
+        guard let engine = ContextualEmbeddingEngine() else {
+            assetStatus = "iOS không có model tiếng Việt cho NLContextualEmbedding."
+            return
+        }
+        guard !engine.hasAvailableAssets else {
+            assetStatus = "Model đã có trên máy."
+            return
+        }
+        isRequestingAssets = true
+        defer { isRequestingAssets = false }
+        do {
+            switch try await engine.requestAssets() {
+            case .available: assetStatus = "Đã tải model. Chạy lại đánh giá để đo."
+            case .notAvailable: assetStatus = "Apple báo model hiện không có cho máy này."
+            case .error: assetStatus = "Tải model lỗi."
+            @unknown default: assetStatus = "Kết quả tải model không xác định."
+            }
+        } catch {
+            assetStatus = "Tải model lỗi: \(error.localizedDescription)"
         }
     }
 

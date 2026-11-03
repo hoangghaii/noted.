@@ -17,6 +17,17 @@ final class ContextualEmbeddingEngine: TextEmbeddingEngine {
     var hasAvailableAssets: Bool { model.hasAvailableAssets }
     var maximumSequenceLength: Int { model.maximumSequenceLength }
 
+    /// Downloads Apple's model assets. Call only from an explicit user action.
+    func requestAssets() async throws -> NLContextualEmbedding.AssetsResult {
+        try await model.requestAssets()
+    }
+
+    /// Loads the model explicitly so cold load can be timed apart from inference.
+    func load() throws {
+        guard model.hasAvailableAssets else { throw EmbeddingError.unavailable("Contextual assets absent") }
+        try model.load()
+    }
+
     func embed(_ text: String, role: EmbeddingRole) throws -> [Float] {
         let cleaned = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !cleaned.isEmpty else { throw EmbeddingError.emptyInput }

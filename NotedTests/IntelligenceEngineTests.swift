@@ -86,6 +86,32 @@ final class IntelligenceEngineTests: XCTestCase {
         XCTAssertFalse(json.contains("private-tag"))
     }
 
+    func testResourceProbeReadsFootprintAndCyclesSmallLibraries() {
+        XCTAssertGreaterThan(IntelligenceResourceProbe.physicalFootprintBytes() ?? 0, 0)
+        XCTAssertEqual(IntelligenceResourceProbe.megabytes(from: 1_048_576, to: 3_145_728), 2)
+        XCTAssertNil(IntelligenceResourceProbe.megabytes(from: nil, to: 1))
+        let cycled = IntelligenceResourceProbe.cycled([1, 2, 3])
+        XCTAssertEqual(cycled.count, IntelligenceResourceProbe.batchSize)
+        XCTAssertEqual(Array(cycled.prefix(4)), [1, 2, 3, 1])
+        XCTAssertTrue(IntelligenceResourceProbe.cycled([Int]()).isEmpty)
+    }
+
+    func testReportSchemaV2CarriesResourceFieldsWithoutLabels() throws {
+        let samples = [IntelligenceSpikeSample(id: UUID(), kind: "text", text: "cà phê sáng", hasOriginalText: true,
+                                               imageURL: nil, hasOCR: false, gold: nil, desiredTags: [], split: nil)]
+        let report = IntelligenceSpikeEvaluator.evaluate(samples)
+        XCTAssertEqual(report.schemaVersion, 2)
+        XCTAssertNil(report.visionColdMilliseconds)
+        let contextual = try XCTUnwrap(report.candidates.first { $0.name == "Apple NL contextual" })
+        // Resource numbers require downloaded assets; without them nothing may be reported as measured.
+        if contextual.status.hasPrefix("resources measured") {
+            XCTAssertNotNil(contextual.coldStartMilliseconds)
+            XCTAssertNotNil(contextual.batch50Milliseconds)
+        } else {
+            XCTAssertNil(contextual.batch50Milliseconds)
+        }
+    }
+
     func testEvaluationSplitIsStableAndLabelStoreRoundTripsWithoutLibraryMutation() throws {
         let id = UUID(uuidString: "00000000-0000-4000-8000-000000000001")!
         let split = IntelligenceLabelStorage.split(for: id)
