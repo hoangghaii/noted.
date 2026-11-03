@@ -92,7 +92,7 @@ struct DataManagementView: View {
                 handledImportURL = url
                 await importBackup(url)
             }
-            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Xong") { dismiss() }.buttonStyle(NotedButtonStyle(role: .soft)).disabled(busy) } }
+            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Xong") { dismiss() }.buttonStyle(NotedButtonStyle(role: .soft)).fixedSize().disabled(busy) }.notedOwnBackground() }
             .operationLoading(busy, message: busyMessage)
             .interactiveDismissDisabled(busy)
             .sheet(item: $export) { output in

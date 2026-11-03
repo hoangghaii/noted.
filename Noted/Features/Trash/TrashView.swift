@@ -49,7 +49,7 @@ struct TrashView: View {
             }
         }
         .navigationTitle("Thùng rác").navigationBarTitleDisplayMode(.inline)
-        .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Xong") { dismiss() }.buttonStyle(NotedButtonStyle(role: .soft)) } }
+        .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Xong") { dismiss() }.buttonStyle(NotedButtonStyle(role: .soft)).fixedSize() }.notedOwnBackground() }
         .overlay { confirmationOverlay }
         .alert("Chưa hoàn tất", isPresented: Binding(get: { error != nil }, set: { if !$0 { error = nil } })) {
             Button("Đóng", role: .cancel) { error = nil }
