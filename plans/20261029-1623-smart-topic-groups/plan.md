@@ -42,6 +42,8 @@ Ngoài phạm vi: chatbot, backend/proxy, đồng bộ, vector DB, LLM trên má
 | [06 — (Tùy chọn) API miễn phí](phase-06-optional-free-api.md) | Pending, có thể bỏ | 04 | Viết lại tiêu đề/tóm tắt, mặc định tắt |
 | [07 — Nghiệm thu iPhone](phase-07-device-acceptance.md) | Pending | 03–05 (06 nếu làm) | Evidence chất lượng/tài nguyên/offline/backup |
 
+Liên quan (2026-11-04): plan [Đọc hiểu & tóm tắt ảnh](../20261104-0902-ocr-image-summary/plan.md) tạo `intelligence.store` (entity `ImageDigest`) trước, và Phase 02 ở đây sẽ mở rộng store đó. Plan ấy cũng thay bước "tiêu đề ảnh từ OCR" của Phase 04 bằng hiển thị `digest.title`, đồng thời viết `RemoteTextGenerator` để Phase 06 dùng lại. Minimum target đã chốt là iOS 27.
+
 Phase 03, 04, 05 có thể làm song song sau 02. Phase 03 chỉ đụng tới màn Thư viện/Tìm kiếm sau khi plan [Giấy & Bảng ghim](../20261102-2119-paper-pinboard-ui/plan.md) nghiệm thu xong, để khỏi làm lại.
 
 ## Cơ sở nguồn hiện tại
