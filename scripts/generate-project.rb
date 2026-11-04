@@ -9,9 +9,9 @@ project = Xcodeproj::Project.new(path)
 config = project.main_group.new_group('Config', 'Config')
 defaults = config.new_file('Defaults.xcconfig')
 config.new_file('Local.xcconfig.example')
-app = project.new_target(:application, 'Noted', :ios, '17.0')
-ext = project.new_target(:app_extension, 'NotedShare', :ios, '17.0')
-tests = project.new_target(:unit_test_bundle, 'NotedTests', :ios, '17.0')
+app = project.new_target(:application, 'Noted', :ios, '27.0')
+ext = project.new_target(:app_extension, 'NotedShare', :ios, '27.0')
+tests = project.new_target(:unit_test_bundle, 'NotedTests', :ios, '27.0')
 files = {}
 %w[Noted NotedShare Shared NotedTests].each do |folder|
   group = project.main_group.new_group(folder, folder)
@@ -29,7 +29,7 @@ embed.dst_subfolder_spec = '13'
 embedded = embed.add_file_reference(ext.product_reference)
 embedded.settings = {'ATTRIBUTES' => ['RemoveHeadersOnCopy']}
 project.build_configurations.each do |c|
-  c.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '17.0'
+  c.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '27.0'
   c.build_settings['SWIFT_VERSION'] = '5.0'
   c.build_settings['CLANG_ENABLE_MODULES'] = 'YES'
 end

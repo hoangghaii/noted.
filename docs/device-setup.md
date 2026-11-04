@@ -3,7 +3,7 @@
 ## Cấu hình
 
 - Xcode hiện kiểm tra: 27.0 (27A266a), iPhoneOS SDK 27.0.
-- Deployment target 17.0; đã chạy thực tế trên iPhone 12 Pro (iPhone13,3), iOS 27.0.1 (24A446), kết nối cáp và Developer Mode enabled.
+- Deployment target 27.0; đã chạy thực tế trên iPhone 12 Pro (iPhone13,3), iOS 27.0.1 (24A446), kết nối cáp và Developer Mode enabled.
 - App: `dev.nguyenhoanghai861.Noted`; extension: `dev.nguyenhoanghai861.Noted.Share`.
 - App Group: `group.dev.nguyenhoanghai861.Noted`; entitlement đã được ký vào cả hai target.
 - Scheme: `Noted`, test target: `NotedTests`; supported platforms chỉ `iphoneos`.
