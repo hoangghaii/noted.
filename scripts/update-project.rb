@@ -8,7 +8,7 @@ app = project.targets.find { |t| t.name == 'Noted' }
 defaults = project.files.find { |f| f.path == 'Defaults.xcconfig' }
 ui = project.targets.find { |t| t.name == 'NotedUITests' }
 unless ui
-  ui = project.new_target(:ui_test_bundle, 'NotedUITests', :ios, '17.0')
+  ui = project.new_target(:ui_test_bundle, 'NotedUITests', :ios, '27.0')
   ui.add_dependency(app)
   ui.build_configurations.each do |c|
     c.base_configuration_reference = defaults
@@ -17,7 +17,7 @@ unless ui
 end
 host = project.targets.find { |t| t.name == 'NotedGateHost' }
 if File.directory?('NotedGateHost') && !host
-  host = project.new_target(:application, 'NotedGateHost', :ios, '17.0')
+  host = project.new_target(:application, 'NotedGateHost', :ios, '27.0')
   host.build_configurations.each do |c|
     c.base_configuration_reference = defaults
     c.build_settings.merge!({'PRODUCT_BUNDLE_IDENTIFIER'=>'dev.nguyenhoanghai861.NotedGateHost', 'GENERATE_INFOPLIST_FILE'=>'YES', 'INFOPLIST_KEY_CFBundleDisplayName'=>'Noted Share Check', 'INFOPLIST_KEY_UILaunchScreen_Generation'=>'YES', 'CODE_SIGN_STYLE'=>'Automatic', 'SWIFT_VERSION'=>'5.0', 'TARGETED_DEVICE_FAMILY'=>'1', 'SUPPORTED_PLATFORMS'=>'iphoneos', 'SDKROOT'=>'iphoneos'})
