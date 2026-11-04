@@ -1,6 +1,6 @@
 # Noted — Lớp AI trên máy: chủ đề, tiêu đề/tóm tắt, tag, tìm theo nghĩa
 
-Tạo 2026-10-29, viết lại 2026-11-03 sau brainstorm. Trạng thái: Phase 01 đang triển khai trên iPhone thật; đã đo tài nguyên, chưa có nhãn, chưa nghiệm thu. Ưu tiên: cao. Bản cũ (4 phase, chỉ phân nhóm): [archive v1](../archive/20261029-1623-smart-topic-groups-v1/plan.md).
+Tạo 2026-10-29, viết lại 2026-11-03 sau brainstorm. Trạng thái: Phase 01 đang triển khai trên iPhone thật; đã đo tài nguyên, chưa có nhãn, chưa nghiệm thu. Ưu tiên: cao. Bản cũ (4 phase, chỉ phân nhóm): [archive v1](../archived/20261029-1623-smart-topic-groups-v1/plan.md).
 
 ## Mục tiêu
 
@@ -34,7 +34,7 @@ Ngoài phạm vi: chatbot, backend/proxy, đồng bộ, vector DB, LLM trên má
 
 | Phase | Trạng thái | Phụ thuộc | Đầu ra |
 |---|---|---|---|
-| [01 — Spike engine & bộ đánh giá](phase-01-engine-spike-and-evaluation.md) | In progress; E5 int8 dẫn đầu trên bộ tổng hợp, chờ người dùng gán nhãn 73 mục thật ([handoff](phase-01-engine-spike-and-evaluation.md#handoff-2026-11-03--tiếp-tục-2026-11-04)) | — | Chọn engine bằng số đo trên iPhone, gán nhãn dữ liệu thật, đếm số mục thư viện |
+| [01 — Spike engine & bộ đánh giá](phase-01-engine-spike-and-evaluation.md) | In progress. Đã gán nhãn 75 mục thật, chưa engine nào thắng baseline rõ ràng; tài nguyên: chọn E5 fp16. Chờ plan [Đọc hiểu link](../20261104-2113-link-understanding/plan.md) rồi đánh giá lại link ([handoff](phase-01-engine-spike-and-evaluation.md#handoff-2026-11-03--tiếp-tục-2026-11-04)) | — | Chọn engine bằng số đo trên iPhone, gán nhãn dữ liệu thật, đếm số mục thư viện |
 | [02 — Kho AI & pipeline](phase-02-intelligence-store-and-pipeline.md) | Pending | 01 | `intelligence.store`, runner, cache vector, backup v2 |
 | [03 — Chủ đề & giao diện nhóm](phase-03-topics-and-grouped-ui.md) | Pending | 02, plan UI giấy Phase 08 | Section theo chủ đề, khởi tạo topic, học từ sửa tay, quản lý topic |
 | [04 — Tiêu đề, tóm tắt, tag & Share](phase-04-titles-tags-and-share.md) | Pending | 02 | og:description, tiêu đề trống, chip tag, gợi ý trong Share Extension |
@@ -44,7 +44,9 @@ Ngoài phạm vi: chatbot, backend/proxy, đồng bộ, vector DB, LLM trên má
 
 Liên quan (2026-11-04): plan [Đọc hiểu & tóm tắt ảnh](../20261104-0902-ocr-image-summary/plan.md) tạo `intelligence.store` (entity `ImageDigest`) trước, và Phase 02 ở đây sẽ mở rộng store đó. Plan ấy cũng thay bước "tiêu đề ảnh từ OCR" của Phase 04 bằng hiển thị `digest.title`, đồng thời viết `RemoteTextGenerator` để Phase 06 dùng lại. Minimum target đã chốt là iOS 27.
 
-Phase 03, 04, 05 có thể làm song song sau 02. Phase 03 chỉ đụng tới màn Thư viện/Tìm kiếm sau khi plan [Giấy & Bảng ghim](../20261102-2119-paper-pinboard-ui/plan.md) nghiệm thu xong, để khỏi làm lại.
+Liên quan (2026-11-04): plan [Đọc hiểu link](../20261104-2113-link-understanding/plan.md) tạo `LinkDigest` (meta, nội dung chính, API tùy chọn). Bước “Link” ở Phase 04 sẽ dùng digest đó thay vì tự lấy og:description.
+
+Phase 03, 04, 05 có thể làm song song sau 02. Phase 03 chỉ đụng tới màn Thư viện/Tìm kiếm sau khi plan [Giấy & Bảng ghim](../archived/20261102-2119-paper-pinboard-ui/plan.md) nghiệm thu xong, để khỏi làm lại.
 
 ## Cơ sở nguồn hiện tại
 

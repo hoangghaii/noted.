@@ -48,6 +48,22 @@ final class SearchAndEnrichmentTests: XCTestCase {
         XCTAssertTrue(PublicURLPolicy.isPublicIPv4(0x08080808))
     }
 
+    func testLinkSourceSpikeMarksRepeatedBoilerplate() {
+        var attempt = LinkSourceAttempt(strategy: .safariUserAgent)
+        attempt.descriptionLength = 80
+        attempt.descriptionHash = LinkSourceSpike.hash("Same boilerplate")
+        attempt.usable = LinkSourceSpike.isUsable(attempt)
+        XCTAssertTrue(attempt.usable)
+        let marked = LinkSourceSpike.markBoilerplate([
+            LinkSourceResult(itemID: UUID(), domain: "facebook", attempts: [attempt]),
+            LinkSourceResult(itemID: UUID(), domain: "facebook", attempts: [attempt])
+        ])
+        XCTAssertTrue(marked.allSatisfy { $0.attempts[0].genericPattern == "repeated-description" && !$0.attempts[0].usable })
+        let summary = LinkSourceSpike.summarize(marked)
+        XCTAssertEqual(summary, [LinkSourceSummaryRow(domain: "facebook", strategy: .safariUserAgent,
+                                                      attempted: 2, usable: 0, loginWall: 2, withStatus2xx: 0)])
+    }
+
     func testOCRReadsSyntheticImageAndReportsActualLanguages() async throws {
         let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)

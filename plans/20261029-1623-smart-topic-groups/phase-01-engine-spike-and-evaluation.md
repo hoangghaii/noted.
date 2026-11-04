@@ -6,6 +6,10 @@ Tiến độ 2026-11-03: đã thêm engine thử nghiệm Natural Language/Visio
 
 Tiến độ 2026-11-03 (iPhone 12 Pro thật, iOS 27.0.1): thư viện có 73 mục (27 ảnh đều có OCR, 20 link, 26 ghi chú), nên gate ≥150 nhãn không đạt được với dữ liệu hiện có. Evaluator đo được cold load NL 55,6 ms, warm p95 NL 37,1 ms, Vision p95 98,6–106,4 ms, memory Vision +39–41 MB. Memory NL chưa tin cậy và chưa đo ảnh hưởng tới thao tác lưu. Asset NL tải được nhưng không còn sau khi cài lại app. Chi tiết: [mục iPhone](../../docs/intelligence-evaluation.md#iphone-12-pro-thật-2026-11-03). Trên bộ mẫu tổng hợp 175 mục do AI viết (không dùng cho gate), NL contextual mean-pool đạt precision 80% và coverage 28,6% trên holdout 35 mục, dưới gate; baseline đạt 100% và 8,6%. E5 small đã convert và chạy trên máy. Tokenizer native khớp 187/187, vector khớp Python với cosine ≥0,9998 cho cả fp16 và int8, khi dùng `.cpuAndNeuralEngine`. E5 int8 mean-centered đạt precision 83,3% và coverage 85,7% trên bộ tổng hợp. Cold load 0,74 s, p95 3,1 ms/mục, model 113 MB. Xem [mục E5](../../docs/intelligence-evaluation.md#mean-centering-và-e5-trên-iphone-2026-11-03--bộ-mẫu-tổng-hợp).
 
+Tiến độ 2026-11-04: đo gate tài nguyên E5 riêng (process sạch và qua các lần mở lại app). Kết quả: chọn **fp16** thay int8. Lý do: lần đầu int8 tăng peak +591 MB, vượt gate; fp16 chỉ +97 MB. fp16 có p95 4,6 ms/mục và load 2,2–2,3 s ở các lần mở sau. Lưu ghi chú trong lúc batch 50 chạy chỉ chậm thêm 2–3 ms. Load lần đầu sau khi cài hoặc cập nhật mất 14,5 s (Neural Engine specialize, có cache) nên chưa đạt gate cold load; cần load nền. Con số 0,74 s hôm trước đã được đính chính. Xem [gate tài nguyên E5](../../docs/intelligence-evaluation.md#gate-tài-nguyên-e5-đo-riêng-2026-11-04). Nhãn thật vẫn chưa có (`labels.json` chưa tồn tại trên máy).
+
+Tiến độ 2026-11-04 (nhãn thật): đã gán nhãn 75 mục. Có 39 mục Cà phê và 24 mục Không rõ; các nhóm khác ≤4 mục, Carepath không có mục nào. Trên holdout 12 mục: baseline 100%/66,7%, NL 90%/83,3%, E5 fp16 centered 88,9%/75%. Chênh lệch giữa các candidate chỉ khoảng 1 mục, nên chưa engine nào thắng baseline rõ ràng; chưa chốt engine theo chất lượng. Người dùng thường chọn “Không rõ” cho link vì thiếu mô tả, nên trước khi đánh giá lại link cần plan [Đọc hiểu link](../20261104-2113-link-understanding/plan.md). Xem [nhãn thật](../../docs/intelligence-evaluation.md#nhãn-thật-trên-iphone-2026-11-04).
+
 ## Mục tiêu
 
 Chọn engine embedding chữ + cách hiểu ảnh bằng số đo trên iPhone 12 Pro, với dữ liệu thật đã được người dùng gán nhãn. Chưa đổi dữ liệu người dùng.
@@ -41,6 +45,7 @@ Chọn engine embedding chữ + cách hiểu ảnh bằng số đo trên iPhone 
   - cold load ≤3 s;
   - bộ nhớ tăng ≤250 MB;
   - batch 50 mục không làm chậm thao tác lưu.
+  - 2026-11-04, E5 fp16: p95, memory, batch/lưu và Vision đạt. Cold load đạt khi có cache (2,2–2,3 s), không đạt ở lần đầu sau khi cài hoặc cập nhật (14,5 s). Checkbox mở cho tới khi chốt cách load nền hoặc chấp nhận ngoại lệ này.
 - [ ] Ghi quyết định: engine được chọn, `engineVersion`, ngưỡng, kích thước app tăng thêm.
 
 ## Acceptance
@@ -58,13 +63,13 @@ Quay lui: spike không ghi gì vào `library.store`. Màn gán nhãn chỉ có t
 
 ## Handoff 2026-11-03 → tiếp tục 2026-11-04
 
-**Trạng thái:** In progress. Chưa chọn engine. Candidate dẫn đầu là E5 small int8 mean-centered (`e5-small-fd1525a-int8-t128-mean-v1-centered`), mới đo trên bộ mẫu tổng hợp nên không dùng để nghiệm thu.
+**Trạng thái:** In progress. Chưa chọn engine. Candidate dẫn đầu là **E5 small fp16 mean-centered** (`e5-small-fd1525a-fp16-t128-mean-v1-centered`); ngày 2026-11-04 đã bỏ int8 vì memory peak. Chất lượng mới đo trên bộ mẫu tổng hợp nên không dùng để nghiệm thu.
 
 **Đang chờ người dùng:** gán nhãn 73 mục thật trên iPhone, ở **Dữ liệu & Backup → Đánh giá AI · DEBUG**. Chọn chủ đề chính theo cảm nhận, phân vân thì chọn “Không rõ”; tag và chủ đề phụ là tùy chọn. Sau đó bấm **Tải model Natural Language tiếng Việt**, rồi **Chạy đánh giá local**.
 
 **Việc kỹ thuật khi có nhãn:**
 1. Lấy báo cáo: `xcrun devicectl device copy from --device <UDID> --domain-type appDataContainer --domain-identifier dev.nguyenhoanghai861.Noted --source "Library/Application Support/IntelligenceEvaluation/report.json" --destination <file>`. Ghi precision, coverage và confusion theo nhóm/loại mục của từng candidate vào `docs/intelligence-evaluation.md`. 73 mục < 150 nên vẫn chỉ là số tham khảo.
-2. Đo gate tài nguyên còn thiếu: memory peak của E5 khi đo riêng (không chạy sau NL/Vision), và ảnh hưởng của batch 50 mục tới thao tác lưu.
+2. ~~Đo gate tài nguyên còn thiếu~~. Xong ngày 2026-11-04 bằng `testE5IsolatedResourceGateOnDevice` và probe `--e5-load-probe fp16`. Còn phải quyết định cách xử lý lần load đầu 14,5 s sau khi cài hoặc cập nhật (đề xuất: load nền, chưa phân nhóm cho tới khi model sẵn sàng).
 3. Nếu E5 vẫn gán nhầm mục lạc đề trên nhãn thật, thử prototype riêng cho “Không rõ” hoặc ngưỡng theo nhóm; chỉnh trên calibration thật, không chỉnh theo bộ tổng hợp.
 4. Ghi quyết định engine, ngưỡng và dung lượng, rồi tick các checkbox còn lại khi đạt.
 
@@ -73,4 +78,5 @@ Quay lui: spike không ghi gì vào `library.store`. Màn gán nhãn chỉ có t
 - File E5 (khoảng 350 MB: `e5-int8.mlmodelc`, `e5-fp16.mlmodelc`, `tokenizer.json`, `reference-vectors.json`, `token-fixture.json`) nằm trong `Library/Application Support/IntelligenceEvaluation/e5/` của app trên máy. Cài đè bằng `xcodebuild test` vẫn giữ các file này. **Gỡ app sẽ mất các file này**; khi đó tạo lại theo [README recipe](../../scripts/topic-model-evaluation/README.md#device-spike-2026-11-03-iphone-12-pro).
 - Venv Python 3.11 và output convert nằm trong thư mục tạm của phiên làm việc, có thể đã bị xóa. Tạo lại bằng `uv venv --python 3.11` theo README.
 - Asset NL tiếng Việt có thể mất sau mỗi lần cài lại app; cần bấm tải lại trước khi đánh giá.
+- Đo lại tài nguyên: `TEST_RUNNER_NOTED_E5_RESOURCE=1 [TEST_RUNNER_NOTED_E5_VARIANTS=fp16] xcodebuild test ... -only-testing:NotedTests/IntelligenceEngineTests/testE5IsolatedResourceGateOnDevice`, đọc dòng `NOTED_E5_RESOURCE_JSON`. Đo qua các lần mở app: cài app, chạy `xcrun devicectl device process launch --device <UDID> --terminate-existing dev.nguyenhoanghai861.Noted --e5-load-probe fp16` vài lần, rồi lấy `IntelligenceEvaluation/e5-load-probe.jsonl`.
 - Chạy test trên máy: `xcodebuild test -project Noted.xcodeproj -scheme Noted -destination 'platform=iOS,id=<UDID>' -allowProvisioningUpdates -only-testing:NotedTests/IntelligenceEngineTests`. Thêm `TEST_RUNNER_NOTED_SPIKE_REPORT=1` để in báo cáo trên bộ tổng hợp ra log (dòng `NOTED_SPIKE_REPORT_JSON`). Lần chạy gần nhất: 14/14 pass. `IntelligenceLabelingUITests` chạy với scheme `Noted-DeviceGate`, 1/1 pass.
