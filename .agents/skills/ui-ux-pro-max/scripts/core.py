@@ -539,7 +539,7 @@ def _load_product_keywords():
     """Return high-signal product labels/aliases, never every corpus keyword."""
     seed = ["saas", "ecommerce", "fintech", "healthcare", "gaming", "portfolio",
             "crypto", "fitness", "marketplace", "banking", "cybersecurity",
-            "education", "travel", "restaurant", "real estate", "community",
+            "education", "travel", "restaurant", "real estate", "community platform",
             "beauty", "spa", "salon", "wellness", "booking"]
     filepath = DATA_DIR / CSV_CONFIG["product"]["file"]
     if not filepath.exists():

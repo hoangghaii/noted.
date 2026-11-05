@@ -70,3 +70,16 @@ Thiết bị vật lý iPhone 12 Pro, iOS 27.0.1, UDID `00008101-001A2519266B001
 Bộ UI acceptance cuối trên iPhone: **9/9 đạt** (`/private/tmp/noted-ui-phase5-final-ui-2.xcresult`), gồm Home icon, Library/Search/Collections, detail/editor, Capture note/link/ảnh, ghim sau lưu, keyboard/draft, phân trang/lọc, lỗi import và Trash. Safari/Photos Share preview từ app nguồn thật: **2/2 đạt** (`/private/tmp/noted-ui-phase5-share-preview.xcresult`); preview được kiểm tra trước khi lưu. Backup Files xuất vào “Trên iPhone” rồi nhập lại: **1/1 đạt** (`/private/tmp/noted-ui-phase5-backup-final.xcresult`), mục có sẵn không bị nhân đôi. Ca phân trang cuối riêng đạt (`/private/tmp/noted-ui-phase5-pagination-final.xcresult`); nút “Xem thêm” nhìn thấy và nhận chạm trên máy mặc dù XCTest báo `isHittable = false`, nên test dùng vị trí nút đang hiển thị để chạm và xác nhận kết quả sau chạm.
 
 42/42 unit tests đạt với source cuối (`/private/tmp/noted-ui-phase5-final-unit-2.xcresult`). Review mã phát hiện đường thoát chưa rõ khi lưu thành công nhưng ghim lỗi; nút thông báo đã đổi thành “Về Thư viện”. VoiceOver/dark mode toàn diện và phép đo pixel 98–100% so với HTML Design Lab chưa thực hiện. UI dùng status bar, sheet, Files/Photos picker native và dữ liệu thật, khác preview mẫu. Các lỗi CoreDevice/Automation Mode trước test body ở lượt đầu là hạ tầng, đã chạy lại các ca sau khi phiên thiết bị ổn định.
+
+## 2026-11-05 — Đọc hiểu link, Phase 03 (kho `LinkDigest` & runner) trên iPhone 12 Pro
+
+Thiết bị: iPhone 12 Pro, iOS 27.0.1, kết nối dây. App cài đè bằng `xcodebuild ... -allowProvisioningUpdates test`, cùng bundle ID, không gỡ app.
+
+- `xcodebuild -project Noted.xcodeproj -scheme Noted -destination 'platform=iOS,id=<UDID>' -allowProvisioningUpdates test -only-testing:NotedTests/LinkDigestPipelineTests`: **21/21 đạt**. Các dòng `CoreData: error ... (259)` trong log là của test store hỏng, đúng kỳ vọng.
+- Toàn bộ `-only-testing:NotedTests`: **109 test, 0 lỗi**, 2 test opt-in của E5 bị bỏ qua như trước.
+- Dữ liệu thật (chỉ đếm trạng thái, không đọc hay lưu nội dung; bản copy tạm đã xóa):
+  - thư viện có 22 link đang dùng và 2 link trong thùng rác;
+  - lần chạy đầu bị cắt khi test kết thúc, để lại 1 digest `running`. Mở lại app thì digest đó được phục hồi và đọc tiếp, kết quả **21 `complete` + 1 `titleOnly`** (iCloud Notes), mỗi link 1 lượt, không có `loginWall`/`unreachable`. Link trong thùng rác không được đọc;
+  - rebuild: ghi đè `Intelligence/schema-version.txt` bằng `0` (`devicectl` không xóa được file), rồi mở app. Store cũ được đặt sang `intelligence.store.corrupt*` (còn đủ 22 bản ghi), store mới rebuild **22/22 trong 14,6 s** (21 `complete` + 1 `titleOnly`), `schema-version.txt` được ghi lại là `1`;
+  - `library.store` trước và sau rebuild: không trường nào ngoài tiêu đề thay đổi (body, URL, `updatedAt`, pin, trash, trạng thái OCR/preview, `userEditedTitle`, tag), và không tiêu đề nào đổi.
+- Chưa kiểm chứng trên máy: snapshot `library.store` **trước** lần chạy digest đầu tiên (tiêu đề link đã được thay ngay lúc app host khởi động trong phiên test). Quy tắc chỉ thay tiêu đề host/`<title>` thô và không đụng tiêu đề người dùng đã sửa được kiểm bằng unit test. Chưa thử offline/Low Data Mode trên máy thật.

@@ -22,11 +22,11 @@ enum LinkMetadataService {
         return title(fromHTML: html, url: url)
     }
 
-    /// One request for the link digest. Pages over `maximumBytes` keep their prefix instead of failing:
+    /// One request for the link digest, never over Low Data Mode (it runs in the background). Pages over `maximumBytes` keep their prefix instead of failing:
     /// meta tags sit in the first few KB (Threads pages are ~600 KB; link-understanding Phase 01).
     static func fetchPage(for url: URL) async throws -> LinkPage {
         try await Task.detached(priority: .utility) { try PublicURLPolicy.validate(url) }.value
-        let download = BoundedMetadataDownload(keepPrefixWhenOversized: true)
+        let download = BoundedMetadataDownload(keepPrefixWhenOversized: true, allowsConstrainedNetworkAccess: false)
         let data = try await download.load(url)
         // A truncated prefix may end mid-character, so it is decoded leniently.
         let html = String(data: data, encoding: .utf8)
@@ -135,6 +135,7 @@ final class BoundedMetadataDownload: NSObject, URLSessionDataDelegate, @unchecke
     private let userAgent: String?
     private let acceptedMIMETypes: Set<String>
     private let keepPrefixWhenOversized: Bool
+    private let allowsConstrainedNetworkAccess: Bool
     private var session: URLSession?
     private var task: URLSessionDataTask?
     private var continuation: CheckedContinuation<Data, Error>?
@@ -148,10 +149,11 @@ final class BoundedMetadataDownload: NSObject, URLSessionDataDelegate, @unchecke
     /// `keepPrefixWhenOversized` stops at the byte limit and returns the prefix: meta tags sit in the first few KB
     /// even when the page (e.g. Threads, ~600 KB) is larger than the limit.
     init(userAgent: String? = nil, acceptedMIMETypes: Set<String> = ["text/html", "application/xhtml+xml"],
-         keepPrefixWhenOversized: Bool = false) {
+         keepPrefixWhenOversized: Bool = false, allowsConstrainedNetworkAccess: Bool = true) {
         self.userAgent = userAgent
         self.acceptedMIMETypes = acceptedMIMETypes
         self.keepPrefixWhenOversized = keepPrefixWhenOversized
+        self.allowsConstrainedNetworkAccess = allowsConstrainedNetworkAccess
     }
 
     func load(_ url: URL) async throws -> Data {
@@ -162,6 +164,7 @@ final class BoundedMetadataDownload: NSObject, URLSessionDataDelegate, @unchecke
             configuration.timeoutIntervalForResource = 12
             configuration.httpShouldSetCookies = false
             configuration.urlCache = nil
+            configuration.allowsConstrainedNetworkAccess = allowsConstrainedNetworkAccess
             let queue = OperationQueue()
             queue.maxConcurrentOperationCount = 1
             session = URLSession(configuration: configuration, delegate: self, delegateQueue: queue)

@@ -36,7 +36,7 @@ YOU'RE STUCK
 | **Recurring patterns** | Same issue different places, reinventing wheels, déjà vu feeling | meta-pattern-recognition.md |
 | **Forced by assumptions** | "Must be done this way", can't question premise, forced solution | inversion-exercise.md |
 | **Scale uncertainty** | Production unclear, edge cases unknown, unsure of limits | scale-game.md |
-| **Code broken** | Wrong behavior, test failing, unexpected output | debugging skill |
+| **Code broken** | Wrong behavior, test failing, unexpected output | kit-debug skill |
 
 ## Process
 

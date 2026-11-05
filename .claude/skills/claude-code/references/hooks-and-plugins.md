@@ -22,7 +22,7 @@ Configure project lifecycle hooks in `.claude/settings.json`. Events such as `Pr
 }
 ```
 
-The script path above is an example: create the handler before enabling it. It must resolve paths correctly from the session working directory. AgentKit instead installs its actual cross-platform launcher and adapter in `.agentkit/hooks/`, merged into project settings.
+The script path above is an example: create the handler before enabling it. It must resolve paths correctly from the session working directory. AgentKit ships one cross-platform adapter: a CLI install puts it in `.agentkit/hooks/` and merges the hooks into project settings, while the Claude plugin runs it from `${CLAUDE_PLUGIN_ROOT}/hooks/` via the plugin's `hooks/hooks.json`.
 
 Parse the payload's event, tool and input fields. Use the documented output schema for context or decisions. Advisory checks should not block a build because a payload is unfamiliar; enforce a restriction only when the requested policy requires it. Test success, failure and malformed input with synthetic payloads. Never log credentials from tool arguments.
 

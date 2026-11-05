@@ -1,6 +1,6 @@
 # Noted — Đọc hiểu link
 
-Tạo 2026-11-04 theo góp ý của người dùng khi gán nhãn Phase 01. Trạng thái: In progress, Phase 01–02 xong, tiếp theo Phase 03. Ưu tiên: cao, **làm trước** khi đánh giá lại Phase 01. Plan liên quan: [Lớp AI trên máy](../20261029-1623-smart-topic-groups/plan.md), [Đọc hiểu ảnh](../20261104-0902-ocr-image-summary/plan.md).
+Tạo 2026-11-04 theo góp ý của người dùng khi gán nhãn Phase 01. Trạng thái: In progress, Phase 01–03 xong, tiếp theo Phase 04. Ưu tiên: cao, **làm trước** khi đánh giá lại Phase 01. Plan liên quan: [Lớp AI trên máy](../20261029-1623-smart-topic-groups/plan.md), [Đọc hiểu ảnh](../20261104-0902-ocr-image-summary/plan.md).
 
 ## Vì sao
 
@@ -38,7 +38,7 @@ Ngoài phạm vi:
 |---|---|---|---|
 | [01 — Spike nguồn link trên 21 link thật](phase-01-link-source-spike.md) | Done (FB/IG chưa có dữ liệu; 1 lượt đo hợp lệ) | — | Tỷ lệ đọc được theo domain và chiến lược, chọn chiến lược |
 | [02 — Trích xuất meta & nội dung chính](phase-02-extraction.md) | Done | 01 | `LinkPageParser`, `ExtractiveLinkDigester`, test fixture |
-| [03 — Kho LinkDigest & runner](phase-03-store-and-runner.md) | Pending | 02 | Entity `LinkDigest`, `LinkDigestRunner` |
+| [03 — Kho LinkDigest & runner](phase-03-store-and-runner.md) | Done | 02 | Entity `LinkDigest`, `LinkDigestRunner` |
 | [04 — Giao diện & màn gán nhãn](phase-04-ui-and-labeling.md) | Pending | 03 | Dòng tóm tắt trên thẻ, Detail, màn gán nhãn DEBUG, đầu vào cho evaluator |
 | [05 — API LLM text-only (tùy chọn)](phase-05-optional-llm-api.md) | Pending | 02; client chung với plan ảnh | Viết lại tóm tắt khi người dùng bật |
 | [06 — Nghiệm thu & đánh giá lại Phase 01](phase-06-acceptance-and-reevaluation.md) | Pending | 04 (05 nếu làm) | Evidence trên iPhone, gán nhãn lại link, chạy lại đánh giá |

@@ -2,6 +2,8 @@
 
 Ngày 2026-11-04. Trạng thái: Pending. Review: chưa nghiệm thu. Phụ thuộc Phase 01. Ưu tiên cao. Overview: [plan.md](plan.md).
 
+> 2026-11-05: `IntelligenceStore` (`NotedLibrary/Intelligence/intelligence.store`, schema v1, chỉ có `LinkDigest`) đã được tạo ở [Phase 03 Đọc hiểu link](../20261104-2113-link-understanding/phase-03-store-and-runner.md). Phase này chỉ thêm `ImageDigest` vào `IntelligenceSchemaV1.models` → tăng `schemaVersion` kèm migration có test (store là dữ liệu dẫn xuất, version lạ hiện bị reset).
+
 ## Mục tiêu
 
 Lưu bản tóm tắt ảnh ở store riêng và chạy nền tuần tự sau OCR, không đụng tới `library.store`.

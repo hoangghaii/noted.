@@ -15,7 +15,7 @@
     "fontPairings": 74,
     "googleFonts": 1930,
     "curatedIcons": 105,
-    "upstreamPhosphorIcons": 1498,
+    "upstreamPhosphorIcons": 1485,
     "uxGuidelines": 119,
     "motionPresets": 17,
     "chartTypes": 25,
@@ -33,7 +33,7 @@
       "sha256": "50816c6012030178195a16ee481ebf58b47bd985d70e8ec58886cc83f6eddafc"
     },
     "phosphor-icons-upstream.json": {
-      "sha256": "21d3b21938ce26517c1d4e2fb90c202dbdaaf4896b174ac27d9e4bd28827916c"
+      "sha256": "1a910236732da8f0b9e85cf19c28a54eaf2e894f60c29ad5425a5550dca4cc62"
     }
   },
   "promotionPolicy": {
@@ -74,5 +74,13 @@
       "family": "Google Sans Flex",
       "reason": "No exact-family METADATA.pb entry in the official google/fonts repository snapshot"
     }
-  ]
+  ],
+  "localAdaptation": {
+    "adaptedAt": "2026-11-02",
+    "note": "AgentKit local subset filtered to satisfy source content policy; counts and hashes describe the installed subset, not the complete upstream catalog.",
+    "upstreamCounts": {
+      "googleFonts": 1934,
+      "upstreamPhosphorIcons": 1512
+    }
+  }
 }

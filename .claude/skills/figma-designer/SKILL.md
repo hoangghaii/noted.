@@ -6,12 +6,10 @@ description: "Design inside Figma the way this designer does: real variables, te
 
 # Figma Designer
 
-This skill requires a connected Figma integration for editing files. Discover the host’s available Figma tools first. Companion skills named below are optional and are not bundled with AgentKit; load them only when installed. If tools or companion skills are unavailable, explain the limitation and provide design specifications without claiming Figma edits. Follow the connected tool documentation for API rules.
+These are the designer's own rules for working in Figma. They sit on top of the Figma tool skills and do not replace them. Use this skill when Figma MCP is available; if it is unavailable, explain the missing capability before attempting Figma edits. The companion skills below are external dependencies and are not bundled with AgentKit.
 
-These are the designer's own rules for working in Figma. They sit on top of the official Figma skills and don't replace them.
-
-- **When available, load `figma-use` before any `use_figma` call.** It holds the Plugin API rules (color ranges, font loading, layout sizing). This skill only adds design rules.
-- For full screens and pages, also load `figma-generate-design` when available. For component libraries and tokens, also load `figma-generate-library` when available.
+- **If available, load `figma-use` before any `use_figma` call.** It holds the Plugin API rules (color ranges, font loading, layout sizing). This skill only adds design rules.
+- For full screens and pages, also load `figma-generate-design` when available. For component libraries and tokens, also load `figma-generate-library` when available. If a needed companion skill is unavailable, use documented Figma MCP capabilities and report the gap.
 - Exact token names and values are in [Token reference](#token-reference) at the end of this file. Read it before you create or bind any variable or text style.
 
 ## Workflow

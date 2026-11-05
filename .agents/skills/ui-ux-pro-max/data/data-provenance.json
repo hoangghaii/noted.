@@ -1316,7 +1316,11 @@
           "type": "official",
           "ref": "https://github.com/google/fonts"
         }
-      ]
+      ],
+      "localAdaptation": {
+        "adaptedAt": "2026-11-02",
+        "note": "AgentKit local subset filtered to satisfy source content policy; counts and hashes describe the installed subset, not the complete upstream catalog."
+      }
     },
     {
       "entityKind": "catalog-snapshot",
@@ -1324,7 +1328,7 @@
       "sourceFile": "phosphor-icons-upstream.json",
       "sourceKey": {
         "Snapshot": "catalog-summary.json",
-        "Count": 1498
+        "Count": 1485
       },
       "status": "active",
       "verifiedAt": "2026-08-13",
@@ -1342,7 +1346,15 @@
           "type": "official",
           "ref": "https://github.com/phosphor-icons/react"
         }
-      ]
+      ],
+      "localAdaptation": {
+        "adaptedAt": "2026-11-02",
+        "note": "AgentKit local subset filtered to satisfy source content policy; counts and hashes describe the installed subset, not the complete upstream catalog."
+      }
     }
-  ]
+  ],
+  "localAdaptation": {
+    "adaptedAt": "2026-11-02",
+    "note": "AgentKit local subset filtered to satisfy source content policy; counts and hashes describe the installed subset, not the complete upstream catalog."
+  }
 }

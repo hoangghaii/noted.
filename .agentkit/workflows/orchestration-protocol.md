@@ -6,6 +6,6 @@ Each handoff contains the objective, relevant paths, constraints, acceptance cri
 
 Read-only roles return findings or proposed file contents. The coordinator writes plan files, applies authorized repairs, integrates changes and owns end-to-end verification. Obtain missing shell/log/tool evidence centrally when a role lacks the capability; do not invent a successful check.
 
-After verified phase delivery, the coordinator or project-manager updates phase TODOs and overview status. A reviewer reports missing acceptance coverage or incorrect status without changing the plan itself. Report blockers and incomplete work explicitly.
+After verified phase delivery, the coordinator updates phase TODOs and overview status. A reviewer reports missing acceptance coverage or incorrect status without changing the plan itself. Report blockers and incomplete work explicitly.
 
 For substantial active-plan work, preserve durable handoffs under `plans/<active-plan>/reports/YYYYMMDD-HHmm-<role>-<topic>.md` using local time and meaningful names. Include scope, findings/decisions, paths, checks and unresolved questions, and pass actual paths to downstream workers. Read-only agents return report contents for the coordinator to persist; inline answers suffice for routine small tasks.

@@ -9,7 +9,7 @@
   },
   "status": "active",
   "verifiedAt": "2026-08-13",
-  "iconCount": 1498,
+  "iconCount": 1485,
   "weights": [
     "thin",
     "light",
@@ -10180,25 +10180,6 @@
       "ssrImport": "import { Detective } from \"@phosphor-icons/react/ssr\""
     },
     {
-      "name": "dev-to-logo",
-      "component": "DevToLogo",
-      "codepoint": 60686,
-      "categories": [
-        "brands",
-        "technology & development"
-      ],
-      "figmaCategory": "brands",
-      "tags": [
-        "logos",
-        "reading",
-        "writing"
-      ],
-      "publishedIn": 2,
-      "updatedIn": 2,
-      "clientImport": "import { DevToLogo } from \"@phosphor-icons/react\"",
-      "ssrImport": "import { DevToLogo } from \"@phosphor-icons/react/ssr\""
-    },
-    {
       "name": "device-mobile",
       "component": "DeviceMobile",
       "codepoint": 57824,
@@ -12044,24 +12025,6 @@
       "updatedIn": 2,
       "clientImport": "import { Feather } from \"@phosphor-icons/react\"",
       "ssrImport": "import { Feather } from \"@phosphor-icons/react/ssr\""
-    },
-    {
-      "name": "fediverse-logo",
-      "component": "FediverseLogo",
-      "codepoint": 60774,
-      "categories": [
-        "brands",
-        "communications"
-      ],
-      "figmaCategory": "brands",
-      "tags": [
-        "*new*",
-        "decentralized"
-      ],
-      "publishedIn": 2.1,
-      "updatedIn": 2.1,
-      "clientImport": "import { FediverseLogo } from \"@phosphor-icons/react\"",
-      "ssrImport": "import { FediverseLogo } from \"@phosphor-icons/react/ssr\""
     },
     {
       "name": "figma-logo",
@@ -15067,25 +15030,6 @@
       "ssrImport": "import { Golf } from \"@phosphor-icons/react/ssr\""
     },
     {
-      "name": "goodreads-logo",
-      "component": "GoodreadsLogo",
-      "codepoint": 60688,
-      "categories": [
-        "brands"
-      ],
-      "figmaCategory": "brands",
-      "tags": [
-        "*updated*",
-        "books",
-        "logos",
-        "reading"
-      ],
-      "publishedIn": 2,
-      "updatedIn": 2.1,
-      "clientImport": "import { GoodreadsLogo } from \"@phosphor-icons/react\"",
-      "ssrImport": "import { GoodreadsLogo } from \"@phosphor-icons/react/ssr\""
-    },
-    {
       "name": "google-cardboard-logo",
       "component": "GoogleCardboardLogo",
       "codepoint": 59318,
@@ -17574,25 +17518,6 @@
       "ssrImport": "import { Lasso } from \"@phosphor-icons/react/ssr\""
     },
     {
-      "name": "lastfm-logo",
-      "component": "LastfmLogo",
-      "codepoint": 59458,
-      "categories": [
-        "brands",
-        "media"
-      ],
-      "figmaCategory": "brands",
-      "tags": [
-        "*new*",
-        "music",
-        "scrobble"
-      ],
-      "publishedIn": 2.1,
-      "updatedIn": 2.1,
-      "clientImport": "import { LastfmLogo } from \"@phosphor-icons/react\"",
-      "ssrImport": "import { LastfmLogo } from \"@phosphor-icons/react/ssr\""
-    },
-    {
       "name": "layout",
       "component": "Layout",
       "codepoint": 59094,
@@ -18166,24 +18091,6 @@
       "updatedIn": 1,
       "clientImport": "import { LinkSimpleHorizontalBreak } from \"@phosphor-icons/react\"",
       "ssrImport": "import { LinkSimpleHorizontalBreak } from \"@phosphor-icons/react/ssr\""
-    },
-    {
-      "name": "linktree-logo",
-      "component": "LinktreeLogo",
-      "codepoint": 60910,
-      "categories": [
-        "brands",
-        "communications"
-      ],
-      "figmaCategory": "brands",
-      "tags": [
-        "*new*",
-        "links"
-      ],
-      "publishedIn": 2.1,
-      "updatedIn": 2.1,
-      "clientImport": "import { LinktreeLogo } from \"@phosphor-icons/react\"",
-      "ssrImport": "import { LinktreeLogo } from \"@phosphor-icons/react/ssr\""
     },
     {
       "name": "linux-logo",
@@ -19186,25 +19093,6 @@
       "ssrImport": "import { MedalMilitary } from \"@phosphor-icons/react/ssr\""
     },
     {
-      "name": "medium-logo",
-      "component": "MediumLogo",
-      "codepoint": 58146,
-      "categories": [
-        "brands"
-      ],
-      "figmaCategory": "brands",
-      "tags": [
-        "logos",
-        "news",
-        "reading",
-        "writing"
-      ],
-      "publishedIn": 1,
-      "updatedIn": 1,
-      "clientImport": "import { MediumLogo } from \"@phosphor-icons/react\"",
-      "ssrImport": "import { MediumLogo } from \"@phosphor-icons/react/ssr\""
-    },
-    {
       "name": "megaphone",
       "component": "Megaphone",
       "codepoint": 58148,
@@ -19288,40 +19176,6 @@
       "updatedIn": 2.1,
       "clientImport": "import { Memory } from \"@phosphor-icons/react\"",
       "ssrImport": "import { Memory } from \"@phosphor-icons/react/ssr\""
-    },
-    {
-      "name": "messenger-logo",
-      "component": "MessengerLogo",
-      "codepoint": 59096,
-      "categories": [
-        "brands",
-        "communications"
-      ],
-      "figmaCategory": "brands",
-      "tags": [
-        "logos"
-      ],
-      "publishedIn": 1.3,
-      "updatedIn": 1.3,
-      "clientImport": "import { MessengerLogo } from \"@phosphor-icons/react\"",
-      "ssrImport": "import { MessengerLogo } from \"@phosphor-icons/react/ssr\""
-    },
-    {
-      "name": "meta-logo",
-      "component": "MetaLogo",
-      "codepoint": 60674,
-      "categories": [
-        "brands"
-      ],
-      "figmaCategory": "brands",
-      "tags": [
-        "*updated*",
-        "logos"
-      ],
-      "publishedIn": 2,
-      "updatedIn": 2.1,
-      "clientImport": "import { MetaLogo } from \"@phosphor-icons/react\"",
-      "ssrImport": "import { MetaLogo } from \"@phosphor-icons/react/ssr\""
     },
     {
       "name": "meteor",
@@ -26718,24 +26572,6 @@
       "ssrImport": "import { SortDescending } from \"@phosphor-icons/react/ssr\""
     },
     {
-      "name": "soundcloud-logo",
-      "component": "SoundcloudLogo",
-      "codepoint": 59614,
-      "categories": [
-        "brands",
-        "media"
-      ],
-      "figmaCategory": "brands",
-      "tags": [
-        "logos",
-        "music"
-      ],
-      "publishedIn": 2,
-      "updatedIn": 2,
-      "clientImport": "import { SoundcloudLogo } from \"@phosphor-icons/react\"",
-      "ssrImport": "import { SoundcloudLogo } from \"@phosphor-icons/react/ssr\""
-    },
-    {
       "name": "spade",
       "component": "Spade",
       "codepoint": 58440,
@@ -29359,24 +29195,6 @@
       "ssrImport": "import { ThermometerSimple } from \"@phosphor-icons/react/ssr\""
     },
     {
-      "name": "threads-logo",
-      "component": "ThreadsLogo",
-      "codepoint": 60830,
-      "categories": [
-        "brands",
-        "communications"
-      ],
-      "figmaCategory": "brands",
-      "tags": [
-        "*new*",
-        "meta"
-      ],
-      "publishedIn": 2.1,
-      "updatedIn": 2.1,
-      "clientImport": "import { ThreadsLogo } from \"@phosphor-icons/react\"",
-      "ssrImport": "import { ThreadsLogo } from \"@phosphor-icons/react/ssr\""
-    },
-    {
       "name": "three-d",
       "component": "ThreeD",
       "codepoint": 59994,
@@ -30475,24 +30293,6 @@
       "ssrImport": "import { TruckTrailer } from \"@phosphor-icons/react/ssr\""
     },
     {
-      "name": "tumblr-logo",
-      "component": "TumblrLogo",
-      "codepoint": 59604,
-      "categories": [
-        "brands",
-        "communications"
-      ],
-      "figmaCategory": "brands",
-      "tags": [
-        "*new*",
-        "logos"
-      ],
-      "publishedIn": 2.1,
-      "updatedIn": 2.1,
-      "clientImport": "import { TumblrLogo } from \"@phosphor-icons/react\"",
-      "ssrImport": "import { TumblrLogo } from \"@phosphor-icons/react/ssr\""
-    },
-    {
       "name": "umbrella",
       "component": "Umbrella",
       "codepoint": 59012,
@@ -31304,29 +31104,6 @@
       "updatedIn": 1,
       "clientImport": "import { VideoCameraSlash } from \"@phosphor-icons/react\"",
       "ssrImport": "import { VideoCameraSlash } from \"@phosphor-icons/react/ssr\""
-    },
-    {
-      "name": "video-conference",
-      "component": "VideoConference",
-      "codepoint": 60878,
-      "categories": [
-        "communications",
-        "media",
-        "system"
-      ],
-      "figmaCategory": "media",
-      "tags": [
-        "*new*",
-        "facetime",
-        "meeting",
-        "skype",
-        "video call",
-        "zoom"
-      ],
-      "publishedIn": 2.1,
-      "updatedIn": 2.1,
-      "clientImport": "import { VideoConference } from \"@phosphor-icons/react\"",
-      "ssrImport": "import { VideoConference } from \"@phosphor-icons/react/ssr\""
     },
     {
       "name": "vignette",
@@ -32206,25 +31983,6 @@
       "updatedIn": 1,
       "clientImport": "import { XCircle } from \"@phosphor-icons/react\"",
       "ssrImport": "import { XCircle } from \"@phosphor-icons/react/ssr\""
-    },
-    {
-      "name": "x-logo",
-      "component": "XLogo",
-      "codepoint": 58556,
-      "categories": [
-        "brands",
-        "communications"
-      ],
-      "figmaCategory": "brands",
-      "tags": [
-        "*new*",
-        "logos",
-        "tweets"
-      ],
-      "publishedIn": 2.1,
-      "updatedIn": 2.1,
-      "clientImport": "import { XLogo } from \"@phosphor-icons/react\"",
-      "ssrImport": "import { XLogo } from \"@phosphor-icons/react/ssr\""
     },
     {
       "name": "x-square",

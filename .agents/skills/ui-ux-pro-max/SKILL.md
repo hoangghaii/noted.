@@ -37,15 +37,13 @@ For the full rule list per category (all 119 UX guidelines with rationale), read
 
 ## Running the search tool
 
-Python 3 is required; no API key is needed. Replace `<skill-dir>` in every example with the absolute directory containing this SKILL.md (Codex: `.agents/skills/ui-ux-pro-max`; Claude: `.claude/skills/ui-ux-pro-max`). Resolve that directory from the installed skill, not the current working directory. Catalog counts below refer to upstream; this snapshot omits excluded branding entries.
-
-The search script lives inside this skill's own directory, not the project directory. Always invoke it by its full path — do not assume a particular working directory:
+The search script lives inside this skill directory. Resolve `<skill-dir>` to the absolute directory containing this `SKILL.md` in the installed project (`.agents/skills/ui-ux-pro-max` for Codex or `.claude/skills/ui-ux-pro-max` for Claude). Replace the placeholder before running a command, independent of the working directory:
 
 ```bash
 python3 "<skill-dir>/scripts/search.py" "<query>" --domain <domain>
 ```
 
-If `python` is not found, try `python3`, then `py -3`. Requires Python 3.x, no external dependencies (see README for install instructions if Python is missing).
+Requires Python 3.x and uses the Python standard library. If `python3` is unavailable, use the local Python 3 command.
 
 ## Workflow
 
