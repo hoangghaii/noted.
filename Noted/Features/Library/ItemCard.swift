@@ -87,6 +87,9 @@ struct ItemCardGrid: View {
 }
 
 struct ItemCard: View {
+    @Environment(\.linkDigestRunner) private var digestRunner
+    @Environment(\.dynamicTypeSize) private var typeSize
+    private var digest: LinkDigest? { digestRunner?.digest(for: item) }
     let item: Item
     let store: LibraryStore
 
@@ -135,6 +138,20 @@ struct ItemCard: View {
                             Text(excerpt).scaledFont(12.5, relativeTo: .footnote).lineSpacing(1.8) // v3 line pitch ≈16.8 pt
                                 .foregroundStyle(tone.secondaryForeground)
                                 .lineLimit(item.kind == "link" ? 3 : 5)
+                        }
+                        if item.kind == "link", let digest {
+                            if let summary = digest.visibleSummary {
+                                if !digest.byline.isEmpty {
+                                    Text(digest.byline).font(.caption).foregroundStyle(tone.secondaryForeground)
+                                }
+                                Text(summary).scaledFont(12.5, relativeTo: .footnote)
+                                    .foregroundStyle(tone.secondaryForeground)
+                                    .lineLimit(typeSize.isAccessibilitySize ? nil : 2)
+                                    .accessibilityIdentifier("cardLinkSummary_" + item.id.uuidString)
+                            } else if digest.state == .loginWall {
+                                Text("Không đọc được nội dung (cần đăng nhập)")
+                                    .font(.footnote).foregroundStyle(tone.secondaryForeground)
+                            }
                         }
                         if item.kind == "link" {
                             // v3 puts the external-link mark after the domain.

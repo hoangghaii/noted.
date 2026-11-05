@@ -1,3 +1,4 @@
+import Network
 import SwiftUI
 import UIKit
 
@@ -45,6 +46,7 @@ private struct MainLibraryView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var manageData = false
     @State private var enrichment = EnrichmentRunner()
+    @State private var linkDigests: LinkDigestRunner?
     @State private var started = false
     @State private var importURL: URL?
 
@@ -59,26 +61,40 @@ private struct MainLibraryView: View {
                     NotedStatusBanner(message: "Đang nhập nội dung đã chia sẻ…", isLoading: true)
                 } else if enrichment.running {
                     NotedStatusBanner(message: "Đang nhận diện chữ và cập nhật preview…", isLoading: true)
+                } else if linkDigests?.running == true {
+                    NotedStatusBanner(message: "Đang đọc nội dung link…", isLoading: true)
                 }
             }
+            .environment(\.linkDigestRunner, linkDigests)
             .tint(NotedDesign.Palette.brand)
-            .sheet(isPresented: $manageData) { DataManagementView(store: store, initialImportURL: importURL) }
+            .sheet(isPresented: $manageData) {
+                DataManagementView(store: store, initialImportURL: importURL)
+                    .environment(\.linkDigestRunner, linkDigests)
+            }
             .task {
                 guard !started else { return }
                 started = true
                 if let externalURL { importURL = externalURL; manageData = true; self.externalURL = nil }
+                linkDigests = Self.makeLinkDigestRunner(for: store)
                 do {
                     try enrichment.recoverInterrupted(in: store)
+                    try linkDigests?.recoverInterrupted()
                     try await store.importPending()
-                    await enrichment.run(in: store)
+                    await runPipelines()
                 } catch { store.lastError = error.localizedDescription }
+            }
+            .task {
+                // A run that stopped offline resumes when the network is back.
+                for await usable in Self.networkUsableUpdates() where usable && linkDigests?.isOffline == true && !manageData {
+                    await runPipelines()
+                }
             }
             .onChange(of: scenePhase) { _, phase in
                 if phase == .active && !manageData {
                     Task {
                         do { try await store.importPending() }
                         catch { store.lastError = error.localizedDescription }
-                        await enrichment.run(in: store)
+                        await runPipelines()
                     }
                 }
             }
@@ -86,19 +102,52 @@ private struct MainLibraryView: View {
                 if let url { importURL = url; manageData = true; externalURL = nil }
             }
             .onChange(of: pendingSignature) { _, _ in
-                if !manageData { Task { await enrichment.run(in: store) } }
+                if !manageData { Task { await runPipelines() } }
             }
             .onChange(of: manageData) { _, presented in
                 if !presented {
                     Task {
                         do {
                             if !enrichment.running { try enrichment.recoverInterrupted(in: store) }
+                            if linkDigests?.running == false { try linkDigests?.recoverInterrupted() }
                             try await store.importPending()
                         } catch { store.lastError = error.localizedDescription }
-                        await enrichment.run(in: store)
+                        await runPipelines()
                     }
                 }
             }
+    }
+
+    /// Link digests start after enrichment, which owns the preview title.
+    private func runPipelines() async {
+        await enrichment.run(in: store)
+        await linkDigests?.run(in: store)
+    }
+
+    /// Digests are derived: when `intelligence.store` cannot be opened even after recovery,
+    /// the library still works and links simply stay without a digest.
+    private static func makeLinkDigestRunner(for store: LibraryStore) -> LinkDigestRunner? {
+        #if DEBUG
+        if PhaseFourFixtures.isVerificationStore(store),
+           ProcessInfo.processInfo.arguments.contains("--link-digest-ui-fixtures") {
+            do { return try PhaseFourFixtures.linkDigestRunner(in: store) }
+            catch { store.lastError = error.localizedDescription; return nil }
+        }
+        // Visual fixtures stay offline and deterministic.
+        if MockFixtures.requestedVariant != nil || ProcessInfo.processInfo.environment["NOTED_PHASE4_RUN"] != nil { return nil }
+        #endif
+        guard let intelligence = try? IntelligenceStore(root: store.root.appendingPathComponent("Intelligence", isDirectory: true))
+        else { return nil }
+        return LinkDigestRunner(intelligence: intelligence, remote: .shared)
+    }
+
+    private static func networkUsableUpdates() -> AsyncStream<Bool> {
+        AsyncStream { continuation in
+            let monitor = NWPathMonitor()
+            monitor.pathUpdateHandler = { path in continuation.yield(path.status == .satisfied && !path.isConstrained) }
+            continuation.onTermination = { _ in monitor.cancel() }
+            monitor.start(queue: DispatchQueue(label: "Noted.NetworkPath"))
+        }
     }
 }
 

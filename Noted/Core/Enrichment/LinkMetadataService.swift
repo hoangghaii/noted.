@@ -22,11 +22,11 @@ enum LinkMetadataService {
         return title(fromHTML: html, url: url)
     }
 
-    /// One request for the link digest. Pages over `maximumBytes` keep their prefix instead of failing:
+    /// One request for the link digest, never over Low Data Mode (it runs in the background). Pages over `maximumBytes` keep their prefix instead of failing:
     /// meta tags sit in the first few KB (Threads pages are ~600 KB; link-understanding Phase 01).
     static func fetchPage(for url: URL) async throws -> LinkPage {
         try await Task.detached(priority: .utility) { try PublicURLPolicy.validate(url) }.value
-        let download = BoundedMetadataDownload(keepPrefixWhenOversized: true)
+        let download = BoundedMetadataDownload(keepPrefixWhenOversized: true, allowsConstrainedNetworkAccess: false)
         let data = try await download.load(url)
         // A truncated prefix may end mid-character, so it is decoded leniently.
         let html = String(data: data, encoding: .utf8)
@@ -135,6 +135,11 @@ final class BoundedMetadataDownload: NSObject, URLSessionDataDelegate, @unchecke
     private let userAgent: String?
     private let acceptedMIMETypes: Set<String>
     private let keepPrefixWhenOversized: Bool
+    private let allowsConstrainedNetworkAccess: Bool
+    private let delegateQueue: OperationQueue = { let q = OperationQueue(); q.maxConcurrentOperationCount = 1; return q }()
+    private let cancellationLock = NSLock()
+    private var cancelRequested = false
+    private var apiMode = false
     private var session: URLSession?
     private var task: URLSessionDataTask?
     private var continuation: CheckedContinuation<Data, Error>?
@@ -148,36 +153,59 @@ final class BoundedMetadataDownload: NSObject, URLSessionDataDelegate, @unchecke
     /// `keepPrefixWhenOversized` stops at the byte limit and returns the prefix: meta tags sit in the first few KB
     /// even when the page (e.g. Threads, ~600 KB) is larger than the limit.
     init(userAgent: String? = nil, acceptedMIMETypes: Set<String> = ["text/html", "application/xhtml+xml"],
-         keepPrefixWhenOversized: Bool = false) {
+         keepPrefixWhenOversized: Bool = false, allowsConstrainedNetworkAccess: Bool = true) {
         self.userAgent = userAgent
         self.acceptedMIMETypes = acceptedMIMETypes
         self.keepPrefixWhenOversized = keepPrefixWhenOversized
+        self.allowsConstrainedNetworkAccess = allowsConstrainedNetworkAccess
     }
 
     func load(_ url: URL) async throws -> Data {
-        try await withCheckedThrowingContinuation { continuation in
-            self.continuation = continuation
-            let configuration = URLSessionConfiguration.ephemeral
-            configuration.timeoutIntervalForRequest = 8
-            configuration.timeoutIntervalForResource = 12
-            configuration.httpShouldSetCookies = false
-            configuration.urlCache = nil
-            let queue = OperationQueue()
-            queue.maxConcurrentOperationCount = 1
-            session = URLSession(configuration: configuration, delegate: self, delegateQueue: queue)
-            var request = URLRequest(url: url)
-            request.setValue(acceptedMIMETypes.sorted().joined(separator: ","), forHTTPHeaderField: "Accept")
-            if let userAgent { request.setValue(userAgent, forHTTPHeaderField: "User-Agent") }
-            task = session?.dataTask(with: request)
-            task?.resume()
+        var request = URLRequest(url: url)
+        request.setValue(acceptedMIMETypes.sorted().joined(separator: ","), forHTTPHeaderField: "Accept")
+        if let userAgent { request.setValue(userAgent, forHTTPHeaderField: "User-Agent") }
+        return try await load(request, apiMode: false)
+    }
+
+    /// POST transport shares the byte bound, drops redirects (including same-host), cookies and cache.
+    /// API status is returned to the caller, so 429 is handled without decoding/logging the error body.
+    func load(_ request: URLRequest, apiMode: Bool,
+              configuration: URLSessionConfiguration = .ephemeral) async throws -> Data {
+        try Task.checkCancellation()
+        return try await withTaskCancellationHandler {
+            try await withCheckedThrowingContinuation { continuation in
+                delegateQueue.addOperation {
+                    self.apiMode = apiMode
+                    self.continuation = continuation
+                    self.cancellationLock.lock()
+                    let cancelled = self.cancelRequested
+                    self.cancellationLock.unlock()
+                    if cancelled { self.finish(.failure(CancellationError())); return }
+                    configuration.timeoutIntervalForRequest = apiMode ? 15 : 8
+                    configuration.timeoutIntervalForResource = apiMode ? 15 : 12
+                    configuration.httpShouldSetCookies = false
+                    configuration.httpCookieStorage = nil
+                    configuration.urlCredentialStorage = nil
+                    configuration.urlCache = nil
+                    configuration.allowsConstrainedNetworkAccess = self.allowsConstrainedNetworkAccess
+                    self.session = URLSession(configuration: configuration, delegate: self, delegateQueue: self.delegateQueue)
+                    self.task = self.session?.dataTask(with: request)
+                    self.task?.resume()
+                }
+            }
+        } onCancel: {
+            self.cancellationLock.lock()
+            self.cancelRequested = true
+            self.cancellationLock.unlock()
+            self.delegateQueue.addOperation { self.finish(.failure(CancellationError())) }
         }
     }
 
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse,
                     completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         httpStatus = (response as? HTTPURLResponse)?.statusCode
-        guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode),
-              acceptedMIMETypes.contains(response.mimeType ?? ""),
+        guard let http = response as? HTTPURLResponse, (apiMode || (200..<300).contains(http.statusCode)),
+              (apiMode || acceptedMIMETypes.contains(response.mimeType ?? "")),
               keepPrefixWhenOversized || response.expectedContentLength <= LinkMetadataService.maximumBytes else {
             completionHandler(.cancel)
             finish(.failure(LinkPreviewError.invalidResponse))
@@ -204,6 +232,7 @@ final class BoundedMetadataDownload: NSObject, URLSessionDataDelegate, @unchecke
     func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse,
                     newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
         do {
+            guard !apiMode else { throw LinkPreviewError.unsafeURL }
             redirects += 1
             guard redirects <= 3, let url = request.url else { throw LinkPreviewError.unsafeURL }
             redirectURLs.append(url)

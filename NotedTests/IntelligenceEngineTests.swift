@@ -106,12 +106,14 @@ final class IntelligenceEngineTests: XCTestCase {
         XCTAssertTrue(IntelligenceResourceProbe.cycled([Int]()).isEmpty)
     }
 
-    func testReportSchemaV3CarriesResourceFieldsWithoutLabels() throws {
+    func testReportSchemaV4CarriesResourceFieldsWithoutLabels() throws {
         let samples = [IntelligenceSpikeSample(id: UUID(), kind: "text", text: "cà phê sáng", hasOriginalText: true,
                                                imageURL: nil, hasOCR: false, gold: nil, desiredTags: [], split: nil)]
         let report = IntelligenceSpikeEvaluator.evaluate(samples)
-        XCTAssertEqual(report.schemaVersion, 3)
+        XCTAssertEqual(report.schemaVersion, 4)
         XCTAssertEqual(report.dataSource, "library")
+        XCTAssertNil(report.linkDigestCoverage)
+        XCTAssertTrue(report.candidates.allSatisfy { $0.linksWithDigest.evaluated == 0 && $0.linksLoginWall.evaluated == 0 })
         XCTAssertNil(report.visionColdMilliseconds)
         let contextual = try XCTUnwrap(report.candidates.first { $0.name == "Apple NL contextual" })
         // Resource numbers require downloaded assets; without them nothing may be reported as measured.

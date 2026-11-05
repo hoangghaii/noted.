@@ -228,6 +228,16 @@ final class LibraryStore {
         try saveChanges()
     }
 
+    /// Writes a derived title (e.g. from a link digest). Never marks it user-edited and leaves `updatedAt`
+    /// alone, so it neither looks like an edit to `EnrichmentRunner` nor blocks later generated titles.
+    func applyGeneratedTitle(_ title: String, to item: Item) throws {
+        try guardMutation()
+        guard !item.userEditedTitle else { return }
+        item.title = title
+        item.rebuildSearchDocument()
+        try saveChanges()
+    }
+
     func togglePin(_ item: Item) throws { try guardMutation(); item.pinned.toggle(); item.updatedAt = Date(); try saveChanges() }
     func trash(_ item: Item) throws { try guardMutation(); item.trashedAt = Date(); item.updatedAt = Date(); try saveChanges() }
     func restore(_ item: Item) throws {

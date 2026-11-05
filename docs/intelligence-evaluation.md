@@ -191,3 +191,21 @@ Không có login wall. Mỗi link mất 1,05–2,41 s, gồm cả tải. Có 1 o
 5. Gate iPhone 12 Pro: cold load ≤3 s, warm p95 text ≤300 ms/mục, Vision ≤500 ms/ảnh, memory delta ≤250 MB, batch 50 mục không chậm thao tác lưu; ghi dung lượng app tăng và `engineVersion`/threshold. Simulator không thay thế phép đo này.
 
 **Quyết định hiện tại:** chưa đủ bằng chứng chọn engine hay bật phân nhóm tự động. Không đổi schema `library.store`, không cài model vào app, không ghi tiêu đề hay topic vào dữ liệu người dùng. Phase 02 vẫn phụ thuộc kết quả của Phase 01.
+
+
+## Link Phase 05 — nhà cung cấp API tùy chọn (2026-11-05)
+
+Người dùng đã chọn **Groq** trong phiên triển khai ngày 2026-11-05. Client mặc định dùng `https://api.groq.com/openai/v1/chat/completions`, model `openai/gpt-oss-20b`; endpoint/model chỉnh được. Không gọi API thật trong kiểm chứng, chưa đo chất lượng tiếng Việt hoặc kết luận bản API tốt hơn bản trích xuất.
+
+Nguồn chính thức kiểm tra ngày 2026-11-05:
+
+- [Billing FAQs](https://console.groq.com/docs/billing-faqs): free tier; phương thức thanh toán cần khi nâng lên Developer. [Hạn mức](https://console.groq.com/docs/rate-limits) liệt kê GPT-OSS 20B trong free plan. Hạn mức thực tế theo tài khoản, có thể đổi.
+- [Services Agreement §8.2](https://console.groq.com/docs/legal/services-agreement): dữ liệu người dùng cung cấp cho prompting/fine-tuning/customization chỉ được dùng để cung cấp dịch vụ cho chính khách hàng. Đây là cơ sở chọn theo yêu cầu không dùng dữ liệu để huấn luyện chung; không đồng nghĩa không lưu dữ liệu.
+- [Your Data](https://console.groq.com/docs/your-data): inference không lưu nội dung theo mặc định; ngoại lệ sự cố/lạm dụng có thể lưu đến 30 ngày. Usage metadata vẫn được thu thập. Có thể bật Zero Data Retention ở Groq Console.
+- [Models](https://console.groq.com/docs/models) và [Structured Outputs](https://console.groq.com/docs/structured-outputs): GPT-OSS 20B có trong danh sách production, hỗ trợ JSON. App dùng JSON mode và tự kiểm tra đúng hai trường title/summary, giới hạn 80/300 ký tự; prompt yêu cầu tiếng Việt. Khả năng đáp ứng tiếng Việt với corpus Noted còn cần đo thực tế.
+
+Payload chỉ là JSON gồm domain, title, description, mainText, tổng ≤2.000 ký tự; lấy text đã làm sạch, loại chuỗi URL HTTP(S)/www trong text. Trang login wall hoặc chỉ có tiêu đề không gọi AI. Dữ liệu text vẫn có thể chứa thông tin riêng tư; màn bật có thông báo và màn xem trước dùng cùng hàm tạo payload với runner. Text trích xuất gốc vẫn làm đầu vào embedding; bản viết lại chỉ đổi title/summary và source=api, không biến nội dung sinh thành bằng chứng.
+
+Client chung `RemoteTextGenerator` quản lý request envelope, Keychain và hạn mức 50 request/ngày (tính cả lần thử lại); API ảnh chưa được triển khai trong phase này. Không có queue cloud lưu trên đĩa. 5xx thử lại tối đa hai lần (đợi 1/2 giây); 429, offline, timeout, JSON sai không retry. 429 chặn thêm request trong phiên một giờ; ngân sách ngày lưu qua lần mở app. Tắt toggle hủy task, xóa queue trong bộ nhớ và bỏ kết quả trễ. Đổi endpoint/model tắt toggle để xác nhận lại. “Thử đọc lại” khi tắt tạo lại bản trích xuất; không gửi bù toàn bộ link cũ.
+
+**Chưa nghiệm thu chất lượng:** cần người dùng nhập khóa trên iPhone và so sánh bản API/bản trích xuất trên đa số link đọc được. Giữ mặc định tắt và chưa khuyến nghị bật đến khi đạt gate này.

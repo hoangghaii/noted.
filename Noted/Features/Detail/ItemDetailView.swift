@@ -3,6 +3,7 @@ import SwiftUI
 struct ItemDetailView: View {
     let item: Item
     let store: LibraryStore
+    @Environment(\.linkDigestRunner) private var digestRunner
     @Environment(\.dismiss) private var dismiss
     @State private var showEditor = false
     @State private var confirmTrash = false
@@ -43,6 +44,7 @@ struct ItemDetailView: View {
                 if item.kind == "link", item.previewStatus == "pending" || item.previewStatus == "running" {
                     ProgressView("Đang tải preview liên kết…").font(.footnote)
                 }
+                if item.kind == "link" { linkSummary }
                 if !item.body.isEmpty { Text(item.body).font(.body).foregroundStyle(NotedDesign.Palette.primaryText).textSelection(.enabled).frame(maxWidth: .infinity, alignment: .leading) }
                 if item.kind == "text" { ShareLink(item: item.body) { Label("Chia sẻ ghi chú", systemImage: "square.and.arrow.up") }.buttonStyle(NotedButtonStyle(role: .soft)) }
                 if !item.tags.isEmpty {
@@ -114,6 +116,44 @@ struct ItemDetailView: View {
         .alert("Chưa hoàn tất", isPresented: Binding(get: { error != nil }, set: { if !$0 { error = nil } })) {
             Button("Đóng", role: .cancel) { error = nil }
         } message: { Text(error ?? "") }
+    }
+
+    @ViewBuilder private var linkSummary: some View {
+        if let runner = digestRunner {
+            let digest = runner.digest(for: item)
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Tóm tắt").font(.headline)
+                if let digest, let summary = digest.visibleSummary {
+                    if let title = digest.title { Text(title).font(.subheadline.weight(.semibold)) }
+                    if !digest.byline.isEmpty { Text(digest.byline).font(.subheadline) }
+                    Text(summary).textSelection(.enabled).accessibilityIdentifier("detailLinkSummary")
+                    Text(digest.source == LinkDigestSource.api.rawValue ? "Viết lại bằng AI" : "Trích từ trang")
+                        .font(.caption).foregroundStyle(.secondary)
+                    if let date = digest.fetchedAt {
+                        Text("Đọc ngày \(date.formatted(date: .abbreviated, time: .shortened))")
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
+                } else if digest?.state == .loginWall {
+                    Text("Không đọc được nội dung (cần đăng nhập)")
+                    Text("Bạn có thể thêm ghi chú để nhớ nội dung link.").font(.footnote)
+                    Button("Thêm ghi chú", systemImage: "pencil") { showEditor = true }
+                } else if digest?.state == .pending || digest?.state == .running {
+                    Text("Đang chờ đọc nội dung link…").font(.footnote)
+                } else {
+                    Text("Chưa đọc được nội dung link.").font(.footnote)
+                }
+                Button("Thử đọc lại", systemImage: "arrow.clockwise") {
+                    do {
+                        try runner.retry(itemID: item.id)
+                        Task { await runner.run(in: store) }
+                    } catch { self.error = error.localizedDescription }
+                }
+                .buttonStyle(NotedButtonStyle(role: .soft))
+                .disabled(runner.running || store.isDataOperationInProgress)
+                .accessibilityIdentifier("detailRetryLink")
+            }
+            .fixedSize(horizontal: false, vertical: true)
+        }
     }
 
     private func perform(_ action: () throws -> Void) {
