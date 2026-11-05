@@ -76,6 +76,11 @@ struct IntelligenceLabelingView: View {
     @State private var reportURL: URL?
     @State private var isRequestingAssets = false
     @State private var assetStatus: String?
+    @State private var linkReport = LinkSourceReport()
+    @State private var linkPreviews: [UUID: LinkSourcePreview] = [:]
+    @State private var linkProgress: (done: Int, total: Int)?
+    /// False when an existing link-sources.json could not be read; measuring would overwrite earlier runs.
+    @State private var linkReportReadable = true
     private let topics = ["Cà phê", "Tìm việc", "Carepath", "Kiếm thêm thu nhập", "Hài hước", "Không rõ", "Chủ đề khác…"]
 
     private var items: [Item] {
@@ -84,6 +89,7 @@ struct IntelligenceLabelingView: View {
 
     private var current: Item? { items.indices.contains(index) ? items[index] : nil }
     private var labelURL: URL { IntelligenceLabelStorage.fileURL(for: store.root) }
+    private var linkReportURL: URL { LinkSourceSpike.reportURL(for: store.root) }
 
     var body: some View {
         NavigationStack {
@@ -144,6 +150,8 @@ struct IntelligenceLabelingView: View {
                     Text("Báo cáo chỉ chứa số đếm và kết quả theo nhóm, không chứa nội dung mục. Không gửi dữ liệu nếu bạn không chọn xuất.")
                 }
 
+                linkSourceSection
+
                 if let item = current {
                     Section("Mục \(index + 1)/\(items.count) · \(IntelligenceLabelStorage.split(for: item.id))") {
                         if item.kind == "image", let attachment = item.attachments.first,
@@ -196,7 +204,73 @@ struct IntelligenceLabelingView: View {
         }
     }
 
+    @ViewBuilder private var linkSourceSection: some View {
+        Section {
+            Button("Đo nguồn link") { Task { await measureLinkSources() } }
+                .disabled(linkProgress != nil || !linkReportReadable || items.allSatisfy { $0.kind != "link" })
+                .accessibilityIdentifier("intelligenceMeasureLinkSources")
+            if let linkProgress {
+                ProgressView(value: Double(linkProgress.done), total: Double(max(linkProgress.total, 1))) {
+                    Text("Đang đo \(linkProgress.done)/\(linkProgress.total), mỗi request cách nhau ~1 giây…")
+                }
+            }
+            if let run = linkReport.runs.last {
+                Text("\(linkReport.runs.count) lần đo · lần cuối \(run.measuredAt.formatted(date: .abbreviated, time: .shortened)) · \(run.results.count) link")
+                    .font(.footnote)
+                ForEach(run.summary.filter { $0.strategy != .linkPresentation }, id: \.self) { row in
+                    LabeledContent("\(row.domain) · \(row.strategy.rawValue)",
+                                   value: "\(row.usable)/\(row.attempted) dùng được · \(row.loginWall) login")
+                        .font(.footnote)
+                }
+                NavigationLink("Xem và đánh giá từng link") {
+                    LinkSourceReviewView(run: run, previews: linkPreviews, items: store.items,
+                                         judgments: $linkReport.judgments) { saveLinkReport(linkReport) }
+                }
+            }
+            if FileManager.default.fileExists(atPath: linkReportURL.path) {
+                ShareLink(item: linkReportURL) { Label("Xuất link-sources.json", systemImage: "square.and.arrow.up") }
+                    .accessibilityIdentifier("intelligenceExportLinkSources")
+            }
+        } header: {
+            Text("Nguồn link · DEBUG")
+        } footer: {
+            Text("Mỗi link được gọi 1 lần cho mỗi chiến lược, không đăng nhập, không cookie. File chỉ chứa domain, cờ, độ dài và hash; nội dung trang chỉ hiển thị trên máy cho tới khi đóng màn này.")
+        }
+    }
+
+    @MainActor
+    private func measureLinkSources() async {
+        guard linkProgress == nil, linkReportReadable else { return }
+        let links = items.filter { $0.kind == "link" }.compactMap { item in
+            URL(string: item.originalURL).map { (id: item.id, url: $0) }
+        }
+        linkProgress = (0, links.count * LinkSourceStrategy.allCases.count)
+        defer { linkProgress = nil }
+        let (run, previews) = await LinkSourceSpike.run(links: links) { done, total in linkProgress = (done, total) }
+        var updated = linkReport
+        updated.runs.append(run)
+        linkPreviews = previews
+        if saveLinkReport(updated) { linkReport = updated }
+    }
+
+    @discardableResult
+    private func saveLinkReport(_ report: LinkSourceReport) -> Bool {
+        do {
+            try LinkSourceSpike.save(report, to: linkReportURL)
+            return true
+        } catch {
+            self.error = "Không lưu được link-sources.json: \(error.localizedDescription)"
+            return false
+        }
+    }
+
     private func load() {
+        do {
+            linkReport = try LinkSourceSpike.load(from: linkReportURL)
+        } catch {
+            linkReportReadable = false
+            self.error = "Không đọc được link-sources.json: \(error.localizedDescription)"
+        }
         do {
             labels = try IntelligenceLabelStorage.load(from: labelURL)
             error = nil
@@ -307,6 +381,58 @@ struct IntelligenceLabelingView: View {
                 kCGImageSourceThumbnailMaxPixelSize: 512
               ] as CFDictionary) else { return nil }
         return UIImage(cgImage: thumbnail)
+    }
+}
+
+/// Lets the user judge, per link, whether what was fetched is enough to assign a topic.
+/// Page text comes from the in-memory previews of the latest run only.
+struct LinkSourceReviewView: View {
+    let run: LinkSourceRun
+    let previews: [UUID: LinkSourcePreview]
+    let items: [Item]
+    @Binding var judgments: [String: Bool]
+    /// Persists the parent's whole report so runs and judgments stay in one file.
+    let onJudge: () -> Void
+
+    var body: some View {
+        List {
+            Section {
+                let judged = run.results.filter { judgments[$0.itemID.uuidString] != nil }
+                Text("\(judged.count)/\(run.results.count) link đã đánh giá · \(judged.filter { judgments[$0.itemID.uuidString] == true }.count) đủ để gán")
+                if previews.isEmpty {
+                    Text("Nội dung trang không được lưu. Chạy “Đo nguồn link” lại để xem nội dung lấy được.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                }
+            }
+            ForEach(run.results, id: \.itemID) { result in
+                Section(result.domain) {
+                    let preview = previews[result.itemID]
+                    let item = items.first { $0.id == result.itemID }
+                    Text(preview?.title.isEmpty == false ? preview!.title : (item?.displayTitle ?? "—")).font(.headline)
+                    if let description = preview?.description, !description.isEmpty {
+                        Text(description).font(.footnote).lineLimit(6)
+                    }
+                    if let url = item?.originalURL { Text(url).font(.caption2).foregroundStyle(.secondary).lineLimit(2) }
+                    Text(result.attempts.map { attempt in
+                        "\(attempt.strategy.rawValue): \(attempt.httpStatus.map(String.init) ?? attempt.error ?? "-")"
+                            + (attempt.loginWall ? " login" : "") + (attempt.usable ? " ✓" : "")
+                    }.joined(separator: " · ")).font(.caption2).foregroundStyle(.secondary)
+                    Picker("Đủ để gán chủ đề?", selection: binding(for: result.itemID)) {
+                        Text("Chưa đánh giá").tag(Bool?.none)
+                        Text("Đủ").tag(Bool?.some(true))
+                        Text("Không đủ").tag(Bool?.some(false))
+                    }
+                }
+            }
+        }
+        .navigationTitle("Đánh giá nguồn link")
+    }
+
+    private func binding(for id: UUID) -> Binding<Bool?> {
+        Binding(get: { judgments[id.uuidString] }, set: { value in
+            judgments[id.uuidString] = value
+            onJudge()
+        })
     }
 }
 #endif

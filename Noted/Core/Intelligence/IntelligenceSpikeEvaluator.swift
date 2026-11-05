@@ -81,7 +81,12 @@ enum IntelligenceResourceProbe {
     static let batchSize = 50
 
     /// Same metric Xcode's memory gauge reports (`phys_footprint`).
-    static func physicalFootprintBytes() -> UInt64? {
+    static func physicalFootprintBytes() -> UInt64? { vmInfo()?.phys_footprint }
+
+    /// Highest `phys_footprint` since process start; only meaningful in a fresh process.
+    static func peakPhysicalFootprintBytes() -> UInt64? { vmInfo().map { UInt64(max(0, $0.ledger_phys_footprint_peak)) } }
+
+    private static func vmInfo() -> task_vm_info_data_t? {
         var info = task_vm_info_data_t()
         var count = mach_msg_type_number_t(MemoryLayout<task_vm_info_data_t>.size / MemoryLayout<integer_t>.size)
         let result = withUnsafeMutablePointer(to: &info) {
@@ -89,7 +94,36 @@ enum IntelligenceResourceProbe {
                 task_info(mach_task_self_, task_flavor_t(TASK_VM_INFO), $0, &count)
             }
         }
-        return result == KERN_SUCCESS ? info.phys_footprint : nil
+        return result == KERN_SUCCESS ? info : nil
+    }
+
+    /// DEBUG launch probe (`--e5-load-probe`): loads E5 once per launch and appends one JSON line
+    /// to `IntelligenceEvaluation/e5-load-probe.jsonl`, to see whether Core ML's device-specialized
+    /// model survives an app relaunch without reinstalling.
+    static func recordE5Load(variant: String = "int8") {
+        Task.detached(priority: .utility) {
+            let before = physicalFootprintBytes()
+            var line: [String: Any] = ["variant": variant, "date": ISO8601DateFormatter().string(from: Date())]
+            do {
+                guard let engine = CoreMLEmbeddingEngine(variant: variant) else { throw EmbeddingError.unavailable("E5 absent") }
+                line["loadMilliseconds"] = try milliseconds { try engine.load() }
+                line["embedMilliseconds"] = try milliseconds { _ = try engine.embed("Cà phê sáng nay", role: .passage) }
+                line["loadDeltaMegabytes"] = megabytes(from: before, to: physicalFootprintBytes())
+                line["peakDeltaMegabytes"] = megabytes(from: before, to: peakPhysicalFootprintBytes())
+            } catch {
+                line["error"] = String(describing: error)
+            }
+            let url = CoreMLEmbeddingEngine.defaultDirectory.deletingLastPathComponent().appendingPathComponent("e5-load-probe.jsonl")
+            guard var data = try? JSONSerialization.data(withJSONObject: line, options: [.sortedKeys]) else { return }
+            data.append(0x0A)
+            if let handle = try? FileHandle(forWritingTo: url) {
+                _ = try? handle.seekToEnd()
+                try? handle.write(contentsOf: data)
+                try? handle.close()
+            } else {
+                try? data.write(to: url)
+            }
+        }
     }
 
     static func megabytes(from before: UInt64?, to after: UInt64?) -> Double? {
@@ -479,7 +513,7 @@ enum IntelligenceSpikeEvaluator {
                      confusion: confusion)
     }
 
-    private static func p95(_ values: [Double]) -> Double? {
+    static func p95(_ values: [Double]) -> Double? {
         guard !values.isEmpty else { return nil }
         let sorted = values.sorted()
         return sorted[Int(ceil(Double(sorted.count) * 0.95)) - 1]

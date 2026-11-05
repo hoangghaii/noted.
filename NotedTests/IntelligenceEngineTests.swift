@@ -206,6 +206,85 @@ final class IntelligenceEngineTests: XCTestCase {
         }
     }
 
+    /// Opt-in resource gate. Run this test alone so the process is fresh and the peak is E5's:
+    /// `TEST_RUNNER_NOTED_E5_RESOURCE=1 xcodebuild test ... -only-testing:NotedTests/IntelligenceEngineTests/testE5IsolatedResourceGateOnDevice`.
+    /// Saves run on the main actor while 50-item batches embed on a background task.
+    @MainActor
+    func testE5IsolatedResourceGateOnDevice() async throws {
+        let environment = ProcessInfo.processInfo.environment
+        guard environment["NOTED_E5_RESOURCE"] == "1" else {
+            throw XCTSkip("Set TEST_RUNNER_NOTED_E5_RESOURCE=1 to measure the E5 resource gate")
+        }
+        let variant = environment["NOTED_E5_VARIANTS"] ?? "int8"
+        guard CoreMLEmbeddingEngine(variant: variant) != nil else { throw XCTSkip("E5 \(variant) model absent") }
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        addTeardownBlock { try? FileManager.default.removeItem(at: root) }
+        let store = try LibraryStore(root: root, queue: ShareGateStore(root: root.appendingPathComponent("queue")))
+        let saves = 30
+
+        func timedSave(_ text: String) async throws -> Double {
+            let start = ProcessInfo.processInfo.systemUptime
+            try await store.captureText(text)
+            return (ProcessInfo.processInfo.systemUptime - start) * 1_000
+        }
+        var idle = [Double]()
+        for index in 0..<saves { idle.append(try await timedSave("Ghi chú đo lưu khi rảnh \(index)")) }
+
+        let texts = IntelligenceResourceProbe.cycled(IntelligenceSyntheticCorpus.samples().map(\.text))
+        let footprintBefore = IntelligenceResourceProbe.physicalFootprintBytes()
+        let peakBefore = IntelligenceResourceProbe.peakPhysicalFootprintBytes()
+        let state = E5BatchState()
+        let batch = Task.detached(priority: .utility) { () throws -> E5BatchResult in
+            let engine = try XCTUnwrap(CoreMLEmbeddingEngine(variant: variant))
+            let cold = try IntelligenceResourceProbe.milliseconds { try engine.load() }
+            let afterLoad = IntelligenceResourceProbe.physicalFootprintBytes()
+            // A second instance shows whether Core ML reuses the device-specialized model.
+            let reload = try IntelligenceResourceProbe.milliseconds {
+                try XCTUnwrap(CoreMLEmbeddingEngine(variant: variant)).load()
+            }
+            state.set(started: true)
+            var batches = [Double]()
+            var items = [Double]()
+            repeat {
+                let start = ProcessInfo.processInfo.systemUptime
+                for text in texts {
+                    items.append(try IntelligenceResourceProbe.milliseconds { _ = try engine.embed(text, role: .passage) })
+                }
+                batches.append((ProcessInfo.processInfo.systemUptime - start) * 1_000)
+            } while !state.stopRequested
+            return E5BatchResult(coldMilliseconds: cold, reloadMilliseconds: reload, footprintAfterLoad: afterLoad,
+                                 footprintAfterBatches: IntelligenceResourceProbe.physicalFootprintBytes(),
+                                 batchMilliseconds: batches, itemMilliseconds: items)
+        }
+        while !state.started { try await Task.sleep(nanoseconds: 5_000_000) }
+        var busy = [Double]()
+        for index in 0..<saves { busy.append(try await timedSave("Ghi chú đo lưu khi batch chạy \(index)")) }
+        state.set(stop: true)
+        let result = try await batch.value
+        let peakAfter = IntelligenceResourceProbe.peakPhysicalFootprintBytes()
+
+        let summary: [String: Any] = [
+            "variant": variant,
+            "computeUnits": "cpuAndNeuralEngine",
+            "coldLoadMilliseconds": result.coldMilliseconds,
+            "secondInstanceLoadMilliseconds": result.reloadMilliseconds,
+            "itemP95Milliseconds": IntelligenceSpikeEvaluator.p95(result.itemMilliseconds) ?? -1,
+            "batch50Milliseconds": result.batchMilliseconds,
+            "loadDeltaMegabytes": IntelligenceResourceProbe.megabytes(from: footprintBefore, to: result.footprintAfterLoad) ?? -1,
+            "afterBatchesDeltaMegabytes": IntelligenceResourceProbe.megabytes(from: footprintBefore, to: result.footprintAfterBatches) ?? -1,
+            "peakDeltaMegabytes": IntelligenceResourceProbe.megabytes(from: footprintBefore, to: peakAfter) ?? -1,
+            "peakBeforeMegabytes": (IntelligenceResourceProbe.megabytes(from: 0, to: peakBefore) ?? -1),
+            "peakAfterMegabytes": (IntelligenceResourceProbe.megabytes(from: 0, to: peakAfter) ?? -1),
+            "saveIdleP95Milliseconds": IntelligenceSpikeEvaluator.p95(idle) ?? -1,
+            "saveIdleMedianMilliseconds": idle.sorted()[saves / 2],
+            "saveDuringBatchP95Milliseconds": IntelligenceSpikeEvaluator.p95(busy) ?? -1,
+            "saveDuringBatchMedianMilliseconds": busy.sorted()[saves / 2],
+        ]
+        let json = try JSONSerialization.data(withJSONObject: summary, options: [.sortedKeys])
+        print("NOTED_E5_RESOURCE_JSON " + String(decoding: json, as: UTF8.self))
+        XCTAssertGreaterThanOrEqual(result.batchMilliseconds.count, 1)
+    }
+
     static func computeUnits(_ name: String?) -> MLComputeUnits {
         switch name {
         case "cpuOnly": .cpuOnly
@@ -228,4 +307,24 @@ final class IntelligenceEngineTests: XCTestCase {
         XCTAssertEqual(try IntelligenceLabelStorage.load(from: url)[id], label)
     }
     #endif
+}
+
+private struct E5BatchResult: Sendable {
+    let coldMilliseconds: Double
+    let reloadMilliseconds: Double
+    let footprintAfterLoad: UInt64?
+    let footprintAfterBatches: UInt64?
+    let batchMilliseconds: [Double]
+    let itemMilliseconds: [Double]
+}
+
+/// Lock-guarded flags shared between the main-actor save loop and the background batch.
+private final class E5BatchState: @unchecked Sendable {
+    private let lock = NSLock()
+    private var _started = false
+    private var _stop = false
+    var started: Bool { lock.withLock { _started } }
+    var stopRequested: Bool { lock.withLock { _stop } }
+    func set(started: Bool) { lock.withLock { _started = started } }
+    func set(stop: Bool) { lock.withLock { _stop = stop } }
 }

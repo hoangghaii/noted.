@@ -92,12 +92,95 @@ Mean-centering: trừ vector trung bình của toàn bộ mục (không dùng nh
 - E5 dạng vector gốc gần như không dự đoán, vì cosine giữa các mục đều cao. Mean-centering là bước bắt buộc với E5.
 
 **Tài nguyên E5 trên iPhone:**
-- Cold load (parse tokenizer 16 MB + load model): int8 735 ms, fp16 755 ms. Gate ≤3 s.
+- Cold load (parse tokenizer 16 MB + load model): int8 735 ms, fp16 755 ms. **Đã đính chính 2026-11-04:** đây là lần load sau NL và sau model kia trong cùng process, không phải cold load thật. Xem [mục đo riêng](#gate-tài-nguyên-e5-đo-riêng-2026-11-04).
 - Warm p95: int8 3,1 ms/mục, fp16 3,4 ms/mục; batch 50 mục int8 mất 146 ms. Gate ≤300 ms.
 - Memory delta khoảng +16,7 MB. Không tin cậy vì đo sau NL và chưa đo peak.
 - Dung lượng `.mlmodelc`: int8 113 MB, fp16 224 MB, cộng tokenizer 16 MB.
 
-**Kết luận tạm:** E5 int8 mean-centered là candidate tốt nhất. Coverage vượt gate và precision sát 85%, nhưng chỉ trên dữ liệu tổng hợp với holdout 35 mục. Chưa chọn engine: cần nhãn thật để đo precision/confusion, cần đo thêm memory peak và ảnh hưởng tới thao tác lưu.
+**Kết luận tạm (2026-11-03, đã thay bằng mục dưới):** E5 int8 mean-centered là candidate tốt nhất. Coverage vượt gate và precision sát 85%, nhưng chỉ trên dữ liệu tổng hợp với holdout 35 mục. Chưa chọn engine: cần nhãn thật để đo precision/confusion, cần đo thêm memory peak và ảnh hưởng tới thao tác lưu.
+
+## Gate tài nguyên E5, đo riêng (2026-11-04)
+
+Đo trên iPhone 12 Pro, iOS 27.0.1, bản Debug, `.cpuAndNeuralEngine`, theo hai cách:
+- **Test `testE5IsolatedResourceGateOnDevice`** (opt-in `TEST_RUNNER_NOTED_E5_RESOURCE=1`, chạy một mình nên process sạch và chỉ có E5). App lưu 30 ghi chú khi rảnh, rồi lưu 30 ghi chú trên main actor trong lúc một task nền embed liên tục các batch 50 mục của bộ tổng hợp. Peak lấy từ `ledger_phys_footprint_peak`. Mỗi lần `xcodebuild test` cài lại app.
+- **Probe khi mở app** (`--e5-load-probe <variant>`, chỉ có trong DEBUG): mỗi lần app khởi động thì load E5 một lần và ghi thêm một dòng vào `IntelligenceEvaluation/e5-load-probe.jsonl`. Cài app một lần, rồi mở lại nhiều lần bằng `devicectl device process launch --terminate-existing`, không cài lại. Delta memory của probe có lẫn phần app khởi động.
+
+| | int8 | fp16 | Gate |
+|---|---|---|---|
+| Load lần đầu sau khi cài (test, 4 lần chạy) | 25,7–31,1 s | 14,5 s | ≤3 s ✗ |
+| Load lần đầu sau khi cài (probe) | 22,9 s | 14,5 s | ≤3 s ✗ |
+| Load ở các lần mở app sau (probe, 2 lần mỗi model) | 2,23–2,25 s | 2,24–2,29 s | ≤3 s ✓ (sát) |
+| Instance thứ hai trong cùng process (test) | 2,37 s | 2,13 s | — |
+| Memory sau load / sau các batch (test) | +224 / +225–293 MB | +39 / +96 MB | ≤250 MB |
+| Peak tăng, lần đầu sau khi cài (test) | **+591 MB** | +97 MB | ≤250 MB |
+| Peak tăng, các lần mở sau (probe) | +104 MB | +104 MB | ≤250 MB ✓ |
+| Warm p95 mỗi mục (test) | 4,3–8,9 ms | 4,6 ms | ≤300 ms ✓ |
+| Một batch 50 mục (test) | 159–266 ms | 181–225 ms | — |
+| Lưu ghi chú p95, khi rảnh → trong lúc batch chạy | 8,9–15,0 → 11,2–21,7 ms | 8,8 → 11,2 ms | không chậm ✓ |
+
+**Nhận xét:**
+- Lần load đầu sau khi cài hoặc cập nhật app chậm, vì Core ML specialize model cho Neural Engine. Bản đã specialize được cache và vẫn còn sau khi tắt và mở lại app. Mỗi lần cài lại thì mất cache. Lần trả phí đầu này vi phạm gate cold load, nên model phải được load trong task nền, không chặn UI hay thao tác lưu, và các mục đó tạm ở trạng thái “Chưa phân nhóm” cho tới khi model sẵn sàng.
+- int8 nhỏ hơn trên đĩa (113 MB so với 224 MB) nhưng tốn RAM hơn: lần đầu peak +591 MB, vượt gate. Sau khi load thì giữ khoảng +225 MB, khác với fp16 chỉ +39 MB. Có thể Neural Engine giải nén weight int8 ra bộ nhớ (chưa kiểm chứng). Trên bộ tổng hợp, chất lượng của hai bản giống hệt nhau.
+- Lưu ghi chú trong lúc batch chạy chậm thêm khoảng 2–3 ms ở median, p95 dưới 22 ms. Người dùng không nhận ra được độ chậm này.
+
+**Kết luận tài nguyên:** chọn **E5 fp16** (`e5-small-fd1525a-fp16-t128-mean-v1`), không chọn int8. Với fp16, các gate p95, memory, batch/lưu và cold load khi đã có cache đều đạt. Gate cold load không đạt ở lần đầu sau khi cài hoặc cập nhật (14,5 s); điều này chấp nhận được nếu load chạy nền như mô tả ở trên. App tăng khoảng 240 MB (model 224 MB và tokenizer 16 MB) nếu đóng gói model. Quyết định engine cuối cùng vẫn chờ chất lượng trên nhãn thật.
+
+## Nhãn thật trên iPhone (2026-11-04)
+
+Người dùng gán nhãn 75 mục (28 ảnh đều có OCR, 21 link, 26 ghi chú), bằng màn DEBUG, rồi chạy đánh giá local. Asset NL tiếng Việt đã được tải lại trước khi chạy. Chưa ai gán tag mong muốn.
+
+- **Phân bố nhãn:** Cà phê 39, Không rõ 24, AI 4, Tiếng Anh 2, Tìm việc 2. Mac App, Đồ ăn, Noted. update note và Vệ sinh mỗi nhóm 1 mục. Carepath và Kiếm thêm thu nhập không có mục nào. Chỉ Cà phê và Không rõ đạt ≥10 mục.
+- **Chia nhóm:** calibration 63 mục, holdout 12 mục, theo seed cố định. Gate ≥150 nhãn và ≥10 mục mỗi nhóm không đạt, nên số dưới đây chỉ để tham khảo. Mỗi mục holdout tương đương 8,3 điểm phần trăm.
+- **Link:** người dùng cho biết hầu hết link khó gán nhãn vì app chỉ có URL và `<title>`, nên thường chọn “Không rõ”. Cần bản mô tả link trước khi đánh giá lại link.
+
+| Candidate | Ngưỡng / margin | Precision | Coverage holdout |
+|---|---|---|---|
+| Baseline tên topic (không phải AI) | — | 100% (8/8) | 66,7% |
+| NL contextual, gốc hoặc mean-centered | 0,90 / 0,02 · 0,50 / 0,12 | 90% (9/10) | 83,3% |
+| E5 fp16/int8 gốc | 0 / 0,04 | 100% (8/8) | 66,7% |
+| E5 fp16/int8 mean-centered | 0,35 / 0,14 | 88,9% (8/9) | 75% |
+| Vision feature-print 1-NN (5 ảnh) | 0,41 | 100% (1/1) | 20% |
+
+- Lỗi duy nhất của các engine embedding là một link “Tiếng Anh” bị gán thành “AI”. Baseline trả “Không rõ” cho mục này.
+- Engine thắng baseline nhiều nhất là NL contextual (+1 mục đúng, +2 mục được gán). Khác biệt này nằm trong sai số của 12 mục, nên **chưa có engine nào thắng baseline rõ ràng**. Theo Acceptance, chưa chốt engine dựa trên chất lượng.
+- Vision trên lần chạy này: p95 99,2 ms/ảnh, cold load 334 ms, memory +38 MB.
+
+## Nguồn link trên iPhone (2026-11-04)
+
+Thuộc [Phase 01 Đọc hiểu link](../plans/20261104-2113-link-understanding/phase-01-link-source-spike.md). Công cụ: màn gán nhãn DEBUG → **Nguồn link · DEBUG** → “Đo nguồn link”. Mỗi link chạy 4 chiến lược, mỗi chiến lược 1 lần, cách nhau ~1,2 s: GET mặc định của `URLSession`, GET với User-Agent Safari iOS, `LPMetadataProvider` (chỉ so tiêu đề), oEmbed công khai không token. Một chiến lược được tính “dùng được” khi không lỗi, không có login wall, và có mô tả ≥40 ký tự hoặc nội dung chính ≥200 ký tự. Mô tả giống hệt nhau ở ≥2 link khác nhau bị coi là boilerplate. File `link-sources.json` chỉ chứa domain đã chuẩn hóa, cờ, độ dài, hash và đánh giá Đủ/Không đủ của người dùng.
+
+Build 1.0 (1), iOS 27.0.1, iPhone 12 Pro (iPhone13,3). Thư viện có 21 link: 8 Threads, 1 iCloud Notes, 12 `example.com`. 12 link `example.com` là dữ liệu fixture nên bị loại khỏi bảng.
+
+- **Lượt 14:32 và 14:37 UTC (không hợp lệ):** Threads 8/8 lỗi `oversized`. Trang khoảng 600 KB, vượt giới hạn 512 KB, nên không đọc được meta. Đây là lỗi của công cụ đo. Đã sửa bằng cách đọc 512 KB đầu (`keepPrefixWhenOversized`).
+- **Lượt 14:47 UTC (sau khi sửa):**
+
+| Domain | Link | GET mặc định | GET UA Safari | LPMetadataProvider | oEmbed không token | Người dùng: đủ để gán |
+|---|---|---|---|---|---|---|
+| threads | 8 | 8/8 có og:description (76–487 ký tự) | 8/8, giống hệt GET mặc định | chỉ tiêu đề = tác giả | 0/8 (HTTP 400) | 7/8 |
+| icloud.com | 1 | 0/1 (og:description 22 ký tự) | 0/1, giống hệt | chỉ tiêu đề | không có endpoint | 0/1 |
+
+- **Threads:** og:title là “Tên (@handle) on Threads”, tức tác giả chứ không phải nội dung. og:description là nội dung bài, nằm trong khoảng 4 KB đầu trang. Cả 8 lần đều qua 1–2 redirect và bị cắt ở 512 KB. Không thấy login wall với link bài viết. Trang profile không đăng nhập (kiểm tra bằng curl) trả boilerplate “Join Threads… Log in with your Instagram.” Thời gian thường 1,0–1,4 s, chậm nhất 4,4 s. Với 1 bài, người dùng đánh giá chưa đủ dù có 127 ký tự mô tả.
+- **iCloud Notes:** chỉ có tiêu đề (dòng đầu của ghi chú). Nội dung được tải bằng JavaScript, không có trong HTML.
+- **Facebook, Instagram:** thư viện không có link nào, nên chưa có số đo thật.
+- **Còn mở:** chỉ có 1 lượt hợp lệ, chưa đo lại ở thời điểm thứ hai như plan yêu cầu.
+
+**Quyết định:**
+1. Mặc định dùng 1 GET với User-Agent mặc định, đọc tối đa 512 KB đầu trang (không coi là lỗi khi vượt), theo thứ tự og → twitter → meta description → nội dung chính. UA Safari không mang lại gì thêm (hash mô tả giống hệt), nên không dùng.
+2. Bỏ oEmbed (Threads cần token, IG/FB theo tài liệu cũng cần token) và bỏ `LPMetadataProvider` (chỉ trùng og:title).
+3. Với Threads, og:title được lưu làm tác giả/tên trang, không làm tiêu đề nội dung; og:description là phần tóm tắt.
+4. Ghi `loginWall` khi redirect tới trang đăng nhập hoặc mô tả khớp mẫu boilerplate (kể cả mô tả lặp ở nhiều link). Facebook/Instagram dùng cùng quy tắc này nhưng **chưa được xác minh trên dữ liệu thật**; cần đo khi thư viện có link của hai nguồn này.
+5. Với iCloud Notes và các trang chỉ có tiêu đề, ghi trạng thái chỉ-có-tiêu-đề và gợi ý người dùng tự thêm ghi chú. Không chạy JavaScript ẩn trong bản đầu.
+
+## Digest link trích xuất trên iPhone (2026-11-04)
+
+Thuộc [Phase 02 Đọc hiểu link](../plans/20261104-2113-link-understanding/phase-02-extraction.md). Đo bằng chiến lược `extractiveDigest` (`fetchPage` + `ExtractiveLinkDigester`, `link-extractive-v1`), build 1.0 (1), iOS 27.0.1, iPhone 12 Pro, lượt 15:04 UTC. Không tính 12 link fixture `example.com`.
+
+| Domain | Link | Digest `complete` | Người dùng: đủ để gán | So với Phase 01 |
+|---|---|---|---|---|
+| threads | 8 | 8/8 (tóm tắt 76–217 ký tự) | 8/8 | 8/8 dùng được; người dùng 7/8 |
+| icloud.com | 1 | 0/1 (`titleOnly`) | 0/1 | như Phase 01 |
+
+Không có login wall. Mỗi link mất 1,05–2,41 s, gồm cả tải. Có 1 og:title Threads không khớp mẫu tác giả nên vẫn được giữ làm tiêu đề.
 
 ## Quy trình đo trước quyết định
 

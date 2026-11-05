@@ -19,15 +19,46 @@ enum LinkMetadataService {
         try await Task.detached(priority: .utility) { try PublicURLPolicy.validate(url) }.value
         let data = try await BoundedMetadataDownload().load(url)
         let html = String(data: data, encoding: .utf8) ?? String(data: data, encoding: .isoLatin1) ?? ""
+        return title(fromHTML: html, url: url)
+    }
+
+    /// One request for the link digest. Pages over `maximumBytes` keep their prefix instead of failing:
+    /// meta tags sit in the first few KB (Threads pages are ~600 KB; link-understanding Phase 01).
+    static func fetchPage(for url: URL) async throws -> LinkPage {
+        try await Task.detached(priority: .utility) { try PublicURLPolicy.validate(url) }.value
+        let download = BoundedMetadataDownload(keepPrefixWhenOversized: true)
+        let data = try await download.load(url)
+        // A truncated prefix may end mid-character, so it is decoded leniently.
+        let html = String(data: data, encoding: .utf8)
+            ?? (download.truncated ? String(decoding: data, as: UTF8.self) : String(data: data, encoding: .isoLatin1) ?? "")
+        return LinkPage(url: url, finalURL: download.redirectURLs.last ?? url, html: html,
+                        statusCode: download.httpStatus, truncated: download.truncated,
+                        redirectCount: download.redirectURLs.count,
+                        redirectedToLogin: download.redirectURLs.contains(where: ExtractiveLinkDigester.isLoginURL))
+    }
+
+    /// The `<title>` of a page, or the host when there is none. Behavior used by `EnrichmentRunner`.
+    static func title(fromHTML html: String, url: URL) -> String {
         let pattern = "(?is)<title[^>]*>(.*?)</title>"
-        let regex = try NSRegularExpression(pattern: pattern)
-        guard let match = regex.firstMatch(in: html, range: NSRange(html.startIndex..., in: html)),
+        guard let regex = try? NSRegularExpression(pattern: pattern),
+              let match = regex.firstMatch(in: html, range: NSRange(html.startIndex..., in: html)),
               let range = Range(match.range(at: 1), in: html) else { return url.host ?? url.absoluteString }
         return String(html[range]).replacingOccurrences(of: "&amp;", with: "&")
             .replacingOccurrences(of: "&lt;", with: "<").replacingOccurrences(of: "&gt;", with: ">")
             .replacingOccurrences(of: "&quot;", with: "\"").replacingOccurrences(of: "&#39;", with: "'")
             .split(whereSeparator: \.isWhitespace).joined(separator: " ").prefix(300).description
     }
+}
+
+/// One downloaded page (or its first `LinkMetadataService.maximumBytes`).
+struct LinkPage: Sendable {
+    let url: URL
+    let finalURL: URL
+    let html: String
+    let statusCode: Int?
+    let truncated: Bool
+    let redirectCount: Int
+    let redirectedToLogin: Bool
 }
 
 enum PublicURLPolicy {
@@ -99,12 +130,29 @@ enum PublicURLPolicy {
 }
 
 /// Serial delegate bounds bytes as they arrive, rather than buffering an unbounded response.
-private final class BoundedMetadataDownload: NSObject, URLSessionDataDelegate, @unchecked Sendable {
+/// Each instance performs one load; status and redirect targets stay readable afterwards for diagnostics.
+final class BoundedMetadataDownload: NSObject, URLSessionDataDelegate, @unchecked Sendable {
+    private let userAgent: String?
+    private let acceptedMIMETypes: Set<String>
+    private let keepPrefixWhenOversized: Bool
     private var session: URLSession?
     private var task: URLSessionDataTask?
     private var continuation: CheckedContinuation<Data, Error>?
     private var data = Data()
     private var redirects = 0
+    private(set) var httpStatus: Int?
+    private(set) var redirectURLs: [URL] = []
+    private(set) var truncated = false
+
+    /// Defaults keep the production preview request unchanged (URLSession user agent, HTML only, fail when oversized).
+    /// `keepPrefixWhenOversized` stops at the byte limit and returns the prefix: meta tags sit in the first few KB
+    /// even when the page (e.g. Threads, ~600 KB) is larger than the limit.
+    init(userAgent: String? = nil, acceptedMIMETypes: Set<String> = ["text/html", "application/xhtml+xml"],
+         keepPrefixWhenOversized: Bool = false) {
+        self.userAgent = userAgent
+        self.acceptedMIMETypes = acceptedMIMETypes
+        self.keepPrefixWhenOversized = keepPrefixWhenOversized
+    }
 
     func load(_ url: URL) async throws -> Data {
         try await withCheckedThrowingContinuation { continuation in
@@ -118,7 +166,8 @@ private final class BoundedMetadataDownload: NSObject, URLSessionDataDelegate, @
             queue.maxConcurrentOperationCount = 1
             session = URLSession(configuration: configuration, delegate: self, delegateQueue: queue)
             var request = URLRequest(url: url)
-            request.setValue("text/html,application/xhtml+xml", forHTTPHeaderField: "Accept")
+            request.setValue(acceptedMIMETypes.sorted().joined(separator: ","), forHTTPHeaderField: "Accept")
+            if let userAgent { request.setValue(userAgent, forHTTPHeaderField: "User-Agent") }
             task = session?.dataTask(with: request)
             task?.resume()
         }
@@ -126,9 +175,10 @@ private final class BoundedMetadataDownload: NSObject, URLSessionDataDelegate, @
 
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse,
                     completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
+        httpStatus = (response as? HTTPURLResponse)?.statusCode
         guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode),
-              ["text/html", "application/xhtml+xml"].contains(response.mimeType ?? ""),
-              response.expectedContentLength <= LinkMetadataService.maximumBytes else {
+              acceptedMIMETypes.contains(response.mimeType ?? ""),
+              keepPrefixWhenOversized || response.expectedContentLength <= LinkMetadataService.maximumBytes else {
             completionHandler(.cancel)
             finish(.failure(LinkPreviewError.invalidResponse))
             return
@@ -139,7 +189,13 @@ private final class BoundedMetadataDownload: NSObject, URLSessionDataDelegate, @
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive bytes: Data) {
         guard data.count + bytes.count <= LinkMetadataService.maximumBytes else {
             task?.cancel()
-            finish(.failure(LinkPreviewError.oversized))
+            if keepPrefixWhenOversized {
+                data.append(bytes.prefix(LinkMetadataService.maximumBytes - data.count))
+                truncated = true
+                finish(.success(data))
+            } else {
+                finish(.failure(LinkPreviewError.oversized))
+            }
             return
         }
         data.append(bytes)
@@ -150,6 +206,7 @@ private final class BoundedMetadataDownload: NSObject, URLSessionDataDelegate, @
         do {
             redirects += 1
             guard redirects <= 3, let url = request.url else { throw LinkPreviewError.unsafeURL }
+            redirectURLs.append(url)
             try PublicURLPolicy.validate(url)
             completionHandler(request)
         } catch {

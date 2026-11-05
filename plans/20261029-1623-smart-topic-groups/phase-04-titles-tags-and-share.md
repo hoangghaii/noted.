@@ -21,7 +21,7 @@ Tự điền tiêu đề trống, tóm tắt link, gợi ý tag, gợi ý topic/
 
 ## Bước
 
-- [ ] **Link**: title theo thứ tự `og:title` → `<title>` → host. Tóm tắt = `og:description`/`meta description`, cắt ≤240 ký tự theo ranh giới câu. Không tải thêm trang.
+- [ ] **Link** (2026-11-04: bước này được thay bằng `LinkDigest` của plan [Đọc hiểu link](../20261104-2113-link-understanding/plan.md); phase này chỉ còn đọc digest): title theo thứ tự `og:title` → `<title>` → host. Tóm tắt = `og:description`/`meta description`, cắt ≤240 ký tự theo ranh giới câu. Không tải thêm trang.
 - [ ] **Ảnh có tiêu đề trống**: dòng OCR nổi bật (dòng đầu đủ dài, không phải số/giờ/thanh trạng thái), ≤60 ký tự. Ảnh không có OCR → để `displayTitle` hiện có (“Ảnh đã lưu”), **không** bịa tiêu đề từ nhãn Vision.
 - [ ] **Ghi chú có tiêu đề trống**: câu đầu, ≤60 ký tự. Chỉ ghi khi body dài hơn câu đó (tránh lặp nguyên body).
 - [ ] Ghi qua `applyGeneratedTitle` (Phase 02). Tiêu đề người dùng sửa → `userEditedTitle` → không bao giờ ghi đè. Có nút “Đặt lại tiêu đề tự động” trong Detail.
