@@ -79,6 +79,41 @@ enum PhaseFourFixtures {
         try store.saveChanges()
     }
 
+    static func linkDigestRunner(in store: LibraryStore) throws -> LinkDigestRunner {
+        let intelligence = try IntelligenceStore(root: store.root.appendingPathComponent("Intelligence"))
+        let blockedID = UUID(uuidString: "00000000-0000-0000-0000-000000000006")!
+        if !store.items.contains(where: { $0.id == blockedID }) {
+            let item = Item(id: blockedID, captureID: "fixture-login-wall", kind: "link",
+                            title: "P4 login wall", originalURL: "https://example.com/login",
+                            createdAt: Date().addingTimeInterval(10))
+            item.previewStatus = "complete"
+            store.context.insert(item)
+            try store.saveChanges()
+        }
+        for item in store.items where item.kind == "link" {
+            if try intelligence.linkDigest(for: item.id) != nil { continue }
+            let digest = LinkDigest(itemID: item.id,
+                fingerprint: LinkDigest.fingerprint(originalURL: item.originalURL, engineVersion: ExtractiveLinkDigester.engineVersion),
+                engineVersion: ExtractiveLinkDigester.engineVersion)
+            digest.apply(LinkDigestContent(title: "Chăm sóc cây trong nhà", siteName: "Vườn mẫu", author: "An",
+                summary: "Tưới cây vừa đủ và đặt cây gần cửa sổ có ánh sáng dịu.",
+                textForEmbedding: "Chăm sóc cây trong nhà", status: .complete), now: Date())
+            if item.id == blockedID { digest.apply(LinkDigestContent(status: .loginWall), now: Date()) }
+            intelligence.context.insert(digest)
+        }
+        try intelligence.saveChanges()
+        if ProcessInfo.processInfo.arguments.contains("--link-digest-labeling-fixture") {
+            let labels = Dictionary(uniqueKeysWithValues: store.items.sorted { $0.id.uuidString < $1.id.uuidString }.prefix(3).map { item in
+                (item.id, IntelligenceLabel(itemID: item.id, topic: "Không rõ", desiredTags: [],
+                    split: IntelligenceLabelStorage.split(for: item.id), labeledAt: Date()))
+            })
+            try IntelligenceLabelStorage.save(labels, to: IntelligenceLabelStorage.fileURL(for: store.root))
+        }
+        return LinkDigestRunner(intelligence: intelligence, loader: { _ in
+            LinkDigestFetch(content: LinkDigestContent(status: .loginWall), rawTitle: "")
+        })
+    }
+
     static func failNextSave(in store: LibraryStore) {
         guard isVerificationStore(store) else { return }
         store.libraryFaultInjector = { [weak store] point in

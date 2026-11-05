@@ -32,6 +32,9 @@ struct DataManagementView: View {
                     LabeledContent("Bộ sưu tập", value: "\(store.collections.count)")
                     LabeledContent("Ảnh gốc", value: ByteCountFormatter.string(fromByteCount: store.items.flatMap(\.attachments).reduce(0) { $0 + $1.size }, countStyle: .file))
                 }
+                Section {
+                    NavigationLink("AI tùy chọn") { RemoteAISettingsView(store: store) }
+                }
                 #if DEBUG
                 Section {
                     NavigationLink("Gán nhãn chủ đề") { IntelligenceLabelingView(store: store) }

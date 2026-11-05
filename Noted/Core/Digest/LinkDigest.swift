@@ -49,6 +49,21 @@ final class LinkDigest {
         set { status = newValue.rawValue }
     }
 
+    func isCurrent(for item: Item) -> Bool {
+        item.kind == "link" && fingerprint == Self.fingerprint(originalURL: item.originalURL,
+                                                               engineVersion: ExtractiveLinkDigester.engineVersion)
+    }
+
+    var byline: String {
+        [siteName, author].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · ")
+    }
+
+    var visibleSummary: String? {
+        guard state == .complete, let summary,
+              !summary.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return nil }
+        return summary
+    }
+
     /// Clears every derived field for a new fingerprint (URL or engine changed).
     func reset(fingerprint: String, engineVersion: String, now: Date) {
         self.fingerprint = fingerprint
@@ -62,13 +77,13 @@ final class LinkDigest {
         updatedAt = now
     }
 
-    func apply(_ content: LinkDigestContent, now: Date) {
+    func apply(_ content: LinkDigestContent, now: Date, source: LinkDigestSource = .extractive) {
         title = content.title
         siteName = content.siteName
         author = content.author
         summary = content.summary
         textForEmbedding = content.textForEmbedding
-        source = LinkDigestSource.extractive.rawValue
+        self.source = source.rawValue
         state = LinkDigestState(rawValue: content.status.rawValue) ?? .complete
         nextRetryAt = nil
         fetchedAt = now

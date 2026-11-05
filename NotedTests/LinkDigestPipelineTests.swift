@@ -11,6 +11,62 @@ final class LinkDigestPipelineTests: XCTestCase {
         addTeardownBlock { [root] in try? FileManager.default.removeItem(at: root!) }
     }
 
+    func testDigestPresentationAndEvaluatorInput() async throws {
+        let store = try library()
+        let item = try await addLink("https://example.com/article", to: store)
+        let intelligence = try IntelligenceStore(root: intelligenceRoot)
+        let digest = LinkDigest(itemID: item.id, fingerprint: LinkDigest.fingerprint(originalURL: item.originalURL, engineVersion: ExtractiveLinkDigester.engineVersion), engineVersion: ExtractiveLinkDigester.engineVersion)
+        digest.title = "Bài đọc"
+        digest.siteName = "Trang mẫu"
+        digest.author = "Tác giả"
+        digest.summary = "Cách chăm sóc cây trong nhà."
+        digest.textForEmbedding = "Bài đọc\nCách chăm sóc cây trong nhà."
+        intelligence.context.insert(digest)
+        digest.state = .running
+        XCTAssertNil(digest.visibleSummary)
+        digest.state = .complete
+        XCTAssertEqual(digest.visibleSummary, digest.summary)
+        XCTAssertEqual(digest.byline, "Trang mẫu · Tác giả")
+        let runner = LinkDigestRunner(intelligence: intelligence)
+        XCTAssertNotNil(runner.digests[item.id])
+        let samples = IntelligenceSpikeEvaluator.snapshots(store: store, labels: [:], digests: runner.digests)
+        XCTAssertTrue(try XCTUnwrap(samples.first).text.contains("chăm sóc cây"))
+        XCTAssertEqual(samples.first?.linkDigestStatus, "complete")
+        digest.state = .loginWall
+        XCTAssertNil(digest.visibleSummary)
+        let blocked = IntelligenceSpikeEvaluator.snapshots(store: store, labels: [:], digests: runner.digests)
+        XCTAssertFalse(try XCTUnwrap(blocked.first).text.contains("chăm sóc cây"))
+        XCTAssertEqual(blocked.first?.linkDigestStatus, "loginWall")
+        digest.state = .complete
+        digest.summary = " "
+        let empty = IntelligenceSpikeEvaluator.snapshots(store: store, labels: [:], digests: runner.digests)
+        XCTAssertEqual(empty.first?.linkDigestStatus, "titleOnly")
+        item.originalURL = "https://example.com/changed"
+        XCTAssertNil(runner.digest(for: item))
+        let changed = IntelligenceSpikeEvaluator.snapshots(store: store, labels: [:], digests: runner.digests)
+        XCTAssertNil(changed.first?.linkDigestStatus)
+    }
+
+    func testLinkMetricsSeparateDigestAndLoginWall() {
+        func sample(_ status: String) -> IntelligenceSpikeSample {
+            .init(id: UUID(), kind: "link", text: "", hasOriginalText: true, imageURL: nil,
+                  hasOCR: false, gold: "Cây", desiredTags: [], split: "holdout", linkDigestStatus: status)
+        }
+        let rows: [(sample: IntelligenceSpikeSample, predicted: String?)] = [
+            (sample("complete"), "Cây"), (sample("complete"), "Khác"),
+            (sample("complete"), nil), (sample("loginWall"), nil)
+        ]
+        let complete = IntelligenceSpikeEvaluator.linkMetrics(rows, status: "complete")
+        XCTAssertEqual(complete.evaluated, 3)
+        XCTAssertEqual(complete.precision, 0.5)
+        XCTAssertEqual(complete.coverage ?? -1, 2.0 / 3, accuracy: 0.0001)
+        let blocked = IntelligenceSpikeEvaluator.linkMetrics(rows, status: "loginWall")
+        XCTAssertEqual(blocked.evaluated, 1)
+        XCTAssertNil(blocked.precision)
+        XCTAssertEqual(blocked.coverage, 0)
+        XCTAssertNil(IntelligenceSpikeEvaluator.linkMetrics([], status: "complete").coverage)
+    }
+
     private var intelligenceRoot: URL { root.appendingPathComponent("library/Intelligence") }
 
     private func library() throws -> LibraryStore {

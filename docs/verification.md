@@ -83,3 +83,28 @@ Thiết bị: iPhone 12 Pro, iOS 27.0.1, kết nối dây. App cài đè bằng 
   - rebuild: ghi đè `Intelligence/schema-version.txt` bằng `0` (`devicectl` không xóa được file), rồi mở app. Store cũ được đặt sang `intelligence.store.corrupt*` (còn đủ 22 bản ghi), store mới rebuild **22/22 trong 14,6 s** (21 `complete` + 1 `titleOnly`), `schema-version.txt` được ghi lại là `1`;
   - `library.store` trước và sau rebuild: không trường nào ngoài tiêu đề thay đổi (body, URL, `updatedAt`, pin, trash, trạng thái OCR/preview, `userEditedTitle`, tag), và không tiêu đề nào đổi.
 - Chưa kiểm chứng trên máy: snapshot `library.store` **trước** lần chạy digest đầu tiên (tiêu đề link đã được thay ngay lúc app host khởi động trong phiên test). Quy tắc chỉ thay tiêu đề host/`<title>` thô và không đụng tiêu đề người dùng đã sửa được kiểm bằng unit test. Chưa thử offline/Low Data Mode trên máy thật.
+
+## 2026-11-05 — Đọc hiểu link, Phase 04 (UI & evaluator)
+
+Đã nối LinkDigest tới thẻ giấy, Detail (nguồn/ngày đọc/đọc lại/login wall), sheet gán nhãn DEBUG và input evaluator. Report JSON v4 có coverage digest và precision/coverage theo nhóm link complete/loginWall. Không sửa stored schema hoặc backup.
+
+- `xcodebuild ... -scheme Noted ... CODE_SIGNING_ALLOWED=NO build`: **đạt** trên source cuối. Lượt sandbox đầu không chạy được SwiftData macro; build ngoài sandbox đạt.
+- `xcodebuild ... -scheme Noted ... -only-testing:NotedTests/LinkDigestPipelineTests -only-testing:NotedTests/IntelligenceEngineTests`: **38 test, 0 lỗi, 2 skip opt-in** của E5/resource report.
+- Chạy lại source cuối: `LinkDigestPipelineTests` + `IntelligenceEngineTests/testReportSchemaV4CarriesResourceFieldsWithoutLabels`: **24 test, 0 lỗi, 0 skip**.
+- `xcodebuild ... -scheme Noted-DeviceGate ... -parallel-testing-enabled NO -collect-test-diagnostics never -only-testing:NotedUITests/IntelligenceLabelingUITests test`: **4/4 đạt trên iPhone 12 Pro**. Có ca riêng kiểm tra complete/login wall, summary trong sheet và Dynamic Type accessibility XXXL. Test cũ được sửa để chờ computation rồi cuộn đến hàng xuất report trong lazy Form; không bỏ assertion. Các lượt thất bại ban đầu và diagnostics bị kẹt được ghi trong evidence.
+- `git diff --check`: đạt; tự review diff và đường truyền environment/fingerprint/retry/snapshots.
+
+[Evidence, lệnh đầy đủ và ảnh tổng hợp](evidence/20261105-link-phase4/summary.md). Chưa nghe VoiceOver thủ công hoặc nghiệm thu dark mode đầy đủ; todo VoiceOver của phase giữ mở. Không xuất screenshot/nội dung cá nhân vào repo. Search trong summary là tùy chọn chưa làm; nghiệm thu chất lượng link thật và đánh giá lại chủ đề thuộc Phase 06.
+
+
+## 2026-11-05 — Link Phase 05: API Groq text-only tùy chọn
+
+Đã triển khai client/Keychain, toggle mặc định tắt có consent, payload preview ≤2.000 ký tự không kèm URL đầy đủ, runner fallback và hạn mức chung 50 request/ngày. Bật áp dụng cho link mới hoặc đọc lại; tắt hủy tác vụ cloud. Không đổi schema hoặc dữ liệu gốc. Các sửa đổi Phase 04 có trước phiên được giữ nguyên.
+
+- `ruby scripts/update-project.rb`: đạt; nguồn mới vào target.
+- `xcodebuild ... -destination 'generic/platform=iOS' ... CODE_SIGNING_ALLOWED=NO build`: **đạt**, cũng kiểm chứng Swift type-check. Lượt sandbox đầu không chạy được macro; cùng lệnh ngoài sandbox đạt.
+- `xcodebuild ... -only-testing:NotedTests/RemoteLinkDigesterTests -only-testing:NotedTests/LinkDigestPipelineTests -only-testing:NotedTests/LinkDigestTests -only-testing:NotedTests/BackupRoundTripTests test`: **61/61 đạt trên iPhone**, không skip; có 14 test remote mới, URLProtocol giả, Keychain thật với service riêng và khóa tổng hợp, kiểm tra package backup.
+- `xcodebuild ... -scheme Noted-DeviceGate ... -only-testing:NotedUITests/RemoteAISettingsUITests test`: **1/1 đạt trên iPhone**, chỉ fixture tổng hợp; xác nhận mặc định tắt, hủy consent, bật và tắt. Lượt đầu lỗi locator; lượt kế phát hiện confirmationDialog iOS 27 ẩn nút Hủy; đã sửa bằng alert và retest đạt.
+- `git diff --check`: đạt; đã tự rà diff/call path. Warning còn lại: AppIntents metadata; clean build có warning có sẵn của Share/AccentColor.
+
+Không gọi Groq thật hoặc kiểm chứng chất lượng tiếng Việt; chưa đánh giá API tốt hơn trên đa số link. Không chạy toàn bộ suite/Share Safari/Photos hoặc nghiệm thu VoiceOver thủ công. Phase giữ **Implemented, chờ quality gate**, không ghi Done. [Lệnh đầy đủ, kết quả và screenshot](evidence/20261105-link-phase5/summary.md), [điều khoản nhà cung cấp](intelligence-evaluation.md#link-phase-05--nhà-cung-cấp-api-tùy-chọn-2026-11-05).

@@ -1,0 +1,141 @@
+Test Suite 'Selected tests' started at 2026-11-05 21:58:23.383.
+Test Suite 'NotedTests.xctest' started at 2026-11-05 21:58:23.383.
+Test Suite 'BackupRoundTripTests' started at 2026-11-05 21:58:23.383.
+Test Case '-[NotedTests.BackupRoundTripTests testConflictKeepsBothAndDoesNotRepeatConflictCopy]' started.
+Test Case '-[NotedTests.BackupRoundTripTests testConflictKeepsBothAndDoesNotRepeatConflictCopy]' passed (0.072 seconds).
+Test Case '-[NotedTests.BackupRoundTripTests testEditedImportedCopyIsPreservedWhenSourceIsRestoredAgain]' started.
+Test Case '-[NotedTests.BackupRoundTripTests testEditedImportedCopyIsPreservedWhenSourceIsRestoredAgain]' passed (0.061 seconds).
+Test Case '-[NotedTests.BackupRoundTripTests testImageRoundTripAndCorruptChecksumRejectedBeforeMutation]' started.
+Test Case '-[NotedTests.BackupRoundTripTests testImageRoundTripAndCorruptChecksumRejectedBeforeMutation]' passed (0.072 seconds).
+Test Case '-[NotedTests.BackupRoundTripTests testInterruptedImportCanRetryWithoutLostOrDuplicateItems]' started.
+Test Case '-[NotedTests.BackupRoundTripTests testInterruptedImportCanRetryWithoutLostOrDuplicateItems]' passed (0.093 seconds).
+Test Case '-[NotedTests.BackupRoundTripTests testRoundTripPreservesMetadataAndRepeatedImportIsIdempotent]' started.
+Test Case '-[NotedTests.BackupRoundTripTests testRoundTripPreservesMetadataAndRepeatedImportIsIdempotent]' passed (0.068 seconds).
+Test Case '-[NotedTests.BackupRoundTripTests testTraversalAndUnsupportedSchemaRejected]' started.
+Test Case '-[NotedTests.BackupRoundTripTests testTraversalAndUnsupportedSchemaRejected]' passed (0.035 seconds).
+Test Suite 'BackupRoundTripTests' passed at 2026-11-05 21:58:23.786.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.401 (0.402) seconds
+Test Suite 'LinkDigestPipelineTests' started at 2026-11-05 21:58:23.786.
+Test Case '-[NotedTests.LinkDigestPipelineTests testChangedEngineVersionFingerprintRebuildsAndMayReplaceItsOwnTitle]' started.
+Test Case '-[NotedTests.LinkDigestPipelineTests testChangedEngineVersionFingerprintRebuildsAndMayReplaceItsOwnTitle]' passed (0.068 seconds).
+Test Case '-[NotedTests.LinkDigestPipelineTests testCompleteDigestIsStoredAndReplacesHostTitleWithoutTouchingLibraryFields]' started.
+Test Case '-[NotedTests.LinkDigestPipelineTests testCompleteDigestIsStoredAndReplacesHostTitleWithoutTouchingLibraryFields]' passed (0.045 seconds).
+Test Case '-[NotedTests.LinkDigestPipelineTests testCorruptStoreIsSetAsideAndRecreated]' started.
+Test Case '-[NotedTests.LinkDigestPipelineTests testCorruptStoreIsSetAsideAndRecreated]' passed (0.027 seconds).
+Test Case '-[NotedTests.LinkDigestPipelineTests testDataOperationInProgressBlocksCommit]' started.
+Test Case '-[NotedTests.LinkDigestPipelineTests testDataOperationInProgressBlocksCommit]' passed (0.076 seconds).
+Test Case '-[NotedTests.LinkDigestPipelineTests testDeletedIntelligenceStoreIsRebuiltForEveryLink]' started.
+Test Case '-[NotedTests.LinkDigestPipelineTests testDeletedIntelligenceStoreIsRebuiltForEveryLink]' passed (0.114 seconds).
+Test Case '-[NotedTests.LinkDigestPipelineTests testDigestPresentationAndEvaluatorInput]' started.
+Test Case '-[NotedTests.LinkDigestPipelineTests testDigestPresentationAndEvaluatorInput]' passed (0.022 seconds).
+Test Case '-[NotedTests.LinkDigestPipelineTests testFingerprintIgnoresFragmentAndTracksEngineVersion]' started.
+Test Case '-[NotedTests.LinkDigestPipelineTests testFingerprintIgnoresFragmentAndTracksEngineVersion]' passed (0.001 seconds).
+Test Case '-[NotedTests.LinkDigestPipelineTests testLinkMetricsSeparateDigestAndLoginWall]' started.
+Test Case '-[NotedTests.LinkDigestPipelineTests testLinkMetricsSeparateDigestAndLoginWall]' passed (0.001 seconds).
+Test Case '-[NotedTests.LinkDigestPipelineTests testLinkWithPendingPreviewWaitsForEnrichment]' started.
+Test Case '-[NotedTests.LinkDigestPipelineTests testLinkWithPendingPreviewWaitsForEnrichment]' passed (0.030 seconds).
+Test Case '-[NotedTests.LinkDigestPipelineTests testLoginWallIsNotRetriedAutomaticallyUntilUserAsks]' started.
+Test Case '-[NotedTests.LinkDigestPipelineTests testLoginWallIsNotRetriedAutomaticallyUntilUserAsks]' passed (0.080 seconds).
+Test Case '-[NotedTests.LinkDigestPipelineTests testLowDataModeCountsAsOffline]' started.
+Test Case '-[NotedTests.LinkDigestPipelineTests testLowDataModeCountsAsOffline]' passed (0.001 seconds).
+Test Case '-[NotedTests.LinkDigestPipelineTests testNetworkErrorsRetryWithBackoffThenBecomeUnreachable]' started.
+Test Case '-[NotedTests.LinkDigestPipelineTests testNetworkErrorsRetryWithBackoffThenBecomeUnreachable]' passed (0.078 seconds).
+Test Case '-[NotedTests.LinkDigestPipelineTests testNewestLinkIsReadFirst]' started.
+Test Case '-[NotedTests.LinkDigestPipelineTests testNewestLinkIsReadFirst]' passed (0.071 seconds).
+Test Case '-[NotedTests.LinkDigestPipelineTests testNonLinkItemsAreIgnored]' started.
+Test Case '-[NotedTests.LinkDigestPipelineTests testNonLinkItemsAreIgnored]' passed (0.027 seconds).
+Test Case '-[NotedTests.LinkDigestPipelineTests testOfflineStopsRunWithoutCountingAttempt]' started.
+Test Case '-[NotedTests.LinkDigestPipelineTests testOfflineStopsRunWithoutCountingAttempt]' passed (0.119 seconds).
+Test Case '-[NotedTests.LinkDigestPipelineTests testPermanentDeleteRemovesDigestButTrashKeepsIt]' started.
+Test Case '-[NotedTests.LinkDigestPipelineTests testPermanentDeleteRemovesDigestButTrashKeepsIt]' passed (0.063 seconds).
+Test Case '-[NotedTests.LinkDigestPipelineTests testPinTagAndTitleEditDoNotRerunDigest]' started.
+Test Case '-[NotedTests.LinkDigestPipelineTests testPinTagAndTitleEditDoNotRerunDigest]' passed (0.040 seconds).
+Test Case '-[NotedTests.LinkDigestPipelineTests testRawTitleIsReplacedButUserAndSharedTitlesAreNot]' started.
+Test Case '-[NotedTests.LinkDigestPipelineTests testRawTitleIsReplacedButUserAndSharedTitlesAreNot]' passed (0.094 seconds).
+Test Case '-[NotedTests.LinkDigestPipelineTests testRunningAfterCrashIsRecoveredAndCompleted]' started.
+Test Case '-[NotedTests.LinkDigestPipelineTests testRunningAfterCrashIsRecoveredAndCompleted]' passed (0.042 seconds).
+Test Case '-[NotedTests.LinkDigestPipelineTests testTrashDuringFetchDropsResultAndRestoreReadsAgain]' started.
+Test Case '-[NotedTests.LinkDigestPipelineTests testTrashDuringFetchDropsResultAndRestoreReadsAgain]' passed (0.042 seconds).
+Test Case '-[NotedTests.LinkDigestPipelineTests testUnknownSchemaVersionIsResetWithoutTouchingLibrary]' started.
+Test Case '-[NotedTests.LinkDigestPipelineTests testUnknownSchemaVersionIsResetWithoutTouchingLibrary]' passed (0.049 seconds).
+Test Case '-[NotedTests.LinkDigestPipelineTests testUnsafeURLFailsWithoutRetry]' started.
+Test Case '-[NotedTests.LinkDigestPipelineTests testUnsafeURLFailsWithoutRetry]' passed (0.037 seconds).
+Test Case '-[NotedTests.LinkDigestPipelineTests testURLChangeDuringFetchDropsStaleResultAndRefetchesNewURL]' started.
+Test Case '-[NotedTests.LinkDigestPipelineTests testURLChangeDuringFetchDropsStaleResultAndRefetchesNewURL]' passed (0.040 seconds).
+Test Suite 'LinkDigestPipelineTests' passed at 2026-11-05 21:58:24.960.
+	 Executed 23 tests, with 0 failures (0 unexpected) in 1.168 (1.174) seconds
+Test Suite 'LinkDigestTests' started at 2026-11-05 21:58:24.960.
+Test Case '-[NotedTests.LinkDigestTests testBlogWithOnlyJSONLDReadsHeadlineAuthorAndDescription]' started.
+Test Case '-[NotedTests.LinkDigestTests testBlogWithOnlyJSONLDReadsHeadlineAuthorAndDescription]' passed (0.001 seconds).
+Test Case '-[NotedTests.LinkDigestTests testClipKeepsWholeSentencesWithinLimit]' started.
+Test Case '-[NotedTests.LinkDigestTests testClipKeepsWholeSentencesWithinLimit]' passed (0.001 seconds).
+Test Case '-[NotedTests.LinkDigestTests testDensestParagraphContainerWinsAndBoilerplateSentencesAreSkipped]' started.
+Test Case '-[NotedTests.LinkDigestTests testDensestParagraphContainerWinsAndBoilerplateSentencesAreSkipped]' passed (0.001 seconds).
+Test Case '-[NotedTests.LinkDigestTests testDescriptionEqualToTitleFallsBackToMainText]' started.
+Test Case '-[NotedTests.LinkDigestTests testDescriptionEqualToTitleFallsBackToMainText]' passed (0.001 seconds).
+Test Case '-[NotedTests.LinkDigestTests testDomainFamiliesAndLoginURLs]' started.
+Test Case '-[NotedTests.LinkDigestTests testDomainFamiliesAndLoginURLs]' passed (0.001 seconds).
+Test Case '-[NotedTests.LinkDigestTests testEmptySPAIsTitleOnlyAndFallsBackToHost]' started.
+Test Case '-[NotedTests.LinkDigestTests testEmptySPAIsTitleOnlyAndFallsBackToHost]' passed (0.001 seconds).
+Test Case '-[NotedTests.LinkDigestTests testFacebookAndInstagramDescriptionsSplitAuthorAndQuotedContent]' started.
+Test Case '-[NotedTests.LinkDigestTests testFacebookAndInstagramDescriptionsSplitAuthorAndQuotedContent]' passed (0.001 seconds).
+Test Case '-[NotedTests.LinkDigestTests testICloudNoteWithShortGenericDescriptionIsTitleOnly]' started.
+Test Case '-[NotedTests.LinkDigestTests testICloudNoteWithShortGenericDescriptionIsTitleOnly]' passed (0.001 seconds).
+Test Case '-[NotedTests.LinkDigestTests testLegacyTitleExtractionIsUnchanged]' started.
+Test Case '-[NotedTests.LinkDigestTests testLegacyTitleExtractionIsUnchanged]' passed (0.001 seconds).
+Test Case '-[NotedTests.LinkDigestTests testLoginWallHasNoSummaryOrTitle]' started.
+Test Case '-[NotedTests.LinkDigestTests testLoginWallHasNoSummaryOrTitle]' passed (0.001 seconds).
+Test Case '-[NotedTests.LinkDigestTests testMalformedHTMLDoesNotBreakParsing]' started.
+Test Case '-[NotedTests.LinkDigestTests testMalformedHTMLDoesNotBreakParsing]' passed (0.001 seconds).
+Test Case '-[NotedTests.LinkDigestTests testNewsArticleUsesMetaAndArticleBodyWithoutNavigation]' started.
+Test Case '-[NotedTests.LinkDigestTests testNewsArticleUsesMetaAndArticleBodyWithoutNavigation]' passed (0.001 seconds).
+Test Case '-[NotedTests.LinkDigestTests testParsingLargePageIsFast]' started.
+Test Case '-[NotedTests.LinkDigestTests testParsingLargePageIsFast]' passed (0.098 seconds).
+Test Case '-[NotedTests.LinkDigestTests testSiteSuffixIsStrippedFromHTMLTitle]' started.
+Test Case '-[NotedTests.LinkDigestTests testSiteSuffixIsStrippedFromHTMLTitle]' passed (0.001 seconds).
+Test Case '-[NotedTests.LinkDigestTests testTextForEmbeddingCombinesFieldsAndCapsMainText]' started.
+Test Case '-[NotedTests.LinkDigestTests testTextForEmbeddingCombinesFieldsAndCapsMainText]' passed (0.001 seconds).
+Test Case '-[NotedTests.LinkDigestTests testThreadsPostTitleIsContentAndAuthorIsSeparate]' started.
+Test Case '-[NotedTests.LinkDigestTests testThreadsPostTitleIsContentAndAuthorIsSeparate]' passed (0.001 seconds).
+Test Case '-[NotedTests.LinkDigestTests testTruncatedOversizedPageStillYieldsHeadMeta]' started.
+Test Case '-[NotedTests.LinkDigestTests testTruncatedOversizedPageStillYieldsHeadMeta]' passed (0.011 seconds).
+Test Case '-[NotedTests.LinkDigestTests testVietnameseEntitiesDecode]' started.
+Test Case '-[NotedTests.LinkDigestTests testVietnameseEntitiesDecode]' passed (0.000 seconds).
+Test Suite 'LinkDigestTests' passed at 2026-11-05 21:58:25.085.
+	 Executed 18 tests, with 0 failures (0 unexpected) in 0.122 (0.125) seconds
+Test Suite 'RemoteLinkDigesterTests' started at 2026-11-05 21:58:25.085.
+Test Case '-[NotedTests.RemoteLinkDigesterTests test429StopsFollowingRequests]' started.
+Test Case '-[NotedTests.RemoteLinkDigesterTests test429StopsFollowingRequests]' passed (0.014 seconds).
+Test Case '-[NotedTests.RemoteLinkDigesterTests test429TimeoutOfflineAndBadSchemaFallbackWithoutRetry]' started.
+Test Case '-[NotedTests.RemoteLinkDigesterTests test429TimeoutOfflineAndBadSchemaFallbackWithoutRetry]' passed (0.006 seconds).
+Test Case '-[NotedTests.RemoteLinkDigesterTests testBoundedPOSTWithURLProtocolAndHTTPStatus]' started.
+Test Case '-[NotedTests.RemoteLinkDigesterTests testBoundedPOSTWithURLProtocolAndHTTPStatus]' passed (0.001 seconds).
+Test Case '-[NotedTests.RemoteLinkDigesterTests testDailyBudgetSharedAndPersists]' started.
+Test Case '-[NotedTests.RemoteLinkDigesterTests testDailyBudgetSharedAndPersists]' passed (0.003 seconds).
+Test Case '-[NotedTests.RemoteLinkDigesterTests testDefaultOffSendsNothing]' started.
+Test Case '-[NotedTests.RemoteLinkDigesterTests testDefaultOffSendsNothing]' passed (0.002 seconds).
+Test Case '-[NotedTests.RemoteLinkDigesterTests testDisableCancelsInFlightAndReenableDropsOldResult]' started.
+Test Case '-[NotedTests.RemoteLinkDigesterTests testDisableCancelsInFlightAndReenableDropsOldResult]' passed (0.003 seconds).
+Test Case '-[NotedTests.RemoteLinkDigesterTests testEndpointChangeDisablesConsentAndRejectsCredentials]' started.
+Test Case '-[NotedTests.RemoteLinkDigesterTests testEndpointChangeDisablesConsentAndRejectsCredentials]' passed (0.002 seconds).
+Test Case '-[NotedTests.RemoteLinkDigesterTests testKeychainRoundTripUsesDeviceOnlyAccessibility]' started.
+Test Case '-[NotedTests.RemoteLinkDigesterTests testKeychainRoundTripUsesDeviceOnlyAccessibility]' passed (0.012 seconds).
+Test Case '-[NotedTests.RemoteLinkDigesterTests testLoginWallAndTitleOnlyNeverSend]' started.
+Test Case '-[NotedTests.RemoteLinkDigesterTests testLoginWallAndTitleOnlyNeverSend]' passed (0.002 seconds).
+Test Case '-[NotedTests.RemoteLinkDigesterTests testPayloadBoundsAndRemovesURLs]' started.
+Test Case '-[NotedTests.RemoteLinkDigesterTests testPayloadBoundsAndRemovesURLs]' passed (0.049 seconds).
+Test Case '-[NotedTests.RemoteLinkDigesterTests testPreviewExactlyMatchesSentDataAndKeyOnlyInHeader]' started.
+Test Case '-[NotedTests.RemoteLinkDigesterTests testPreviewExactlyMatchesSentDataAndKeyOnlyInHeader]' passed (0.003 seconds).
+Test Case '-[NotedTests.RemoteLinkDigesterTests testRunnerUsesAPIThenRebuildsExtractiveWhenDisabledAndBackupExcludesKey]' started.
+Test Case '-[NotedTests.RemoteLinkDigesterTests testRunnerUsesAPIThenRebuildsExtractiveWhenDisabledAndBackupExcludesKey]' passed (0.066 seconds).
+Test Case '-[NotedTests.RemoteLinkDigesterTests testSchemaAndLengthValidation]' started.
+Test Case '-[NotedTests.RemoteLinkDigesterTests testSchemaAndLengthValidation]' passed (0.001 seconds).
+Test Case '-[NotedTests.RemoteLinkDigesterTests testServerErrorsRetryAtMostTwice]' started.
+Test Case '-[NotedTests.RemoteLinkDigesterTests testServerErrorsRetryAtMostTwice]' passed (3.076 seconds).
+Test Suite 'RemoteLinkDigesterTests' passed at 2026-11-05 21:58:28.328.
+	 Executed 14 tests, with 0 failures (0 unexpected) in 3.240 (3.243) seconds
+Test Suite 'NotedTests.xctest' passed at 2026-11-05 21:58:28.329.
+	 Executed 61 tests, with 0 failures (0 unexpected) in 4.931 (4.946) seconds
+Test Suite 'Selected tests' passed at 2026-11-05 21:58:28.330.
+	 Executed 61 tests, with 0 failures (0 unexpected) in 4.931 (4.947) seconds
+** TEST SUCCEEDED **

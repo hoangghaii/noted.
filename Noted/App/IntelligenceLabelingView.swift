@@ -62,6 +62,7 @@ enum IntelligenceLabelStorage {
 }
 
 struct IntelligenceLabelingView: View {
+    @Environment(\.linkDigestRunner) private var digestRunner
     let store: LibraryStore
     @Environment(\.dismiss) private var dismiss
     @State private var labels: [UUID: IntelligenceLabel] = [:]
@@ -162,6 +163,15 @@ struct IntelligenceLabelingView: View {
                         Text(item.displayTitle).font(.headline)
                         if !item.body.isEmpty { Text(item.body).lineLimit(8) }
                         if !item.originalURL.isEmpty { Text(item.originalURL).font(.footnote).lineLimit(3) }
+                        if item.kind == "link", let digest = digestRunner?.digest(for: item) {
+                            if let summary = digest.visibleSummary {
+                                if let title = digest.title { Text(title).font(.headline) }
+                                if !digest.byline.isEmpty { Text(digest.byline).font(.subheadline) }
+                                Text(summary).accessibilityIdentifier("labelingLinkSummary")
+                            } else if digest.state == .loginWall {
+                                Text("Không đọc được nội dung (cần đăng nhập). Bạn có thể thêm ghi chú trong chi tiết link.")
+                            }
+                        }
                         if !item.ocrText.isEmpty {
                             Text("OCR: \(item.ocrText)").font(.footnote).lineLimit(8)
                         }
@@ -352,7 +362,7 @@ struct IntelligenceLabelingView: View {
         isEvaluating = true
         defer { isEvaluating = false }
         let samples = synthetic ? IntelligenceSyntheticCorpus.samples()
-            : IntelligenceSpikeEvaluator.snapshots(store: store, labels: labels)
+            : IntelligenceSpikeEvaluator.snapshots(store: store, labels: labels, digests: digestRunner?.digests ?? [:])
         let source = synthetic ? IntelligenceSyntheticCorpus.version : "library"
         let report = await Task.detached(priority: .utility) {
             IntelligenceSpikeEvaluator.evaluate(samples, dataSource: source)

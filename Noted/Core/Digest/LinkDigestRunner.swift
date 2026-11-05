@@ -1,11 +1,24 @@
 import Foundation
 import Observation
+import SwiftUI
+
+private struct LinkDigestRunnerKey: EnvironmentKey {
+    static let defaultValue: LinkDigestRunner? = nil
+}
+
+extension EnvironmentValues {
+    var linkDigestRunner: LinkDigestRunner? {
+        get { self[LinkDigestRunnerKey.self] }
+        set { self[LinkDigestRunnerKey.self] = newValue }
+    }
+}
 
 /// What the runner needs from one fetch: the digest and the page's raw `<title>`,
 /// so a title written earlier by `EnrichmentRunner` can be recognized and replaced.
 struct LinkDigestFetch: Sendable {
     var content: LinkDigestContent
     var rawTitle: String
+    var remotePayload: String? = nil
 }
 
 /// Reads saved links one at a time into `LinkDigest` records (link-understanding Phase 03).
@@ -16,7 +29,9 @@ final class LinkDigestRunner {
 
     @ObservationIgnored let intelligence: IntelligenceStore
     @ObservationIgnored private let loader: @Sendable (URL) async throws -> LinkDigestFetch
+    @ObservationIgnored let remote: RemoteTextGenerator?
     @ObservationIgnored private let now: () -> Date
+    private(set) var digests: [UUID: LinkDigest] = [:]
     private(set) var running = false
     /// Set when the last run stopped for lack of a usable network; cleared by the next run.
     private(set) var isOffline = false
@@ -24,16 +39,21 @@ final class LinkDigestRunner {
 
     init(intelligence: IntelligenceStore,
          loader: @escaping @Sendable (URL) async throws -> LinkDigestFetch = { try await LinkDigestRunner.fetch($0) },
-         now: @escaping () -> Date = Date.init) {
+         now: @escaping () -> Date = Date.init, remote: RemoteTextGenerator? = nil) {
+        self.remote = remote
         self.intelligence = intelligence
         self.loader = loader
         self.now = now
+        refreshDigests()
     }
 
     nonisolated static func fetch(_ url: URL) async throws -> LinkDigestFetch {
         let page = try await LinkMetadataService.fetchPage(for: url)
-        return LinkDigestFetch(content: ExtractiveLinkDigester.digest(page),
-                               rawTitle: LinkMetadataService.title(fromHTML: page.html, url: url))
+        let fields = LinkPageParser.parse(page.html)
+        let content = ExtractiveLinkDigester.digest(fields: fields, url: url, redirectedToLogin: page.redirectedToLogin)
+        return LinkDigestFetch(content: content,
+                               rawTitle: LinkMetadataService.title(fromHTML: page.html, url: url),
+                               remotePayload: RemoteLinkDigester.payload(fields: fields, url: url, content: content))
     }
 
     /// 1 min, then 4 min before the second and third attempts.
@@ -57,11 +77,21 @@ final class LinkDigestRunner {
         try intelligence.saveChanges()
     }
 
+    func digest(for item: Item) -> LinkDigest? {
+        guard let digest = digests[item.id], digest.isCurrent(for: item) else { return nil }
+        return digest
+    }
+
+    private func refreshDigests() {
+        do { digests = Dictionary(try intelligence.linkDigests().map { ($0.itemID, $0) }, uniquingKeysWith: { first, _ in first }) }
+        catch { lastError = error.localizedDescription }
+    }
+
     func run(in library: LibraryStore) async {
         guard !running, !library.isDataOperationInProgress else { return }
         running = true
         isOffline = false
-        defer { running = false }
+        defer { running = false; refreshDigests() }
         do { try pruneDeletedItems(in: library) } catch { lastError = error.localizedDescription; return }
         // Each item is attempted at most once per run; a retry waits for its backoff and a later run.
         var visited = Set<UUID>()
@@ -70,6 +100,7 @@ final class LinkDigestRunner {
             do { job = try nextJob(in: library, excluding: visited) } catch { lastError = error.localizedDescription; return }
             guard let job else { return }
             visited.insert(job.itemID)
+            defer { refreshDigests() }
             do {
                 guard try await process(job, in: library) else { return }
             } catch {
@@ -149,10 +180,24 @@ final class LinkDigestRunner {
         }
         switch result {
         case .success(let fetch):
+            let rewritten: LinkDigestContent?
+            if let remote, remote.linksEnabled {
+                rewritten = await RemoteLinkDigester.rewrite(fetch, using: remote)
+            } else { rewritten = nil }
+            // The library and item can change while the cloud request is in flight too.
+            guard try intelligence.linkDigest(for: job.itemID) != nil else { return true }
+            guard !Task.isCancelled, !library.isDataOperationInProgress,
+                  item.trashedAt == nil, library.items.contains(where: { $0.id == job.itemID }),
+                  LinkDigest.fingerprint(originalURL: item.originalURL, engineVersion: ExtractiveLinkDigester.engineVersion) == job.fingerprint else {
+                digest.state = .pending
+                try intelligence.saveChanges()
+                return false
+            }
+            let content = rewritten ?? fetch.content
             digest.attempts += 1
-            digest.apply(fetch.content, now: now())
+            digest.apply(content, now: now(), source: rewritten == nil ? .extractive : .api)
             try intelligence.saveChanges()
-            if fetch.content.status != .loginWall, let title = fetch.content.title,
+            if content.status != .loginWall, let title = content.title,
                Self.canReplaceTitle(of: item, rawTitle: fetch.rawTitle, previousDigestTitle: previousTitle, with: title) {
                 try library.applyGeneratedTitle(title, to: item)
             }

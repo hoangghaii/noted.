@@ -8,7 +8,8 @@ App cá nhân chỉ dành cho iPhone, build trực tiếp bằng Xcode. Không d
 - Thư viện trên máy, Inbox, ghim, tag, bộ sưu tập một cấp và thùng rác.
 - Tìm kiếm tiếng Việt có/không dấu; nhận diện chữ trong ảnh bằng Apple Vision trên iPhone.
 - Xuất/nhập package `.notedbackup` qua Files; giữ cả hai bản khi nội dung xung đột.
-- Không cần tài khoản, backend hoặc dịch vụ AI bên ngoài. Preview link có thể cần mạng; nội dung gốc được lưu trước.
+- Không cần tài khoản hoặc backend. AI tóm tắt link qua Groq là tùy chọn, mặc định tắt; cần khóa API riêng. Preview link có thể cần mạng; nội dung gốc được lưu trước.
+- Dữ liệu & backup → AI tùy chọn: xem trước domain, tiêu đề, mô tả và nội dung text sẽ gửi (tổng tối đa 2.000 ký tự, loại URL trong text; không gửi ảnh, ID mục hoặc URL đầy đủ). Khóa lưu trong Keychain trên thiết bị, ngoài backup Noted. Giới hạn 50 request/ngày; lỗi/hết hạn mức dùng bản trích xuất. Bật áp dụng cho link mới hoặc “Thử đọc lại” trong Chi tiết; tắt hủy request và bỏ kết quả đang chạy, bản AI đã lưu giữ đến khi tạo lại. Endpoint/model đổi được và cần bật lại để xác nhận nơi gửi mới.
 
 Đã build/cài và kiểm thử trên iPhone 12 Pro, iOS 27.0.1. Các hạng mục kiểm chứng và giới hạn còn lại được ghi riêng trong báo cáo, không đồng nhất build thành công với nghiệm thu toàn bộ.
 

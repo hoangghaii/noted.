@@ -1,0 +1,12 @@
+Test Suite 'Selected tests' started at 2026-11-05 21:56:35.937.
+Test Suite 'NotedUITests.xctest' started at 2026-11-05 21:56:35.937.
+Test Suite 'RemoteAISettingsUITests' started at 2026-11-05 21:56:35.938.
+Test Case '-[NotedUITests.RemoteAISettingsUITests testSettingsDefaultOffAndConsentCanBeCancelled]' started.
+Test Case '-[NotedUITests.RemoteAISettingsUITests testSettingsDefaultOffAndConsentCanBeCancelled]' passed (19.992 seconds).
+Test Suite 'RemoteAISettingsUITests' passed at 2026-11-05 21:56:55.941.
+	 Executed 1 test, with 0 failures (0 unexpected) in 19.992 (20.003) seconds
+Test Suite 'NotedUITests.xctest' passed at 2026-11-05 21:56:55.942.
+	 Executed 1 test, with 0 failures (0 unexpected) in 19.992 (20.005) seconds
+Test Suite 'Selected tests' passed at 2026-11-05 21:56:55.944.
+	 Executed 1 test, with 0 failures (0 unexpected) in 19.992 (20.007) seconds
+** TEST SUCCEEDED **

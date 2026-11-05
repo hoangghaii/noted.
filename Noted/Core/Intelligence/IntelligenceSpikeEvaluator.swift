@@ -13,6 +13,7 @@ struct IntelligenceSpikeSample: Sendable {
     let gold: String?
     let desiredTags: [String]
     let split: String?
+    var linkDigestStatus: String? = nil
 }
 
 struct IntelligenceSpikeReport: Codable, Sendable {
@@ -35,6 +36,14 @@ struct IntelligenceSpikeReport: Codable, Sendable {
         let count: Int
     }
 
+    struct LinkMetrics: Codable, Sendable {
+        let evaluated: Int
+        let predicted: Int
+        let correct: Int
+        let precision: Double?
+        let coverage: Double?
+    }
+
     struct Candidate: Codable, Sendable {
         let name: String
         let engineVersion: String
@@ -55,6 +64,8 @@ struct IntelligenceSpikeReport: Codable, Sendable {
         /// Process physical footprint after load + batch minus before load.
         let memoryDeltaMegabytes: Double?
         let unknownReductionForTextlessImages: Double?
+        let linksWithDigest: LinkMetrics
+        let linksLoginWall: LinkMetrics
         let confusion: [Confusion]
     }
 
@@ -65,6 +76,7 @@ struct IntelligenceSpikeReport: Codable, Sendable {
     /// "library" or a synthetic corpus version; synthetic labels never satisfy the gate.
     let dataSource: String
     let counts: Counts
+    let linkDigestCoverage: Double?
     let sufficientLabelsForGate: Bool
     let candidates: [Candidate]
     let visionProcessed: Int
@@ -153,10 +165,14 @@ enum IntelligenceSpikeEvaluator {
     }
 
     @MainActor
-    static func snapshots(store: LibraryStore, labels: [UUID: IntelligenceLabel]) -> [IntelligenceSpikeSample] {
+    static func snapshots(store: LibraryStore, labels: [UUID: IntelligenceLabel], digests: [UUID: LinkDigest] = [:]) -> [IntelligenceSpikeSample] {
         store.items.filter { $0.trashedAt == nil }.map { item in
             var fields = [String]()
             if item.userEditedTitle { fields.append(item.title) }
+            let digest = digests[item.id].flatMap { $0.isCurrent(for: item) ? $0 : nil }
+            if let digest, digest.state == .complete || digest.state == .titleOnly, let text = digest.textForEmbedding {
+                fields.append(text)
+            }
             fields.append(item.body)
             fields.append(item.ocrText)
             fields.append(contentsOf: item.tags)
@@ -168,7 +184,8 @@ enum IntelligenceSpikeEvaluator {
                 text: text, hasOriginalText: !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
                 imageURL: item.kind == "image" ? item.attachments.first.map(store.attachmentURL) : nil,
                 hasOCR: !item.ocrText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-                gold: label?.topic, desiredTags: label?.desiredTags ?? [], split: label?.split
+                gold: label?.topic, desiredTags: label?.desiredTags ?? [], split: label?.split,
+                linkDigestStatus: digest.map { $0.state == .complete && $0.visibleSummary == nil ? "titleOnly" : $0.status }
             )
         }
     }
@@ -254,7 +271,7 @@ enum IntelligenceSpikeEvaluator {
                                     text: [sample.text, visionWords[sample.id] ?? ""].filter { !$0.isEmpty }.joined(separator: "\n"),
                                     hasOriginalText: sample.hasOriginalText, imageURL: sample.imageURL,
                                     hasOCR: sample.hasOCR, gold: sample.gold,
-                                    desiredTags: sample.desiredTags, split: sample.split)
+                                    desiredTags: sample.desiredTags, split: sample.split, linkDigestStatus: sample.linkDigestStatus)
         }
 
         let contextual = evaluateContextual(enriched)
@@ -268,10 +285,12 @@ enum IntelligenceSpikeEvaluator {
                                                         engineVersion: visionVersion)
         notes.append("Tag precision and semantic recall@10 are not measured here; E5 parity is checked by device tests.")
         return IntelligenceSpikeReport(
-            schemaVersion: 3, generatedAt: Date(),
+            schemaVersion: 4, generatedAt: Date(),
             platform: "\(ProcessInfo.processInfo.operatingSystemVersionString)\(isSimulator ? " simulator" : " device")",
             buildVersion: "\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "unknown") (\(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "unknown"))",
-            dataSource: dataSource, counts: counts, sufficientLabelsForGate: sufficient,
+            dataSource: dataSource, counts: counts,
+            linkDigestCoverage: counts.link > 0 ? Double(samples.filter { $0.kind == "link" && $0.linkDigestStatus == "complete" }.count) / Double(counts.link) : nil,
+            sufficientLabelsForGate: sufficient,
             candidates: [baseline] + contextual + e5 + [nearestImage], visionProcessed: visionProcessed,
             visionFailures: visionFailures, visionP95Milliseconds: p95(visionWarm),
             visionColdMilliseconds: visionCold, visionMemoryDeltaMegabytes: visionMemory, notes: notes
@@ -478,6 +497,16 @@ enum IntelligenceSpikeEvaluator {
         return first.0
     }
 
+    static func linkMetrics(_ predictions: [(sample: IntelligenceSpikeSample, predicted: String?)],
+                            status: String) -> IntelligenceSpikeReport.LinkMetrics {
+        let rows = predictions.filter { $0.sample.kind == "link" && $0.sample.linkDigestStatus == status }
+        let predicted = rows.filter { $0.predicted != nil }.count
+        let correct = rows.filter { $0.predicted != nil && $0.predicted == $0.sample.gold }.count
+        return .init(evaluated: rows.count, predicted: predicted, correct: correct,
+                     precision: predicted > 0 ? Double(correct) / Double(predicted) : nil,
+                     coverage: rows.isEmpty ? nil : Double(predicted) / Double(rows.count))
+    }
+
     private static func candidate(name: String, engineVersion: String, status: String, threshold: Float?, margin: Float?,
                                   predictions: [(sample: IntelligenceSpikeSample, predicted: String?)],
                                   timings: [Double] = [], resources: TextResources? = nil,
@@ -510,6 +539,8 @@ enum IntelligenceSpikeEvaluator {
                      batch50Milliseconds: timings.count == IntelligenceResourceProbe.batchSize ? timings.reduce(0, +) : nil,
                      memoryDeltaMegabytes: resources?.memoryDelta,
                      unknownReductionForTextlessImages: unknownReduction,
+                     linksWithDigest: linkMetrics(predictions, status: "complete"),
+                     linksLoginWall: linkMetrics(predictions, status: "loginWall"),
                      confusion: confusion)
     }
 

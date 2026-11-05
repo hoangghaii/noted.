@@ -65,8 +65,12 @@ private struct MainLibraryView: View {
                     NotedStatusBanner(message: "Đang đọc nội dung link…", isLoading: true)
                 }
             }
+            .environment(\.linkDigestRunner, linkDigests)
             .tint(NotedDesign.Palette.brand)
-            .sheet(isPresented: $manageData) { DataManagementView(store: store, initialImportURL: importURL) }
+            .sheet(isPresented: $manageData) {
+                DataManagementView(store: store, initialImportURL: importURL)
+                    .environment(\.linkDigestRunner, linkDigests)
+            }
             .task {
                 guard !started else { return }
                 started = true
@@ -124,12 +128,17 @@ private struct MainLibraryView: View {
     /// the library still works and links simply stay without a digest.
     private static func makeLinkDigestRunner(for store: LibraryStore) -> LinkDigestRunner? {
         #if DEBUG
+        if PhaseFourFixtures.isVerificationStore(store),
+           ProcessInfo.processInfo.arguments.contains("--link-digest-ui-fixtures") {
+            do { return try PhaseFourFixtures.linkDigestRunner(in: store) }
+            catch { store.lastError = error.localizedDescription; return nil }
+        }
         // Visual fixtures stay offline and deterministic.
         if MockFixtures.requestedVariant != nil || ProcessInfo.processInfo.environment["NOTED_PHASE4_RUN"] != nil { return nil }
         #endif
         guard let intelligence = try? IntelligenceStore(root: store.root.appendingPathComponent("Intelligence", isDirectory: true))
         else { return nil }
-        return LinkDigestRunner(intelligence: intelligence)
+        return LinkDigestRunner(intelligence: intelligence, remote: .shared)
     }
 
     private static func networkUsableUpdates() -> AsyncStream<Bool> {
