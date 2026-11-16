@@ -3,7 +3,7 @@
 
 ## Location and ownership
 
-Save requested implementation plans under `plans/YYYYMMDD-HHmm-<topic>/` in the target project. Obtain the timestamp from the local runtime. Follow an existing project convention or reuse the supplied plan directory when revising a plan. Do not overwrite an unrelated plan with a colliding name; choose a distinct suffix.
+Save requested implementation plans under `plans/YYYYMMDD-HHmm-<topic>/` in the target project. Obtain the timestamp from the local runtime. Follow an existing project convention or reuse the supplied plan directory when revising a plan. Do not overwrite an unrelated plan with a colliding name; choose a distinct suffix. Plans under `plans/archived/` are finished: never reuse or revise them as the active plan.
 
 A coordinating agent with write access persists the plan. A read-only planner returns proposed file paths and complete contents to that agent. If no writer is available, disclose the limitation rather than claiming files were saved. Respect an explicit user request for inline-only output.
 
@@ -22,6 +22,8 @@ This is an example, not a mandatory phase list. Create one file for each meaning
 ## Overview: plan.md
 
 Keep the overview concise, preferably under 80 lines. Include the goal, scope and exclusions, key decisions, dependencies, assumptions and unresolved questions. Add a table with each phase's status and a relative Markdown link to its file, for example a link labeled Data model pointing to `phase-01-data-model.md`. Keep phase details in the linked files.
+
+When the plan will run under autopilot (orchestration pack), add an `Executor` column with `codex` or `claude` for each phase: `codex` by default, `claude` for small configuration, documentation or wiring phases and for phases that depend on judgment a handoff prompt cannot carry.
 
 ## Phases: phase-NN-name.md
 

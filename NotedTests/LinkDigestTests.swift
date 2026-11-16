@@ -188,6 +188,35 @@ final class LinkDigestTests: XCTestCase {
         XCTAssertEqual(result.summary, "Tráng phin bằng nước sôi trước, sau đó cho 20 gram cà phê và nén nhẹ.")
     }
 
+    func testFacebookDescriptionRepeatingPartOfTitleIsTitleOnly() {
+        let result = digest("""
+        <meta property="og:title" content="Quán Mẫu mở thêm chi nhánh mới ở Quận 3 từ tuần sau, mời mọi người ghé">
+        <meta property="og:description" content="Quán Mẫu mở thêm chi nhánh">
+        """, url: "https://www.facebook.com/share/p/abc/")
+        XCTAssertNil(result.summary)
+        XCTAssertEqual(result.status, .titleOnly)
+        XCTAssertEqual(result.title, "Quán Mẫu mở thêm chi nhánh mới ở Quận 3 từ tuần sau, mời mọi người ghé")
+    }
+
+    func testFacebookPipeTitleSplitsExcerptFromAuthorWithoutSummary() {
+        let result = digest("""
+        <meta property="og:title" content="mai ghé quán mới nhé cả nhà | Nhóm Cà Phê Mẫu | Facebook">
+        <meta property="og:description" content="Nhóm Cà Phê Mẫu">
+        """, url: "https://www.facebook.com/share/p/abc/")
+        XCTAssertEqual(result.title, "mai ghé quán mới nhé cả nhà")
+        XCTAssertEqual(result.author, "Nhóm Cà Phê Mẫu")
+        XCTAssertEqual(result.siteName, "Facebook")
+        XCTAssertNil(result.summary)
+        XCTAssertEqual(result.status, .titleOnly)
+
+        let byline = ExtractiveLinkDigester.facebookTitle("Đoạn trích bài | By Tác Giả Mẫu | Nhóm Mẫu")
+        XCTAssertEqual(byline?.title, "Đoạn trích bài")
+        XCTAssertEqual(byline?.author, "Tác Giả Mẫu · Nhóm Mẫu")
+        XCTAssertNil(ExtractiveLinkDigester.facebookTitle("Không có dấu phân cách"))
+        // Only Facebook titles are split.
+        XCTAssertEqual(digest("<meta property=\"og:title\" content=\"A | B\">", url: "https://example.org/x").title, "A | B")
+    }
+
     // MARK: Text rules
 
     func testClipKeepsWholeSentencesWithinLimit() {

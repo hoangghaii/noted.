@@ -82,6 +82,7 @@ struct IntelligenceLabelingView: View {
     @State private var linkProgress: (done: Int, total: Int)?
     /// False when an existing link-sources.json could not be read; measuring would overwrite earlier runs.
     @State private var linkReportReadable = true
+    @State private var isMeasuringDigests = false
     private let topics = ["Cà phê", "Tìm việc", "Carepath", "Kiếm thêm thu nhập", "Hài hước", "Không rõ", "Chủ đề khác…"]
 
     private var items: [Item] {
@@ -152,6 +153,8 @@ struct IntelligenceLabelingView: View {
                 }
 
                 linkSourceSection
+
+                linkDigestSection
 
                 if let item = current {
                     Section("Mục \(index + 1)/\(items.count) · \(IntelligenceLabelStorage.split(for: item.id))") {
@@ -245,6 +248,64 @@ struct IntelligenceLabelingView: View {
             Text("Nguồn link · DEBUG")
         } footer: {
             Text("Mỗi link được gọi 1 lần cho mỗi chiến lược, không đăng nhập, không cookie. File chỉ chứa domain, cờ, độ dài và hash; nội dung trang chỉ hiển thị trên máy cho tới khi đóng màn này.")
+        }
+    }
+
+    private var digestReportURL: URL { LinkDigestReport.fileURL(for: store.root) }
+
+    @ViewBuilder private var linkDigestSection: some View {
+        Section {
+            if let digestRunner {
+                let report = LinkDigestReport.make(items: store.items, runner: digestRunner)
+                Button("Đọc lại tất cả link và đo") { Task { await measureDigests(digestRunner) } }
+                    .disabled(isMeasuringDigests || digestRunner.running || report.overall.total == 0)
+                    .accessibilityIdentifier("intelligenceMeasureLinkDigests")
+                if isMeasuringDigests || digestRunner.running {
+                    ProgressView("Đang đọc link, hãy giữ app mở…")
+                }
+                if digestRunner.isOffline { Text("Đang offline; runner chờ có mạng.").font(.footnote) }
+                ForEach([report.overall] + report.rows, id: \.self) { row in
+                    LabeledContent(row.domain == "all" ? "Tất cả (\(row.total))" : "\(row.domain) (\(row.total))",
+                                   value: Self.describe(row))
+                        .font(.footnote)
+                }
+                if FileManager.default.fileExists(atPath: digestReportURL.path) {
+                    ShareLink(item: digestReportURL) { Label("Xuất link-digest-report.json", systemImage: "square.and.arrow.up") }
+                        .accessibilityIdentifier("intelligenceExportLinkDigests")
+                }
+                NavigationLink("So sánh bản API với bản trích xuất") { RemoteDigestComparisonView(store: store) }
+                    .accessibilityIdentifier("intelligenceCompareRemoteDigests")
+            } else {
+                Text("Chưa mở được intelligence.store.").font(.footnote)
+            }
+        } header: {
+            Text("Nghiệm thu digest · DEBUG")
+        } footer: {
+            Text("Đặt mọi digest về chờ đọc rồi chạy runner thật (mỗi link 1 request). Thời gian là tải + trích xuất, không gồm API. File chỉ chứa domain và số đếm.")
+        }
+    }
+
+    private static func describe(_ row: LinkDigestDomainRow) -> String {
+        var parts = ["\(row.complete) đủ", "\(row.titleOnly) tiêu đề", "\(row.loginWall) login",
+                     "\(row.unreachable) lỗi mạng", "\(row.failed) hỏng", "\(row.notRead) chưa đọc"]
+        if row.api > 0 { parts.append("\(row.api) API") }
+        if let p50 = row.p50Milliseconds, let p95 = row.p95Milliseconds {
+            parts.append("p50 \(Int(p50)) ms · p95 \(Int(p95)) ms")
+        }
+        return parts.joined(separator: " · ")
+    }
+
+    @MainActor
+    private func measureDigests(_ runner: LinkDigestRunner) async {
+        guard !isMeasuringDigests else { return }
+        isMeasuringDigests = true
+        defer { isMeasuringDigests = false }
+        do {
+            try runner.retryAll()
+            await runner.run(in: store)
+            try LinkDigestReport.make(items: store.items, runner: runner).save(to: digestReportURL)
+        } catch {
+            self.error = "Không đo/lưu được link-digest-report.json: \(error.localizedDescription)"
         }
     }
 

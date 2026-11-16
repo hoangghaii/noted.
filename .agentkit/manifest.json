@@ -1,13 +1,15 @@
 {
   "schemaVersion": 1,
-  "version": "2.0.0",
+  "version": "2.1.0",
   "packs": [
     "core",
     "web",
     "backend-data",
     "platform",
     "documents",
-    "ai-media"
+    "ai-media",
+    "quality",
+    "orchestration"
   ],
   "agents": [
     "codex",
@@ -18,7 +20,7 @@
       "type": "block",
       "fragment": "<!-- agentkit:begin -->\n<!-- Managed by AgentKit Engineer. Put project-specific instructions outside this block; edits inside are kept but stop receiving AgentKit updates. -->\n# AgentKit Engineer\n\n## How to work\n\n- Small, well-understood change: do it directly. Larger work: state the acceptance criteria first, then plan → implement → test → review.\n- Respect the requested stage. Brainstorm compares options, plan writes plans, debug diagnoses, test runs checks, review reports findings. None of these edit application code unless the user also asked for a fix or implementation.\n- Delegate only independent, substantial work: `scout` to locate code, `researcher` for external facts, `planner`, `tester`, `code-reviewer`, `debugger`. Give each one the objective, paths, constraints and expected output. Without delegation, do the same stages yourself.\n- Load only the skills the task needs. Skill resources and scripts resolve relative to the installed skill directory, not the shell directory. Check the version the project actually uses before applying a bundled API example.\n\n## Workflows\n\nInvoke `kit-plan`, `kit-implement`, `kit-debug`, `kit-fix`, `kit-test` and `kit-review` (Codex `$kit-plan`, Claude `/kit-plan` or the installed aliases). Use `kit-tdd` only when TDD is selected and the quality pack is installed.\n\nPlans live in `plans/YYYYMMDD-HHmm-<topic>/`: a `plan.md` overview plus one `phase-NN-<name>.md` per phase, unless the user wants the plan inline. When executing a plan, read the overview and the current phase only. Tick todos and update statuses only after their acceptance checks pass. Workflow details are in `.agentkit/workflows/`.\n\n## Before saying \"done\"\n\n1. Run the project's real test, type-check and build commands for what you changed, and read the output.\n2. Report each command and its result. Say explicitly which checks failed, were skipped or could not run. Never present a skipped check as passing.\n3. Review your own diff for unrelated changes, debugging leftovers and secrets.\n4. Hand off: changed paths, checks run, remaining risks.\n\nPreserve existing project instructions, user edits, configuration and public APIs. Never silence errors with `any`, broad casts, skipped tests or suppression comments. Commit, push, publish or deploy only when the user asks.\n\n## Principles\n\nYAGNI: build only what is required now. KISS: choose the simplest solution that works. DRY: keep one source of truth, but do not abstract prematurely.\n<!-- agentkit:end -->\n",
       "original": null,
-      "hash": "8c08d137bce46c8179a32f6bc6f2238c6a8d1538531d613f73b61a1851edca87"
+      "hash": "7fb06c3322d13b92ad81eade2b115c5261781cc3556bc98da72e8d76f9a8e588"
     },
     ".agents/skills/package.json": {
       "type": "file",
@@ -2522,31 +2524,31 @@
     },
     ".codex/agents/code-reviewer.toml": {
       "type": "file",
-      "hash": "41f1358b70151b6a8adb4c28a35b1a31c6578aac3bfef063e6e098f0035f6694"
+      "hash": "0ef15e1fb87deb9e4c8e36a6d122e702782cd46d04609a21f40371d8c3b73493"
     },
     ".codex/agents/debugger.toml": {
       "type": "file",
-      "hash": "eebc5e0f39fb82b803f8b89aec2fab59fab0c6ac9f9832b818fee75aabfe489b"
+      "hash": "1d74793974e7c497ada37307fe5d38a0d41361b7353bd172bd9b14baf9f6bfa2"
     },
     ".codex/agents/researcher.toml": {
       "type": "file",
-      "hash": "e89e5c3d97e76508dd7eb8f4761c851ecb01858332e0c242af4f41a49ac968b6"
+      "hash": "60606ef18ed894b9d651bd89032f1368b9a515007a3ee8c6ac68289b9a1b28e3"
     },
     ".codex/agents/tester.toml": {
       "type": "file",
-      "hash": "ad2886ba8a9505925bc100e540e3b6d3dfa948f080c85d3c07a00c661ac794da"
+      "hash": "80e430de43ae78d2d60a4048b7f10fbbb2c106411fca3bb4c2de2495a63c1d22"
     },
     ".codex/agents/planner.toml": {
       "type": "file",
-      "hash": "37287508586892e4878ae4f21683d01d19eed678ec46e5a071cc544418c5c061"
+      "hash": "b7fd98116139dda9ce529b2b81a7c66fb139c00d689225c0fea07a51a77a4b03"
     },
     ".codex/agents/ui-ux-designer.toml": {
       "type": "file",
-      "hash": "43880f4470f3dd0c044d823460a3e2687da0e4a7bcc374d28a6c17eef117b638"
+      "hash": "89aa2d2262135941a5ed19e1342102fecd015df3e6d0eb8126c5feaad36a7300"
     },
     ".codex/agents/scout.toml": {
       "type": "file",
-      "hash": "7ca3841d06934d6cf5a76494925a15a9e7d3d4b57d4e3dfe5a045970371b3b7b"
+      "hash": "0c421620eff49948dc3617456299d240bd2551bf6acbd6d3c89d3531dfe9e20d"
     },
     ".agentkit/workflows/development-rules.md": {
       "type": "file",
@@ -2558,7 +2560,7 @@
     },
     ".agentkit/workflows/orchestration-protocol.md": {
       "type": "file",
-      "hash": "36e406d827976c0b16e5d1ff63ec368ecb8339a40c05a310d28f8c3250cb25b3"
+      "hash": "fc2de9a764daf42ab5378a7dff552bfa00521be7fdf39d0110d1d9873e855cd9"
     },
     ".agentkit/workflows/primary-workflow.md": {
       "type": "file",
@@ -2566,7 +2568,7 @@
     },
     ".agentkit/hooks/adapter.cjs": {
       "type": "file",
-      "hash": "27c2c6524d3b2185cfead01eb936fe27a7ccb969032a8fa61437b287bc65b9ea"
+      "hash": "96c78dbce4e001711b622b6ff4cb8574b56163dd30e8a998adb52d60a9688196"
     },
     ".codex/hooks.json": {
       "type": "json",
@@ -2619,7 +2621,7 @@
       "type": "block",
       "fragment": "<!-- agentkit:begin -->\n<!-- Managed by AgentKit Engineer. Put project-specific instructions outside this block; edits inside are kept but stop receiving AgentKit updates. -->\n# AgentKit Engineer\n\n## How to work\n\n- Small, well-understood change: do it directly. Larger work: state the acceptance criteria first, then plan → implement → test → review.\n- Respect the requested stage. Brainstorm compares options, plan writes plans, debug diagnoses, test runs checks, review reports findings. None of these edit application code unless the user also asked for a fix or implementation.\n- Delegate only independent, substantial work: `scout` to locate code, `researcher` for external facts, `planner`, `tester`, `code-reviewer`, `debugger`. Give each one the objective, paths, constraints and expected output. Without delegation, do the same stages yourself.\n- Load only the skills the task needs. Skill resources and scripts resolve relative to the installed skill directory, not the shell directory. Check the version the project actually uses before applying a bundled API example.\n\n## Workflows\n\nInvoke `kit-plan`, `kit-implement`, `kit-debug`, `kit-fix`, `kit-test` and `kit-review` (Codex `$kit-plan`, Claude `/kit-plan` or the installed aliases). Use `kit-tdd` only when TDD is selected and the quality pack is installed.\n\nPlans live in `plans/YYYYMMDD-HHmm-<topic>/`: a `plan.md` overview plus one `phase-NN-<name>.md` per phase, unless the user wants the plan inline. When executing a plan, read the overview and the current phase only. Tick todos and update statuses only after their acceptance checks pass. Workflow details are in `.agentkit/workflows/`.\n\n## Before saying \"done\"\n\n1. Run the project's real test, type-check and build commands for what you changed, and read the output.\n2. Report each command and its result. Say explicitly which checks failed, were skipped or could not run. Never present a skipped check as passing.\n3. Review your own diff for unrelated changes, debugging leftovers and secrets.\n4. Hand off: changed paths, checks run, remaining risks.\n\nPreserve existing project instructions, user edits, configuration and public APIs. Never silence errors with `any`, broad casts, skipped tests or suppression comments. Commit, push, publish or deploy only when the user asks.\n\n## Principles\n\nYAGNI: build only what is required now. KISS: choose the simplest solution that works. DRY: keep one source of truth, but do not abstract prematurely.\n<!-- agentkit:end -->\n",
       "original": null,
-      "hash": "8c08d137bce46c8179a32f6bc6f2238c6a8d1538531d613f73b61a1851edca87"
+      "hash": "9dccef43194246bf5a3931144aace2d3c407dfcff9309d6900dcdb19ac2efc18"
     },
     ".claude/skills/package.json": {
       "type": "file",
@@ -5123,23 +5125,23 @@
     },
     ".claude/agents/code-reviewer.md": {
       "type": "file",
-      "hash": "75f8e71f2748c53d676486d0985b99d56638681f653aee961cb6a83c15d698d0"
+      "hash": "2850a06bb7c5b3fc0c326903de70786345e7f14b22fb68d38d4fca39a4ee41a0"
     },
     ".claude/agents/debugger.md": {
       "type": "file",
-      "hash": "7e849cbcecba4698cbabc949057b1c2df73f978464b2ecfa85020aaf69352274"
+      "hash": "ce91d0c7af812354c69f72cbf46e91e14438e722fd2113aaf1e13abfe0ce535e"
     },
     ".claude/agents/researcher.md": {
       "type": "file",
-      "hash": "ae4f260249d67910026b3a6da6ba923234543fbac863f98456db7df3a6f58d08"
+      "hash": "013257ea126c0c0f3771295c6e18971a4bf28c4f63d4daf15c4ad3490915a8cd"
     },
     ".claude/agents/tester.md": {
       "type": "file",
-      "hash": "5b8cb8fb38b3d508cfbb4bc7f0eb1906e3391ab9fad890ea0d780f7ef9a40fb3"
+      "hash": "53dc3bfb2efd7408e82dac0ef8dcfa4be602ef6a9226d4d743c9874ec41c1910"
     },
     ".claude/agents/planner.md": {
       "type": "file",
-      "hash": "3541c35c3d7f9731fb3d39aa99417401e80a4bb1f9786cd79b2d63a9b93bcec2"
+      "hash": "edc40ae99882bd503abfe51932acd3d98a77b3b45fa6ae47fb78e5ffa14877df"
     },
     ".claude/agents/ui-ux-designer.md": {
       "type": "file",
@@ -5147,7 +5149,7 @@
     },
     ".claude/agents/scout.md": {
       "type": "file",
-      "hash": "92b541e72a0015356fdc2dd4b4ecccba4dec74105a3c7922c1219db577f6cb71"
+      "hash": "aa753fb5fb03e0abadd9ca97a61febe9df15dd0557105dab89d0bf068cdad208"
     },
     ".claude/settings.json": {
       "type": "json",
@@ -5400,7 +5402,7 @@
     },
     ".agentkit/templates/claude-statusline.json.example": {
       "type": "file",
-      "hash": "4c0a151c93c491a1ff77de818e167fed4bc4e53221d6ff0567ce4ff09e46100a"
+      "hash": "b7085560ff5101284a800e9cb94eedd10d76bfff57f43b2303f3a44a9ccb4e8a"
     },
     ".agentkit/templates/codex-mcp.toml.example": {
       "type": "file",
@@ -5412,11 +5414,11 @@
     },
     ".agentkit/templates/statusline/README.md": {
       "type": "file",
-      "hash": "bf93147893eb13225010e8bfda480f65d0f30b538660fcf3d52045a848bf7341"
+      "hash": "6142eb2f9ebc5e98e7cefb38fd4149575cdce8da7e786e1da69804c47f99faf2"
     },
     ".agentkit/templates/statusline/claude-statusline.cjs": {
       "type": "file",
-      "hash": "e8a7a8fe1d344713538acf8dc6eab939fdbeefbea17fbcdfe56b532b036fd2af"
+      "hash": "80fccf0e6db980a34ec7e176a0b3cfafb8410ff89eb72ecc1e9923cc692f077b"
     },
     ".agents/skills/kit-plan/references/codebase-understanding.md": {
       "type": "file",
@@ -5428,7 +5430,7 @@
     },
     ".agents/skills/kit-plan/references/plan-organization.md": {
       "type": "file",
-      "hash": "fc01f1827135589413bcfc12494f04e6daeeac24c4e5f32871ab596390e45abf"
+      "hash": "1dcde86a63cd246d5ae2702f12acd305252483bf77fb0f76243f44e1e14a9780"
     },
     ".agents/skills/kit-plan/references/research-phase.md": {
       "type": "file",
@@ -5884,7 +5886,7 @@
     },
     ".codex/agents/database-admin.toml": {
       "type": "file",
-      "hash": "66b96d0626a5a9024267c097409bb2bf0eb260a81cb978abb5009811fc6d9533"
+      "hash": "9a8e31f0b22de7280b3d3e0c48a1202bc161addc96fe40b9d764a7d070c0feac"
     },
     ".claude/skills/kit-plan/references/codebase-understanding.md": {
       "type": "file",
@@ -5896,7 +5898,7 @@
     },
     ".claude/skills/kit-plan/references/plan-organization.md": {
       "type": "file",
-      "hash": "fc01f1827135589413bcfc12494f04e6daeeac24c4e5f32871ab596390e45abf"
+      "hash": "1dcde86a63cd246d5ae2702f12acd305252483bf77fb0f76243f44e1e14a9780"
     },
     ".claude/skills/kit-plan/references/research-phase.md": {
       "type": "file",
@@ -6361,6 +6363,66 @@
     ".claude/commands/integrate/sepay.md": {
       "type": "file",
       "hash": "56f7f4e61444e78e78c9dfce0515c6b5c76ba2165b8a44af57558b2925f39fc5"
+    },
+    ".agents/skills/kit-tdd/SKILL.md": {
+      "type": "file",
+      "hash": "1e259ed92ba4cc0bd4562df093b5aa145efff35b9387b45db71401383940a2ef"
+    },
+    ".agents/skills/kit-tdd/UPSTREAM-LICENSE.txt": {
+      "type": "file",
+      "hash": "a37e0e9697144819e1d965176ac4ae5bc3fa02d11e7812036bbcadf6dafe2400"
+    },
+    ".agents/skills/kit-tdd/references/guide.md": {
+      "type": "file",
+      "hash": "d6e0ddff812313f4c302d64a6467da25cc5e867ae0f7ee9fa600a8f2fb2b64a3"
+    },
+    ".agents/skills/kit-tdd/writing-good-tests.md": {
+      "type": "file",
+      "hash": "496876382cfe8f79d65fac81d4420f9507a6bcd1dec50a2128a838688b51750f"
+    },
+    ".claude/skills/kit-tdd/SKILL.md": {
+      "type": "file",
+      "hash": "1e259ed92ba4cc0bd4562df093b5aa145efff35b9387b45db71401383940a2ef"
+    },
+    ".claude/skills/kit-tdd/UPSTREAM-LICENSE.txt": {
+      "type": "file",
+      "hash": "a37e0e9697144819e1d965176ac4ae5bc3fa02d11e7812036bbcadf6dafe2400"
+    },
+    ".claude/skills/kit-tdd/references/guide.md": {
+      "type": "file",
+      "hash": "d6e0ddff812313f4c302d64a6467da25cc5e867ae0f7ee9fa600a8f2fb2b64a3"
+    },
+    ".claude/skills/kit-tdd/writing-good-tests.md": {
+      "type": "file",
+      "hash": "496876382cfe8f79d65fac81d4420f9507a6bcd1dec50a2128a838688b51750f"
+    },
+    ".claude/skills/kit-autopilot/SKILL.md": {
+      "type": "file",
+      "hash": "0a51a539afef7be8389c1dbbb90c6e174ae0e06cf01878c78bf34196202cd566"
+    },
+    ".claude/skills/kit-autopilot/references/codex-handoff.md": {
+      "type": "file",
+      "hash": "0e0afe79d27879f0d25b6f62e81302fead8a6fe984004ebaa99135059b8fa57d"
+    },
+    ".claude/skills/kit-autopilot/references/codex-result.schema.json": {
+      "type": "file",
+      "hash": "c753a2d47a011de60df3795c3f19a82b990b7316f2f68976084c376272c31097"
+    },
+    ".claude/skills/kit-autopilot/references/fix-routing.md": {
+      "type": "file",
+      "hash": "3087b4e69921c586ffa59e179dcd2067f73c5162b9cfc4fa048d892267aab40d"
+    },
+    ".claude/skills/kit-autopilot/references/git-and-state.md": {
+      "type": "file",
+      "hash": "b1e37abc3d6998eaea9ef707b782dca850743700e46ad61f9fa9c083ad2692a1"
+    },
+    ".claude/skills/kit-autopilot/references/phase-worker.md": {
+      "type": "file",
+      "hash": "f7ae665bedcceba272137bc3f3170c0db70e6c136a688826fe9cbaab7752af03"
+    },
+    ".claude/commands/autopilot.md": {
+      "type": "file",
+      "hash": "ac4fe3cdaa574354d815599dadf86062da3935b574621c519bc4977407b53189"
     }
   }
 }

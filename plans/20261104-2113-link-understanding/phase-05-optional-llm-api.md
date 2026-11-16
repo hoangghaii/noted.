@@ -1,6 +1,6 @@
 # Phase 05 — API LLM text-only (tùy chọn)
 
-Ngày 2026-11-04. Trạng thái: Implemented — kiểm chứng kỹ thuật đạt trên iPhone; chờ người dùng đánh giá chất lượng Groq thật. Review: đã tự rà diff/call path ngày 2026-11-05. Phụ thuộc Phase 02. Dùng chung client với [Phase 05 Đọc hiểu ảnh](../20261104-0902-ocr-image-summary/phase-05-optional-llm-api.md). Ưu tiên trung bình. Overview: [plan.md](plan.md).
+Ngày 2026-11-04. Trạng thái: Done — gate chất lượng đã đánh giá ngày 2026-11-16: không đạt đa số, nên giữ mặc định tắt. Review: đã tự rà diff/call path ngày 2026-11-05. Phụ thuộc Phase 02. Dùng chung client với [Phase 05 Đọc hiểu ảnh](../20261104-0902-ocr-image-summary/phase-05-optional-llm-api.md). Ưu tiên trung bình. Overview: [plan.md](plan.md).
 
 ## Mục tiêu
 
@@ -26,7 +26,7 @@ Khi người dùng bật: gửi **text đã trích** của link lên API LLM mi�
 - [x] Bật/tắt hoạt động; màn xem trước đúng với payload thật (test).
 - [x] 429, timeout, sai schema, offline → fallback, không retry vô hạn.
 - [x] Key không xuất hiện trong log hay backup (kiểm chứng với khóa tổng hợp; Keychain service test riêng).
-- [ ] Người dùng đánh giá bản API tốt hơn bản trích xuất trên đa số link đọc được; nếu không thì giữ mặc định tắt và không khuyến nghị.
+- [x] Người dùng đánh giá bản API tốt hơn bản trích xuất trên đa số link đọc được; nếu không thì giữ mặc định tắt và không khuyến nghị. *(2026-11-16: API tốt hơn 5/12, ngang 7, kém 0. Không đạt đa số, nên giữ mặc định tắt và không khuyến nghị.)*
 
 ## Rủi ro
 
@@ -45,3 +45,7 @@ Tắt hủy ngay task và bỏ kết quả muộn; không lưu cloud queue. Khi 
 Build/type-check generic iOS đạt; 61/61 unit/integration và 1/1 UI test trên iPhone đạt. File mới vào target bằng `ruby scripts/update-project.rb`; không đổi schema. [Báo cáo, lệnh và evidence](../../docs/evidence/20261105-link-phase5/summary.md).
 
 **Chưa đóng phase về nghiệm thu:** không có khóa Groq thật trong phiên, chưa gọi mạng thật hoặc so sánh chất lượng bản API trên đa số link. Tính năng vẫn mặc định tắt, chưa khuyến nghị bật. Các gate thủ công này được giữ mở.
+
+## Đánh giá chất lượng 2026-11-16
+
+Người dùng lưu khóa Groq trong Keychain trên iPhone và so sánh bằng màn DEBUG `RemoteDigestComparisonView`. Có 12 link thật `complete`: gọi API 12/12 thành công. API tốt hơn 5, ngang 7, trích xuất tốt hơn 0. Gate “đa số” không đạt, nên tính năng giữ **mặc định tắt** và không khuyến nghị. [Chi tiết](../../docs/intelligence-evaluation.md#link-phase-05--chất-lượng-groq-so-với-trích-xuất-2026-11-16).

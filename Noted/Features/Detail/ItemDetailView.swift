@@ -133,8 +133,13 @@ struct ItemDetailView: View {
                         Text("Đọc ngày \(date.formatted(date: .abbreviated, time: .shortened))")
                             .font(.caption).foregroundStyle(.secondary)
                     }
-                } else if digest?.state == .loginWall {
-                    Text("Không đọc được nội dung (cần đăng nhập)")
+                } else if let digest, digest.state == .loginWall || digest.state == .titleOnly {
+                    if digest.state == .loginWall {
+                        Text("Không đọc được nội dung (cần đăng nhập)")
+                    } else {
+                        if !digest.byline.isEmpty { Text(digest.byline).font(.subheadline) }
+                        Text("Trang chỉ cho xem tiêu đề, không có nội dung để tóm tắt.")
+                    }
                     Text("Bạn có thể thêm ghi chú để nhớ nội dung link.").font(.footnote)
                     Button("Thêm ghi chú", systemImage: "pencil") { showEditor = true }
                 } else if digest?.state == .pending || digest?.state == .running {

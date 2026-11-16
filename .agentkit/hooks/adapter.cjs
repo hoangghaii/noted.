@@ -87,7 +87,7 @@ function session() {
   const parts = [];
   // A project installed with the CLI already carries these instructions in CLAUDE.md.
   if (pluginRoot && !fs.existsSync(path.join(projectRoot, '.agentkit', 'manifest.json'))) {
-    try { parts.push(fs.readFileSync(path.join(pluginRoot, 'instructions.md'), 'utf8').replaceAll('{{PLUGIN_ROOT}}', pluginRoot).trim()); } catch { /* instructions are optional */ }
+    try { parts.push(fs.readFileSync(path.join(pluginRoot, 'instructions.md'), 'utf8').replaceAll('{{PLUGIN_ROOT}}', pluginRoot.split(path.sep).join('/')).trim()); } catch { /* instructions are optional */ }
   }
   const plan = activePlan();
   if (plan) parts.push(plan);

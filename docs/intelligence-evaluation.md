@@ -145,6 +145,27 @@ Người dùng gán nhãn 75 mục (28 ảnh đều có OCR, 21 link, 26 ghi ch�
 - Engine thắng baseline nhiều nhất là NL contextual (+1 mục đúng, +2 mục được gán). Khác biệt này nằm trong sai số của 12 mục, nên **chưa có engine nào thắng baseline rõ ràng**. Theo Acceptance, chưa chốt engine dựa trên chất lượng.
 - Vision trên lần chạy này: p95 99,2 ms/ảnh, cold load 334 ms, memory +38 MB.
 
+## Đánh giá lại sau khi có digest link (2026-11-16)
+
+Thuộc [Phase 06 Đọc hiểu link](../plans/20261104-2113-link-understanding/phase-06-acceptance-and-reevaluation.md). Người dùng gán nhãn lại link dựa trên tóm tắt, rồi chạy “Chạy đánh giá local” trên iPhone 12 Pro, iOS 27.2.1, build 1.0 (1), lúc 14:33 UTC. Tóm tắt từ báo cáo xuất ra (chỉ có số đếm) và file nhãn (chỉ có chủ đề).
+
+- **Nhãn:** 89 mục (30 ảnh đều có OCR, 26 link, 34 ghi chú, trong 90 mục). Calibration 75, holdout 14. Gate ≥150 nhãn và ≥10 mục mỗi nhóm vẫn chưa đạt, nên mọi số bên dưới chỉ để tham khảo. Mỗi mục holdout tương đương 7,1 điểm phần trăm.
+- **Link “Không rõ” giảm:** 14 link thật (không tính 12 fixture `example.com`), chỉ còn **2/14** là “Không rõ”. Còn lại: AI 5, Kiếm thêm thu nhập 2, Tiếng Anh 1, Đồ ăn 1, IPA 1, Ghi chú 1, ấn tay 1. Ngày 2026-11-04, người dùng chọn “Không rõ” cho phần lớn link. Số đếm theo loại của lần đó không được lưu. Digest phủ 92,3% link (24/26).
+- **Lẫn fixture:** 12 link fixture được gán nhãn “example” (7), “Example” (3), “Không rõ” (2). 2 trong 5 link holdout là fixture, nên số đo link bên dưới chỉ có ý nghĩa với 3 link thật trong holdout (AI 2, Tiếng Anh 1).
+
+| Candidate | Precision | Coverage holdout | Link thật trong holdout (đúng / 3) |
+|---|---|---|---|
+| Baseline tên topic (không phải AI) | 100% (9/9) | 64,3% | 3 |
+| E5 fp16 gốc (0,90 / 0,02) | 100% (8/8) | 57,1% | 1 |
+| E5 fp16 mean-centered (0,55 / 0,06) | 100% (6/6) | 42,9% | 0 |
+| E5 int8 (gốc / mean-centered) | như fp16 | như fp16 | 1 / 0 |
+| Vision feature-print 1-NN (5 ảnh) | 100% (1/1) | 20% | — |
+| NL contextual | không chạy: asset chưa tải, app không tự tải | — | — |
+
+- Có digest, **baseline từ khóa** gán đúng cả 3 link thật trong holdout; ngày 2026-11-04 nó trả “Không rõ” cho link “Tiếng Anh”. E5 chỉ gán đúng 1/3. Không candidate nào gán sai. Khác biệt nằm trong sai số của 14 mục, nên **chưa có engine nào thắng baseline**.
+- Tài nguyên E5: fp16 cold load 4,0 s (vượt gate 3 s), warm p95 7,1 ms, memory +24 MB. int8 cold load 7,5 s, memory +229 MB. Vision p95 121 ms/ảnh, cold load 294 ms, memory +45 MB.
+- **Việc tiếp theo cho Phase 01 Lớp AI:** gom “example”/“Example” và loại fixture khỏi bộ nhãn, tải lại asset NL tiếng Việt, gán thêm nhãn tới ≥150 mục rồi chạy lại.
+
 ## Nguồn link trên iPhone (2026-11-04)
 
 Thuộc [Phase 01 Đọc hiểu link](../plans/20261104-2113-link-understanding/phase-01-link-source-spike.md). Công cụ: màn gán nhãn DEBUG → **Nguồn link · DEBUG** → “Đo nguồn link”. Mỗi link chạy 4 chiến lược, mỗi chiến lược 1 lần, cách nhau ~1,2 s: GET mặc định của `URLSession`, GET với User-Agent Safari iOS, `LPMetadataProvider` (chỉ so tiêu đề), oEmbed công khai không token. Một chiến lược được tính “dùng được” khi không lỗi, không có login wall, và có mô tả ≥40 ký tự hoặc nội dung chính ≥200 ký tự. Mô tả giống hệt nhau ở ≥2 link khác nhau bị coi là boilerplate. File `link-sources.json` chỉ chứa domain đã chuẩn hóa, cờ, độ dài, hash và đánh giá Đủ/Không đủ của người dùng.
@@ -182,6 +203,23 @@ Thuộc [Phase 02 Đọc hiểu link](../plans/20261104-2113-link-understanding/
 
 Không có login wall. Mỗi link mất 1,05–2,41 s, gồm cả tải. Có 1 og:title Threads không khớp mẫu tác giả nên vẫn được giữ làm tiêu đề.
 
+## Nghiệm thu digest link trên iPhone (2026-11-15)
+
+Thuộc [Phase 06 Đọc hiểu link](../plans/20261104-2113-link-understanding/phase-06-acceptance-and-reevaluation.md). Đo bằng nút “Đọc lại tất cả link và đo” trong màn DEBUG, chạy runner thật, mỗi link 1 request. Engine `link-extractive-v1`, không bật API, máy iPhone 12 Pro, lượt 04:46 UTC. Nguồn số liệu là `link-digest-report.json`, chỉ chứa domain và số đếm. Thư viện có 25 link; 12 link fixture `example.com` bị loại, còn **13 link thật**.
+
+| Domain | Link | `complete` | `titleOnly` | `loginWall` | `unreachable`/`failed` | p50 / p95 |
+|---|---|---|---|---|---|---|
+| facebook | 1 | 1 | 0 | 0 | 0 | 1,46 s (1 mẫu) |
+| instagram | 0 | — | — | — | — | — |
+| threads | 10 | 10 | 0 | 0 | 0 | 1,14 s / 1,69 s |
+| icloud.com | 1 | 0 | 1 | 0 | 0 | 1,65 s (1 mẫu) |
+| penciltest.ai | 1 | 1 | 0 | 0 | 0 | 0,52 s (1 mẫu) |
+| **13 link thật** | 13 | **12** | 1 | 0 | 0 | p95 ≤ 1,69 s |
+
+- Đây là lần đầu có dữ liệu Facebook: 1/1 `complete`, không bị nhận là login wall. Người dùng xem trên máy và thấy thẻ không có tóm tắt dùng được. Đọc store trên máy (chỉ metadata) cho thấy mô tả chỉ có 4 từ và nằm sẵn trong og:title. Digester v1 chỉ loại mô tả trùng hẳn tiêu đề, nên tính nhầm là `complete`. Từ `link-extractive-v2`, mô tả nằm trong tiêu đề bị bỏ, nên link này sẽ là `titleOnly`. Từ `v3`, tiêu đề dạng `đoạn trích | tên | …` được tách: phần đầu làm tiêu đề, phần sau làm dòng tác giả/trang. Người dùng đã chọn cách này (2026-11-16) thay vì chạy WKWebView ẩn. Tính thực tế: Facebook **0/1** có tóm tắt dùng được, mới có một mẫu. Instagram vẫn chưa có link nào.
+- Threads giữ 10/10 `complete` (so với 8/8 ngày 2026-11-04). iCloud Notes vẫn chỉ có tiêu đề, như Phase 01 dự đoán.
+- Thời gian là tải + trích xuất, không gồm API. p95 của 13 link thật bằng giá trị lớn nhất (nearest-rank với 13 mẫu). Chưa đo việc lưu link mới khi runner đang chạy.
+
 ## Quy trình đo trước quyết định
 
 1. Trên thư viện mục tiêu, ghi số mục từng loại, ảnh có/không OCR; gán nhãn ít nhất 150 mục và ít nhất 10 mục mỗi nhóm nếu dữ liệu đủ. Người dùng mô tả Carepath và nhóm mơ hồ bằng 3–5 ví dụ. Giữ holdout cố định.
@@ -192,6 +230,21 @@ Không có login wall. Mỗi link mất 1,05–2,41 s, gồm cả tải. Có 1 o
 
 **Quyết định hiện tại:** chưa đủ bằng chứng chọn engine hay bật phân nhóm tự động. Không đổi schema `library.store`, không cài model vào app, không ghi tiêu đề hay topic vào dữ liệu người dùng. Phase 02 vẫn phụ thuộc kết quả của Phase 01.
 
+
+## Link Phase 05 — chất lượng Groq so với trích xuất (2026-11-16)
+
+Người dùng tự lưu khóa Groq vào Keychain trên iPhone, rồi dùng màn DEBUG “So sánh bản API với bản trích xuất”. Model `openai/gpt-oss-20b`, endpoint mặc định, lượt 14:53 UTC. Có 12 link thật đang `complete`: Threads 10, penciltest.ai 1, chungchi365.com 1. Fixture `example.com`, Facebook và iCloud Notes (`titleOnly`) bị bỏ qua. File `digest-comparison.json` chỉ chứa domain và lựa chọn.
+
+| Domain | Link | API tốt hơn | Ngang nhau | Trích xuất tốt hơn | API lỗi |
+|---|---|---|---|---|---|
+| threads | 10 | 4 | 6 | 0 | 0 |
+| chungchi365.com | 1 | 1 | 0 | 0 | 0 |
+| penciltest.ai | 1 | 0 | 1 | 0 | 0 |
+| **Tổng** | 12 | **5** | 7 | 0 | 0 |
+
+- Gọi API thật 12/12 thành công, JSON hợp lệ, không phải dùng bản dự phòng.
+- API tốt hơn ở 5/12 (42%), chưa phải đa số. Không link nào API làm kém đi.
+- **Quyết định theo Acceptance Phase 05:** gate “tốt hơn trên đa số link” không đạt. Giữ tính năng **mặc định tắt** và không khuyến nghị bật. Người dùng vẫn tự bật được; khi bật, chất lượng không kém bản trích xuất trên mẫu này.
 
 ## Link Phase 05 — nhà cung cấp API tùy chọn (2026-11-05)
 

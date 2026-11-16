@@ -24,6 +24,7 @@
 		2979DE518800E2ACD2353BF5 /* ItemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 049D80377E8AF639B6EDEE06 /* ItemDetailView.swift */; };
 		2C2530B82D38750241F52FCA /* PaperAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB1007DAB42C81CAF73384C9 /* PaperAssets.xcassets */; };
 		2EF9B266DE46FE1481D95FE4 /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64D42EC1764D2C71ACD1E6EB /* LibraryView.swift */; };
+		2F6010434D4169D99B865C32 /* RemoteDigestComparisonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA993B0435ABA70AB6AB907 /* RemoteDigestComparisonView.swift */; };
 		2F9DC364058E1BB6BF93B7A5 /* RemoteAISettingsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2455A43EE66822C85E5EA8DA /* RemoteAISettingsUITests.swift */; };
 		30109908D977B0F4A3C2B7B4 /* RemoteTextGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 384C12D460C26483FCE086ED /* RemoteTextGenerator.swift */; };
 		3A4A3F099940D355F711343C /* PhaseFourFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0CE35F5F5457B0BEA8A84FC /* PhaseFourFixtures.swift */; };
@@ -69,6 +70,7 @@
 		9225386D0EFA25932A44E612 /* ThumbnailService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7748E68BEE0D3E403F6E1E80 /* ThumbnailService.swift */; };
 		944599A3F7960F6A5EACE97A /* ShareGateStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38D5D2544AADB6455BE50FE1 /* ShareGateStoreTests.swift */; };
 		9556C36216B87A2906D61262 /* IntelligenceLabelingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6D4D74EA963C70D1A32D0C6 /* IntelligenceLabelingView.swift */; };
+		A218057BD4706AC061F689CD /* LinkDigestReport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C039969CBFC947EE7EE2288 /* LinkDigestReport.swift */; };
 		A545E0C1F2ABA56BDAE30D50 /* MockFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43CE9CBC64FAEFB06FEC6123 /* MockFixtures.swift */; };
 		AB67F7AC7269B9C19C510A33 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9873D31D250307A5466320C9 /* Foundation.framework */; };
 		AF0000000000000000000001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AF0000000000000000000002 /* Assets.xcassets */; };
@@ -150,6 +152,7 @@
 		07F4E6ECE5140AA69DBDEA4F /* DeviceGateFixtures.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DeviceGateFixtures.swift; path = App/DeviceGateFixtures.swift; sourceTree = "<group>"; };
 		0C05593FFCDA348ADDC34E97 /* OCRService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OCRService.swift; path = Core/Enrichment/OCRService.swift; sourceTree = "<group>"; };
 		161E42E62AF572059CD117E8 /* ModelStore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ModelStore.swift; path = Core/Persistence/ModelStore.swift; sourceTree = "<group>"; };
+		1C039969CBFC947EE7EE2288 /* LinkDigestReport.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LinkDigestReport.swift; path = Core/Digest/LinkDigestReport.swift; sourceTree = "<group>"; };
 		1CA198872206B0B38589813C /* Noted.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Noted.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CF6F50FA632835FFDCDDEEF /* ShareViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		209A76A24C72C637368D5731 /* NoteDraftStore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NoteDraftStore.swift; path = Features/Capture/NoteDraftStore.swift; sourceTree = "<group>"; };
@@ -196,6 +199,7 @@
 		74B9DF520AE329C681E2979B /* RootView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RootView.swift; path = App/RootView.swift; sourceTree = "<group>"; };
 		75B160540BE695DD90878D15 /* MockFidelityUITests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MockFidelityUITests.swift; sourceTree = "<group>"; };
 		7748E68BEE0D3E403F6E1E80 /* ThumbnailService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ThumbnailService.swift; path = Core/Storage/ThumbnailService.swift; sourceTree = "<group>"; };
+		7AA993B0435ABA70AB6AB907 /* RemoteDigestComparisonView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RemoteDigestComparisonView.swift; path = App/RemoteDigestComparisonView.swift; sourceTree = "<group>"; };
 		7C4498082C652C4AB7F794C2 /* CaptureRecoveryTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CaptureRecoveryTests.swift; sourceTree = "<group>"; };
 		7CBFFF99C35D3B0D1810E878 /* Local.xcconfig.example */ = {isa = PBXFileReference; includeInIndex = 1; path = Local.xcconfig.example; sourceTree = "<group>"; };
 		7DF0C555425375C55F1BCAC0 /* AttachmentStore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AttachmentStore.swift; path = Core/Storage/AttachmentStore.swift; sourceTree = "<group>"; };
@@ -391,6 +395,8 @@
 				715981918B9305C957044D34 /* RemoteLinkDigester.swift */,
 				3CCE106708CBBFE41316ADB4 /* APIKeyStore.swift */,
 				384C12D460C26483FCE086ED /* RemoteTextGenerator.swift */,
+				1C039969CBFC947EE7EE2288 /* LinkDigestReport.swift */,
+				7AA993B0435ABA70AB6AB907 /* RemoteDigestComparisonView.swift */,
 			);
 			name = Noted;
 			path = Noted;
@@ -771,6 +777,8 @@
 				217F2CFECBB53FCEC3B37A48 /* RemoteLinkDigester.swift in Sources */,
 				28F3B6D572AB2410D71D04BE /* APIKeyStore.swift in Sources */,
 				30109908D977B0F4A3C2B7B4 /* RemoteTextGenerator.swift in Sources */,
+				A218057BD4706AC061F689CD /* LinkDigestReport.swift in Sources */,
+				2F6010434D4169D99B865C32 /* RemoteDigestComparisonView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

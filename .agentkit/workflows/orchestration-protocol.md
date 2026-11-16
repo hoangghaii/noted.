@@ -1,6 +1,6 @@
 # Orchestration protocol
 
-Delegate substantial independent scopes only where delegation improves the task. Inherit the session model. Without delegation, execute the stages sequentially.
+Delegate substantial independent scopes only where delegation improves the task. Each agent runs on the model `kit/agents.json` gives it (Claude: haiku for `scout`, sonnet for `researcher`/`tester`, opus for `planner`/`code-reviewer`/`debugger`; Codex: `gpt-6.1-sol` at medium effort); an agent with no model inherits the session. When a check fails, retry on the same model at higher effort before moving to a stronger model. Use Fable only when the user asks. Without delegation, execute the stages sequentially.
 
 Each handoff contains the objective, relevant paths, constraints, acceptance criteria, allowed edits and expected output. Avoid overlapping write ownership. Supply existing reports rather than repeating completed research. Share decisions, observed evidence and unresolved risks, not private chain-of-thought.
 
