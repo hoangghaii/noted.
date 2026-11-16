@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Codex phase result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "changed_files", "checks", "out_of_scope", "notes"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["done", "partial", "blocked"],
+      "description": "done: every phase step is implemented. partial: some steps remain. blocked: cannot proceed without input."
+    },
+    "changed_files": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Paths created, modified or deleted, relative to the project root."
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["command", "result"],
+        "properties": {
+          "command": {"type": "string"},
+          "result": {"type": "string", "enum": ["passed", "failed", "not-run"]}
+        }
+      }
+    },
+    "out_of_scope": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Changed paths outside the phase file list, each with a short reason."
+    },
+    "notes": {
+      "type": "string",
+      "description": "Blockers, assumptions and remaining steps. Under 15 lines."
+    }
+  }
+}
