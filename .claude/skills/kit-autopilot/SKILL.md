@@ -19,12 +19,14 @@ There is no unattended mode: Gate 2 always runs.
 
 All state lives in `plan.md` ([git and state](references/git-and-state.md#state-in-planmd)), so any session can resume a run from the plan alone.
 
+`plan.html` is the user's view of that state. After every status change, re-render it with `kit-plan`'s `scripts/render-plan.mjs plans/<dir>` (path relative to the kit-plan skill directory); pass `--open` only at Gate 1, and the user refreshes the page afterwards. A render failure is noted, never a reason to stop.
+
 ## Start
 
 1. **Plan.** Use the supplied or clearly active `plans/<dir>/plan.md`; plans under `plans/archived/` are finished and never active. When the supplied plan is already archived, or its path is gone because it was archived, report its final state and stop. With only an idea, run `kit-plan --brainstorm` for open questions, then `kit-plan` to write the plan. Every phase row needs an `Executor` of `codex` or `claude` ([routing](references/fix-routing.md#choosing-the-executor)).
 2. **Codex preflight** once per session ([Codex handoff](references/codex-handoff.md#preflight)). If Codex is unavailable, say why in one line and switch every `codex` phase to `claude`.
 3. **Baseline.** Only when `plan.md` has no `Approved` yet: before Gate 1, run the project's test, type-check and build commands once on the current tree, with their output written to `plans/<dir>/reports/<ts>-baseline.log` (`<ts>` is a local `YYYYMMDD-HHmm` timestamp). Read only the exit codes and the failing part of the log. Record any check that already fails as `Baseline:` in `plan.md`, so a pre-existing failure is not found halfway through the run.
-4. **Gate 1.** Skip it when `plan.md` already records `Approved`. Otherwise show the phase table (phase, executor, status), the mode, the Codex state and the baseline failures, ask whether those failures block phases, and wait for approval or edits. On approval record `Approved: <date>` and `Mode`, then go straight to step 5 in the same session.
+4. **Gate 1.** Skip it when `plan.md` already records `Approved`. Otherwise render and open `plan.html`, then show the phase table (phase, executor, status), the mode, the Codex state and the baseline failures, ask whether those failures block phases, and wait for approval or edits. On approval record `Approved: <date>` and `Mode`, then go straight to step 5 in the same session.
 5. **Resume.** Follow [resume](references/git-and-state.md#resume): switch to the recorded branch and continue from the first phase that is not `done`.
 
 ## Per phase

@@ -145,6 +145,24 @@ Người dùng gán nhãn 75 mục (28 ảnh đều có OCR, 21 link, 26 ghi ch�
 - Engine thắng baseline nhiều nhất là NL contextual (+1 mục đúng, +2 mục được gán). Khác biệt này nằm trong sai số của 12 mục, nên **chưa có engine nào thắng baseline rõ ràng**. Theo Acceptance, chưa chốt engine dựa trên chất lượng.
 - Vision trên lần chạy này: p95 99,2 ms/ảnh, cold load 334 ms, memory +38 MB.
 
+## Gom chủ đề đánh giá (2026-11-17)
+
+Người dùng chốt 6 chủ đề chính. Nhãn cũ được chuyển bằng một lần đổi `labels.json` trên iPhone, có bản gốc lưu cạnh file là `labels.before-20261117.json`. Chỉ `topic` và `secondaryTopics` thay đổi; ID mục, split, tag và ngày gán giữ nguyên. Màn gán nhãn DEBUG cũng chỉ còn 6 chủ đề này (cùng “Chủ đề khác…”).
+
+| Chủ đề chính | Gồm nhãn cũ | Số nhãn (mục không ở Thùng rác) |
+|---|---|---|
+| Food&Drink | Cà phê, Đồ ăn | 40 |
+| Etc. | Không rõ, ấn tay, Ghi chú, Hài hước, Vệ sinh | 15 |
+| Work Hard | AI, Carepath, Kiếm thêm thu nhập, Tìm việc | 12 |
+| Mac App | Mac App, IPA | 2 |
+| Tiếng Anh | Tiếng Anh, English (chủ đề phụ) | 2 |
+| Update Noted. | Noted. update note | 1 |
+
+- 12 link fixture `example.com` đã được người dùng chuyển vào Thùng rác, nên evaluator bỏ qua. Nhãn “example”/“Example” của chúng vẫn nằm trong file nhưng không được tính.
+- Không còn nhãn “Không rõ”: mục không rõ chủ đề giờ thuộc Etc., một nhóm “còn lại” và khó học hơn các nhóm khác.
+- **Baseline từ khóa yếu đi do tên chủ đề:** baseline chỉ dò tên chủ đề trong nội dung. Các tên Food&Drink, Work Hard, Etc. hầu như không xuất hiện trong text, nên coverage của baseline sẽ giảm mạnh. Khi so với các lần trước, đừng hiểu điểm baseline giảm là engine embedding tốt lên.
+- Gate vẫn chưa đạt: cần ≥150 nhãn và mỗi chủ đề ≥10. Mac App, Tiếng Anh và Update Noted. còn thiếu 8–9 mục mỗi chủ đề; tổng còn thiếu khoảng 78 nhãn.
+
 ## Đánh giá lại sau khi có digest link (2026-11-16)
 
 Thuộc [Phase 06 Đọc hiểu link](../plans/20261104-2113-link-understanding/phase-06-acceptance-and-reevaluation.md). Người dùng gán nhãn lại link dựa trên tóm tắt, rồi chạy “Chạy đánh giá local” trên iPhone 12 Pro, iOS 27.2.1, build 1.0 (1), lúc 14:33 UTC. Tóm tắt từ báo cáo xuất ra (chỉ có số đếm) và file nhãn (chỉ có chủ đề).

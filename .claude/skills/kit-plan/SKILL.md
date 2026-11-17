@@ -10,7 +10,7 @@ Read project instructions and the relevant code, then choose the mode before cre
 
 ## Brainstorming: --brainstorm
 
-Do this in the main session (delegate codebase lookups to `scout` and external facts to `researcher` when useful). Clarify the objective and constraints, compare feasible options, challenge assumptions, identify risks and recommend one approach with reasons. Report a decision summary and open questions. This mode does not write code or phase files; save the summary only when asked. Move to implementation planning when that is requested.
+Do this in the main session (delegate codebase lookups to `scout` and external facts to `researcher` when useful). Clarify the objective and constraints, compare feasible options, challenge assumptions, identify risks and recommend one approach with reasons. Report a decision summary and open questions. This mode does not write code or phase files. At the end, offer to save the summary as `plans/YYYYMMDD-HHmm-<topic>/brainstorm.md` (understanding of the idea, options, comparison, recommendation, risks, open questions; a Mermaid diagram where a flow or structure is easier to see than to read) and render it with `scripts/render-plan.mjs <file> --open`; save only when the user agrees. Move to implementation planning when that is requested; the plan reuses that directory and builds on `brainstorm.md` instead of repeating the brainstorm.
 
 ## Implementation planning
 
@@ -20,7 +20,7 @@ Do this in the main session (delegate codebase lookups to `scout` and external f
    - `plan.md`: scope, approach, dependencies and a status table linking every phase.
    - `phase-01-<name>.md`, `phase-02-<name>.md`, …: one file per meaningful phase with scope, affected files, ordered steps, todo checkboxes, acceptance checks and material risks.
    - `research/`, `reports/`, `scout/`: only for artifacts actually produced.
-4. **Verify**: read back the saved files and check relative links. Return the actual overview path and a phase summary; never claim proposed files exist. A read-only planner returns per-file contents; the coordinator writes and verifies them.
+4. **Verify**: read back the saved files and check relative links. Render the HTML view with `--open` ([plan organization](references/plan-organization.md#html-view-planhtml)); if rendering fails, note it and continue. Return the actual overview path, the `plan.html` path and a phase summary; never claim proposed files exist. A read-only planner returns per-file contents; the coordinator writes and verifies them.
 
 Small tasks (one or two phases) may use a single `plan.md` with inline phases.
 

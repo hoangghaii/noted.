@@ -67,7 +67,7 @@ struct IntelligenceLabelingView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var labels: [UUID: IntelligenceLabel] = [:]
     @State private var index = 0
-    @State private var topic = "Không rõ"
+    @State private var topic = "Etc."
     @State private var customTopic = ""
     @State private var secondaryTopics = ""
     @State private var desiredTags = ""
@@ -83,7 +83,8 @@ struct IntelligenceLabelingView: View {
     /// False when an existing link-sources.json could not be read; measuring would overwrite earlier runs.
     @State private var linkReportReadable = true
     @State private var isMeasuringDigests = false
-    private let topics = ["Cà phê", "Tìm việc", "Carepath", "Kiếm thêm thu nhập", "Hài hước", "Không rõ", "Chủ đề khác…"]
+    /// Main topics agreed with the user on 2026-11-17; older labels (including “Không rõ”) were merged into these.
+    private let topics = ["Food&Drink", "Work Hard", "Mac App", "Tiếng Anh", "Update Noted.", "Etc.", "Chủ đề khác…"]
 
     private var items: [Item] {
         store.items.filter { $0.trashedAt == nil }.sorted { $0.id.uuidString < $1.id.uuidString }
@@ -356,7 +357,7 @@ struct IntelligenceLabelingView: View {
         guard items.indices.contains(next) else { return }
         index = next
         let label = labels[items[next].id]
-        topic = label.map { topics.contains($0.topic) ? $0.topic : "Chủ đề khác…" } ?? "Không rõ"
+        topic = label.map { topics.contains($0.topic) ? $0.topic : "Chủ đề khác…" } ?? "Etc."
         customTopic = topic == "Chủ đề khác…" ? (label?.topic ?? "") : ""
         secondaryTopics = label?.secondaryTopics?.joined(separator: ", ") ?? ""
         desiredTags = label?.desiredTags.joined(separator: ", ") ?? ""

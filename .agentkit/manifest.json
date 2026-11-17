@@ -8,6 +8,7 @@
     "platform",
     "documents",
     "ai-media",
+    "motion",
     "quality",
     "orchestration"
   ],
@@ -352,7 +353,7 @@
     },
     ".agents/skills/kit-plan/SKILL.md": {
       "type": "file",
-      "hash": "b0549b54b41b653932d52706645fe4b3826744c4a315ec1519430c9a3571083e"
+      "hash": "1a97732f555a1244a088e809b01b3880f98b888f0d6c36ebed2231f0bea13924"
     },
     ".agents/skills/kit-implement/SKILL.md": {
       "type": "file",
@@ -380,11 +381,11 @@
     },
     ".agents/skills/kit-git/SKILL.md": {
       "type": "file",
-      "hash": "d83e4239026c8f9c4c040bf950b7d2b6d70012cab505b035b0ea94060a5a4f1d"
+      "hash": "cf0ceaef3b04177c466cc09cbfd721365272c10864c5de5191c2efa1d2453f39"
     },
     ".agents/skills/kit-status/SKILL.md": {
       "type": "file",
-      "hash": "f517ebbc68d65c769e2777a872a10cfb8292b0424061dad03709161f957bc05f"
+      "hash": "be40b4deb888785c8550085eb20bfa9a50326d82d6c4e60e1454fbc662f73c50"
     },
     ".agents/skills/kit-scout/SKILL.md": {
       "type": "file",
@@ -2953,7 +2954,7 @@
     },
     ".claude/skills/kit-plan/SKILL.md": {
       "type": "file",
-      "hash": "b0549b54b41b653932d52706645fe4b3826744c4a315ec1519430c9a3571083e"
+      "hash": "1a97732f555a1244a088e809b01b3880f98b888f0d6c36ebed2231f0bea13924"
     },
     ".claude/skills/kit-implement/SKILL.md": {
       "type": "file",
@@ -2981,11 +2982,11 @@
     },
     ".claude/skills/kit-git/SKILL.md": {
       "type": "file",
-      "hash": "d83e4239026c8f9c4c040bf950b7d2b6d70012cab505b035b0ea94060a5a4f1d"
+      "hash": "cf0ceaef3b04177c466cc09cbfd721365272c10864c5de5191c2efa1d2453f39"
     },
     ".claude/skills/kit-status/SKILL.md": {
       "type": "file",
-      "hash": "f517ebbc68d65c769e2777a872a10cfb8292b0424061dad03709161f957bc05f"
+      "hash": "be40b4deb888785c8550085eb20bfa9a50326d82d6c4e60e1454fbc662f73c50"
     },
     ".claude/skills/kit-scout/SKILL.md": {
       "type": "file",
@@ -5154,6 +5155,10 @@
     ".claude/settings.json": {
       "type": "json",
       "fragment": {
+        "attribution": {
+          "commit": "",
+          "pr": ""
+        },
         "hooks": {
           "SessionStart": [
             {
@@ -5190,7 +5195,7 @@
         }
       },
       "original": null,
-      "hash": "698d6c0de9218675c83e848533b32e572d2189babb60c9c1fffdf18ad5ea29d9"
+      "hash": "71b9eb3d266ee1868d9be8547201a06df803d08f08049ca2bfa8e9ebcd04652a"
     },
     ".mcp.json": {
       "type": "json",
@@ -5430,7 +5435,7 @@
     },
     ".agents/skills/kit-plan/references/plan-organization.md": {
       "type": "file",
-      "hash": "1dcde86a63cd246d5ae2702f12acd305252483bf77fb0f76243f44e1e14a9780"
+      "hash": "00d1984a59f976bc3f3907d8c5b78b7d0a037b991c777b3e2250a198dc69e643"
     },
     ".agents/skills/kit-plan/references/research-phase.md": {
       "type": "file",
@@ -5898,7 +5903,7 @@
     },
     ".claude/skills/kit-plan/references/plan-organization.md": {
       "type": "file",
-      "hash": "1dcde86a63cd246d5ae2702f12acd305252483bf77fb0f76243f44e1e14a9780"
+      "hash": "00d1984a59f976bc3f3907d8c5b78b7d0a037b991c777b3e2250a198dc69e643"
     },
     ".claude/skills/kit-plan/references/research-phase.md": {
       "type": "file",
@@ -6398,7 +6403,7 @@
     },
     ".claude/skills/kit-autopilot/SKILL.md": {
       "type": "file",
-      "hash": "0a51a539afef7be8389c1dbbb90c6e174ae0e06cf01878c78bf34196202cd566"
+      "hash": "3fa8ea370fb83976a73759c9d520c50ab8909621f07eef9ec2b9ac7c838ec2e8"
     },
     ".claude/skills/kit-autopilot/references/codex-handoff.md": {
       "type": "file",
@@ -6414,7 +6419,7 @@
     },
     ".claude/skills/kit-autopilot/references/git-and-state.md": {
       "type": "file",
-      "hash": "b1e37abc3d6998eaea9ef707b782dca850743700e46ad61f9fa9c083ad2692a1"
+      "hash": "263368562504d169ba654f6d069f2306bfd0c66bc2aa9c86973ace5dc498d1fd"
     },
     ".claude/skills/kit-autopilot/references/phase-worker.md": {
       "type": "file",
@@ -6423,6 +6428,268 @@
     ".claude/commands/autopilot.md": {
       "type": "file",
       "hash": "ac4fe3cdaa574354d815599dadf86062da3935b574621c519bc4977407b53189"
+    },
+    ".agents/skills/kit-plan/scripts/render-plan.mjs": {
+      "type": "file",
+      "hash": "c7325672a2fd09c1c4bdc40cb3a6c911eaf5f767e34c9ce3d155a4276a197ad8"
+    },
+    ".agents/skills/remotion-video/SKILL.md": {
+      "type": "file",
+      "hash": "354b7094b13a93c0e656e8d02856dea308db9786d5943263d9419359676af2af"
+    },
+    ".agents/skills/remotion-video/UPSTREAM-LICENSE.txt": {
+      "type": "file",
+      "hash": "33d6cd35a20903b5e968a76a1e584a7aeae2c83e3e58ea58ecc50b889b83e668"
+    },
+    ".agents/skills/remotion-video/UPSTREAM-NOTICE.md": {
+      "type": "file",
+      "hash": "c1e44081ca139a2fc57eac0cb1433e4fce8dadb699b1cd819257797806fd969d"
+    },
+    ".agents/skills/remotion-video/references/api-and-patterns.md": {
+      "type": "file",
+      "hash": "623a179462862cbdfa8cfcf7b412b8148641134c6bb4e4ee7da59fed76bd2ea9"
+    },
+    ".agents/skills/remotion-video/scripts/README.md": {
+      "type": "file",
+      "hash": "4c448995ff64136ecd27ac071872baa70ebbc2848e82fc258a1ab5ecb9146e2b"
+    },
+    ".agents/skills/remotion-video/scripts/contact-sheet.sh": {
+      "type": "file",
+      "hash": "a3873536da80dbb6724c2a3d462bd60a2ddc03e22dabce73bb0d0f70d4d1a361"
+    },
+    ".agents/skills/remotion-video/scripts/probe-mp4.sh": {
+      "type": "file",
+      "hash": "3a1bb8c5d017599e52f4bb49822259257266899ee46028663ba416acccc19e6a"
+    },
+    ".agents/skills/manim/SKILL.md": {
+      "type": "file",
+      "hash": "58c35a8cbcf2ba5f29d7faa689efec4f3af800b7f74d9ce36c277c5f52be1f77"
+    },
+    ".agents/skills/manim/UPSTREAM-LICENSE.txt": {
+      "type": "file",
+      "hash": "33d6cd35a20903b5e968a76a1e584a7aeae2c83e3e58ea58ecc50b889b83e668"
+    },
+    ".agents/skills/manim/UPSTREAM-NOTICE.md": {
+      "type": "file",
+      "hash": "cd17ba1b10bfa8298801885e958008485878ebf4749ccb9e3e6f5b57fb996442"
+    },
+    ".agents/skills/manim/references/3d-and-camera.md": {
+      "type": "file",
+      "hash": "e7ede1c1a3dde869bde9dd45c5e5b9c99251ad77ddff6ee408d609a1bab2e650"
+    },
+    ".agents/skills/manim/references/graphs-and-updaters.md": {
+      "type": "file",
+      "hash": "6380db5b40a4c1dd0724aef05729478014b8edebdbe460cae2c466543bf6c81d"
+    },
+    ".agents/skills/manim/references/math-and-text.md": {
+      "type": "file",
+      "hash": "732c42aa6313d5f46ea9994ccfa434c163d68c0d8809b2cdcdec97e1562436fa"
+    },
+    ".agents/skills/manim/scripts/README.md": {
+      "type": "file",
+      "hash": "d91782a698744505cd4ae343d66aa3cb29380389ef0971ad7fdf2ddfd790cdcf"
+    },
+    ".agents/skills/manim/scripts/contact-sheet.sh": {
+      "type": "file",
+      "hash": "a3873536da80dbb6724c2a3d462bd60a2ddc03e22dabce73bb0d0f70d4d1a361"
+    },
+    ".agents/skills/manim/scripts/probe-mp4.sh": {
+      "type": "file",
+      "hash": "3a1bb8c5d017599e52f4bb49822259257266899ee46028663ba416acccc19e6a"
+    },
+    ".agents/skills/explainer-video/SKILL.md": {
+      "type": "file",
+      "hash": "4ea5ddc97debff482d43321a582792f0816bd94554d4f8b5055ea3588f5c8fbb"
+    },
+    ".agents/skills/explainer-video/UPSTREAM-LICENSE.txt": {
+      "type": "file",
+      "hash": "33d6cd35a20903b5e968a76a1e584a7aeae2c83e3e58ea58ecc50b889b83e668"
+    },
+    ".agents/skills/explainer-video/UPSTREAM-NOTICE.md": {
+      "type": "file",
+      "hash": "c3526af10e0384cda5b5afe451c520cf0b842712f8c703bfaf8f010d89cd6025"
+    },
+    ".agents/skills/explainer-video/references/script-to-screen-workflow.md": {
+      "type": "file",
+      "hash": "7e7b6f6e5ea405026895a6dd5535d9b1c30e53785034c84ec0becfc706b24332"
+    },
+    ".agents/skills/chart-animation/SKILL.md": {
+      "type": "file",
+      "hash": "681a6f97bc23cd4f81d43c5054abfe2dbf49e7d49ae641c31b35f3aabedcfd27"
+    },
+    ".agents/skills/chart-animation/UPSTREAM-LICENSE.txt": {
+      "type": "file",
+      "hash": "33d6cd35a20903b5e968a76a1e584a7aeae2c83e3e58ea58ecc50b889b83e668"
+    },
+    ".agents/skills/chart-animation/UPSTREAM-NOTICE.md": {
+      "type": "file",
+      "hash": "36e67622d95d32dbe840fd5cebbba7a1dec59a79966c54dddfb69a44693bb751"
+    },
+    ".agents/skills/chart-animation/references/bar-chart-race.md": {
+      "type": "file",
+      "hash": "95a77372611aec11b344a9fb3a2637a8d0143d1a0557c3d955a1f04c2510ce09"
+    },
+    ".agents/skills/chart-animation/references/data-pipeline.md": {
+      "type": "file",
+      "hash": "0b2cbf501fff0389ce74879cf566f82471a9fd7f4da85a3150e7a0139f1c735f"
+    },
+    ".agents/skills/animation-principles/SKILL.md": {
+      "type": "file",
+      "hash": "8b713d177e83c71730864318cc57adb162cce8c08778fb876444b6945e54df48"
+    },
+    ".agents/skills/animation-principles/UPSTREAM-LICENSE.txt": {
+      "type": "file",
+      "hash": "33d6cd35a20903b5e968a76a1e584a7aeae2c83e3e58ea58ecc50b889b83e668"
+    },
+    ".agents/skills/animation-principles/UPSTREAM-NOTICE.md": {
+      "type": "file",
+      "hash": "184576d5417c16abba24892cf0395f229ce7b9d9d8099ad44218e1d76f648343"
+    },
+    ".agents/skills/animation-principles/references/easing-curves.md": {
+      "type": "file",
+      "hash": "862e1b24cad105ffe9db53883e18d2729422a8879553cda6ccce351074fa80d1"
+    },
+    ".agents/skills/animation-principles/references/easing-graph-editor.md": {
+      "type": "file",
+      "hash": "55d29beff95c0bd02449fb57a85c8c74ea9d6786c9918bb85c235f89ec10cf4e"
+    },
+    ".agents/skills/animation-principles/references/twelve-principles.md": {
+      "type": "file",
+      "hash": "332afa62ccef62186b05447db32a629a3923a4b6b87572af6e75ef30d9911f16"
+    },
+    ".claude/skills/kit-plan/scripts/render-plan.mjs": {
+      "type": "file",
+      "hash": "c7325672a2fd09c1c4bdc40cb3a6c911eaf5f767e34c9ce3d155a4276a197ad8"
+    },
+    ".claude/skills/remotion-video/SKILL.md": {
+      "type": "file",
+      "hash": "354b7094b13a93c0e656e8d02856dea308db9786d5943263d9419359676af2af"
+    },
+    ".claude/skills/remotion-video/UPSTREAM-LICENSE.txt": {
+      "type": "file",
+      "hash": "33d6cd35a20903b5e968a76a1e584a7aeae2c83e3e58ea58ecc50b889b83e668"
+    },
+    ".claude/skills/remotion-video/UPSTREAM-NOTICE.md": {
+      "type": "file",
+      "hash": "c1e44081ca139a2fc57eac0cb1433e4fce8dadb699b1cd819257797806fd969d"
+    },
+    ".claude/skills/remotion-video/references/api-and-patterns.md": {
+      "type": "file",
+      "hash": "623a179462862cbdfa8cfcf7b412b8148641134c6bb4e4ee7da59fed76bd2ea9"
+    },
+    ".claude/skills/remotion-video/scripts/README.md": {
+      "type": "file",
+      "hash": "4c448995ff64136ecd27ac071872baa70ebbc2848e82fc258a1ab5ecb9146e2b"
+    },
+    ".claude/skills/remotion-video/scripts/contact-sheet.sh": {
+      "type": "file",
+      "hash": "a3873536da80dbb6724c2a3d462bd60a2ddc03e22dabce73bb0d0f70d4d1a361"
+    },
+    ".claude/skills/remotion-video/scripts/probe-mp4.sh": {
+      "type": "file",
+      "hash": "3a1bb8c5d017599e52f4bb49822259257266899ee46028663ba416acccc19e6a"
+    },
+    ".claude/skills/manim/SKILL.md": {
+      "type": "file",
+      "hash": "58c35a8cbcf2ba5f29d7faa689efec4f3af800b7f74d9ce36c277c5f52be1f77"
+    },
+    ".claude/skills/manim/UPSTREAM-LICENSE.txt": {
+      "type": "file",
+      "hash": "33d6cd35a20903b5e968a76a1e584a7aeae2c83e3e58ea58ecc50b889b83e668"
+    },
+    ".claude/skills/manim/UPSTREAM-NOTICE.md": {
+      "type": "file",
+      "hash": "cd17ba1b10bfa8298801885e958008485878ebf4749ccb9e3e6f5b57fb996442"
+    },
+    ".claude/skills/manim/references/3d-and-camera.md": {
+      "type": "file",
+      "hash": "e7ede1c1a3dde869bde9dd45c5e5b9c99251ad77ddff6ee408d609a1bab2e650"
+    },
+    ".claude/skills/manim/references/graphs-and-updaters.md": {
+      "type": "file",
+      "hash": "6380db5b40a4c1dd0724aef05729478014b8edebdbe460cae2c466543bf6c81d"
+    },
+    ".claude/skills/manim/references/math-and-text.md": {
+      "type": "file",
+      "hash": "732c42aa6313d5f46ea9994ccfa434c163d68c0d8809b2cdcdec97e1562436fa"
+    },
+    ".claude/skills/manim/scripts/README.md": {
+      "type": "file",
+      "hash": "d91782a698744505cd4ae343d66aa3cb29380389ef0971ad7fdf2ddfd790cdcf"
+    },
+    ".claude/skills/manim/scripts/contact-sheet.sh": {
+      "type": "file",
+      "hash": "a3873536da80dbb6724c2a3d462bd60a2ddc03e22dabce73bb0d0f70d4d1a361"
+    },
+    ".claude/skills/manim/scripts/probe-mp4.sh": {
+      "type": "file",
+      "hash": "3a1bb8c5d017599e52f4bb49822259257266899ee46028663ba416acccc19e6a"
+    },
+    ".claude/skills/explainer-video/SKILL.md": {
+      "type": "file",
+      "hash": "4ea5ddc97debff482d43321a582792f0816bd94554d4f8b5055ea3588f5c8fbb"
+    },
+    ".claude/skills/explainer-video/UPSTREAM-LICENSE.txt": {
+      "type": "file",
+      "hash": "33d6cd35a20903b5e968a76a1e584a7aeae2c83e3e58ea58ecc50b889b83e668"
+    },
+    ".claude/skills/explainer-video/UPSTREAM-NOTICE.md": {
+      "type": "file",
+      "hash": "c3526af10e0384cda5b5afe451c520cf0b842712f8c703bfaf8f010d89cd6025"
+    },
+    ".claude/skills/explainer-video/references/script-to-screen-workflow.md": {
+      "type": "file",
+      "hash": "7e7b6f6e5ea405026895a6dd5535d9b1c30e53785034c84ec0becfc706b24332"
+    },
+    ".claude/skills/chart-animation/SKILL.md": {
+      "type": "file",
+      "hash": "681a6f97bc23cd4f81d43c5054abfe2dbf49e7d49ae641c31b35f3aabedcfd27"
+    },
+    ".claude/skills/chart-animation/UPSTREAM-LICENSE.txt": {
+      "type": "file",
+      "hash": "33d6cd35a20903b5e968a76a1e584a7aeae2c83e3e58ea58ecc50b889b83e668"
+    },
+    ".claude/skills/chart-animation/UPSTREAM-NOTICE.md": {
+      "type": "file",
+      "hash": "36e67622d95d32dbe840fd5cebbba7a1dec59a79966c54dddfb69a44693bb751"
+    },
+    ".claude/skills/chart-animation/references/bar-chart-race.md": {
+      "type": "file",
+      "hash": "95a77372611aec11b344a9fb3a2637a8d0143d1a0557c3d955a1f04c2510ce09"
+    },
+    ".claude/skills/chart-animation/references/data-pipeline.md": {
+      "type": "file",
+      "hash": "0b2cbf501fff0389ce74879cf566f82471a9fd7f4da85a3150e7a0139f1c735f"
+    },
+    ".claude/skills/animation-principles/SKILL.md": {
+      "type": "file",
+      "hash": "8b713d177e83c71730864318cc57adb162cce8c08778fb876444b6945e54df48"
+    },
+    ".claude/skills/animation-principles/UPSTREAM-LICENSE.txt": {
+      "type": "file",
+      "hash": "33d6cd35a20903b5e968a76a1e584a7aeae2c83e3e58ea58ecc50b889b83e668"
+    },
+    ".claude/skills/animation-principles/UPSTREAM-NOTICE.md": {
+      "type": "file",
+      "hash": "184576d5417c16abba24892cf0395f229ce7b9d9d8099ad44218e1d76f648343"
+    },
+    ".claude/skills/animation-principles/references/easing-curves.md": {
+      "type": "file",
+      "hash": "862e1b24cad105ffe9db53883e18d2729422a8879553cda6ccce351074fa80d1"
+    },
+    ".claude/skills/animation-principles/references/easing-graph-editor.md": {
+      "type": "file",
+      "hash": "55d29beff95c0bd02449fb57a85c8c74ea9d6786c9918bb85c235f89ec10cf4e"
+    },
+    ".claude/skills/animation-principles/references/twelve-principles.md": {
+      "type": "file",
+      "hash": "332afa62ccef62186b05447db32a629a3923a4b6b87572af6e75ef30d9911f16"
+    },
+    ".gitignore": {
+      "type": "hash-block",
+      "fragment": "# agentkit:begin\n# AgentKit Engineer: the installed kit and plans stay out of Git. Delete this block to commit them.\n/.agentkit/\n/.agents/skills/aesthetic/\n/.agents/skills/ai-multimodal/\n/.agents/skills/animation-principles/\n/.agents/skills/backend-development/\n/.agents/skills/better-auth/\n/.agents/skills/chart-animation/\n/.agents/skills/chrome-devtools/\n/.agents/skills/claude-code/\n/.agents/skills/common/\n/.agents/skills/databases/\n/.agents/skills/devops/\n/.agents/skills/docs-seeker/\n/.agents/skills/docx/\n/.agents/skills/explainer-video/\n/.agents/skills/figma-designer/\n/.agents/skills/frontend-design/\n/.agents/skills/frontend-development/\n/.agents/skills/google-adk-python/\n/.agents/skills/kit-content/\n/.agents/skills/kit-debug/\n/.agents/skills/kit-design/\n/.agents/skills/kit-docs/\n/.agents/skills/kit-fix/\n/.agents/skills/kit-git/\n/.agents/skills/kit-implement/\n/.agents/skills/kit-integrate/\n/.agents/skills/kit-mcp/\n/.agents/skills/kit-plan/\n/.agents/skills/kit-review/\n/.agents/skills/kit-scout/\n/.agents/skills/kit-skill-authoring/\n/.agents/skills/kit-status/\n/.agents/skills/kit-tdd/\n/.agents/skills/kit-test/\n/.agents/skills/landing-page-design/\n/.agents/skills/manim/\n/.agents/skills/mcp-builder/\n/.agents/skills/media-processing/\n/.agents/skills/mobile-development/\n/.agents/skills/package.json\n/.agents/skills/payment-integration/\n/.agents/skills/pdf/\n/.agents/skills/pptx/\n/.agents/skills/problem-solving/\n/.agents/skills/remotion-video/\n/.agents/skills/repomix/\n/.agents/skills/research/\n/.agents/skills/sequential-thinking/\n/.agents/skills/shopify/\n/.agents/skills/supabase-postgres-best-practices/\n/.agents/skills/threejs/\n/.agents/skills/ui-styling/\n/.agents/skills/ui-ux-pro-max/\n/.agents/skills/vercel-composition-patterns/\n/.agents/skills/vercel-react-best-practices/\n/.agents/skills/web-design-guidelines/\n/.agents/skills/web-frameworks/\n/.agents/skills/webapp-testing/\n/.agents/skills/xlsx/\n/.claude/agents/code-reviewer.md\n/.claude/agents/database-admin.md\n/.claude/agents/debugger.md\n/.claude/agents/planner.md\n/.claude/agents/researcher.md\n/.claude/agents/scout.md\n/.claude/agents/tester.md\n/.claude/agents/ui-ux-designer.md\n/.claude/commands/ask.md\n/.claude/commands/autopilot.md\n/.claude/commands/bootstrap.md\n/.claude/commands/bootstrap/auto.md\n/.claude/commands/bootstrap/auto/fast.md\n/.claude/commands/brainstorm.md\n/.claude/commands/code.md\n/.claude/commands/content/cro.md\n/.claude/commands/content/enhance.md\n/.claude/commands/content/fast.md\n/.claude/commands/content/good.md\n/.claude/commands/cook.md\n/.claude/commands/cook/auto.md\n/.claude/commands/cook/auto/fast.md\n/.claude/commands/design/3d.md\n/.claude/commands/design/describe.md\n/.claude/commands/design/fast.md\n/.claude/commands/design/good.md\n/.claude/commands/design/screenshot.md\n/.claude/commands/design/video.md\n/.claude/commands/docs/init.md\n/.claude/commands/docs/summarize.md\n/.claude/commands/docs/update.md\n/.claude/commands/fix.md\n/.claude/commands/fix/ci.md\n/.claude/commands/fix/fast.md\n/.claude/commands/fix/hard.md\n/.claude/commands/fix/logs.md\n/.claude/commands/fix/test.md\n/.claude/commands/fix/types.md\n/.claude/commands/fix/ui.md\n/.claude/commands/git/cm.md\n/.claude/commands/git/cp.md\n/.claude/commands/git/pr.md\n/.claude/commands/integrate/polar.md\n/.claude/commands/integrate/sepay.md\n/.claude/commands/journal.md\n/.claude/commands/plan/ci.md\n/.claude/commands/plan/cro.md\n/.claude/commands/plan/fast.md\n/.claude/commands/plan/hard.md\n/.claude/commands/plan/two.md\n/.claude/commands/review/codebase.md\n/.claude/commands/scout.md\n/.claude/commands/scout/ext.md\n/.claude/commands/skill/add.md\n/.claude/commands/skill/create.md\n/.claude/commands/skill/fix-logs.md\n/.claude/commands/skill/optimize.md\n/.claude/commands/test.md\n/.claude/commands/use-mcp.md\n/.claude/commands/watzup.md\n/.claude/skills/aesthetic/\n/.claude/skills/ai-multimodal/\n/.claude/skills/animation-principles/\n/.claude/skills/backend-development/\n/.claude/skills/better-auth/\n/.claude/skills/chart-animation/\n/.claude/skills/chrome-devtools/\n/.claude/skills/claude-code/\n/.claude/skills/common/\n/.claude/skills/databases/\n/.claude/skills/devops/\n/.claude/skills/docs-seeker/\n/.claude/skills/docx/\n/.claude/skills/explainer-video/\n/.claude/skills/figma-designer/\n/.claude/skills/frontend-design/\n/.claude/skills/frontend-development/\n/.claude/skills/google-adk-python/\n/.claude/skills/kit-autopilot/\n/.claude/skills/kit-content/\n/.claude/skills/kit-debug/\n/.claude/skills/kit-design/\n/.claude/skills/kit-docs/\n/.claude/skills/kit-fix/\n/.claude/skills/kit-git/\n/.claude/skills/kit-implement/\n/.claude/skills/kit-integrate/\n/.claude/skills/kit-mcp/\n/.claude/skills/kit-plan/\n/.claude/skills/kit-review/\n/.claude/skills/kit-scout/\n/.claude/skills/kit-skill-authoring/\n/.claude/skills/kit-status/\n/.claude/skills/kit-tdd/\n/.claude/skills/kit-test/\n/.claude/skills/landing-page-design/\n/.claude/skills/manim/\n/.claude/skills/mcp-builder/\n/.claude/skills/media-processing/\n/.claude/skills/mobile-development/\n/.claude/skills/package.json\n/.claude/skills/payment-integration/\n/.claude/skills/pdf/\n/.claude/skills/pptx/\n/.claude/skills/problem-solving/\n/.claude/skills/remotion-video/\n/.claude/skills/repomix/\n/.claude/skills/research/\n/.claude/skills/sequential-thinking/\n/.claude/skills/shopify/\n/.claude/skills/supabase-postgres-best-practices/\n/.claude/skills/threejs/\n/.claude/skills/ui-styling/\n/.claude/skills/ui-ux-pro-max/\n/.claude/skills/vercel-composition-patterns/\n/.claude/skills/vercel-react-best-practices/\n/.claude/skills/web-design-guidelines/\n/.claude/skills/web-frameworks/\n/.claude/skills/webapp-testing/\n/.claude/skills/xlsx/\n/.codex/agents/code-reviewer.toml\n/.codex/agents/database-admin.toml\n/.codex/agents/debugger.toml\n/.codex/agents/planner.toml\n/.codex/agents/researcher.toml\n/.codex/agents/scout.toml\n/.codex/agents/tester.toml\n/.codex/agents/ui-ux-designer.toml\n/plans/\n# agentkit:end\n",
+      "original": ".DS_Store\nDerivedData/\n*.xcuserstate\nxcuserdata/\nConfig/Local.xcconfig\n*.xcresult\n.env\n.env.*\n!.env.example\n__pycache__/\n",
+      "hash": "4cc8937ae41c0aa9332ccd1d2005dc985e2061359afa9f9b7654781d9ed8a15d"
     }
   }
 }

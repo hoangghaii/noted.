@@ -12,4 +12,6 @@ Inspect branch, status and diff. Stage only the task's reviewed changes and excl
 - `--cp`: create the reviewed commit and push to the configured intended branch when that action is authorized. Use a normal push, never silently force or overwrite remote work.
 - `--pr`: preserve the legacy positional arguments: destination/base branch first (default `main`), source/head branch second (default current branch). Verify those branches; if the default base does not exist, report the mismatch rather than creating or silently selecting another branch. Prepare a reviewable title/body and create the requested PR with host/GitHub tooling, describing final behavior and actual validation.
 
+Keep commit messages and PR text free of `Co-Authored-By` trailers and generated agent/model signatures (such as "Generated with ...") unless the user explicitly asks for them.
+
 An explicit invocation of the corresponding commit/push/PR command expresses that action's intent; do not ask again when it is already authorized. It does not authorize unrelated publishing or messages. If identity, Git, remote, authentication or a remote-history conflict blocks the action, preserve local work, report the actual blocker and complete unaffected preparation. Never invent a successful commit or push.
