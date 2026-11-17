@@ -59,4 +59,4 @@ Bước 1 đạt: 13 link thật (loại 12 fixture `example.com`). 12 `complete
 
 - Tỷ lệ theo domain, so với quyết định Phase 01: Threads 10/10 có tóm tắt (đạt). iCloud Notes `titleOnly` (đúng dự đoán). Facebook 0/1 có tóm tắt, chỉ có tiêu đề, không login wall: mới 1 mẫu nên **chưa đủ để kết luận**. Instagram **chưa có dữ liệu**. Hai nguồn này được giữ là điểm mở và không chặn phase.
 - Link thật “Không rõ” giảm còn 2/14. Evaluation doc đã có kết quả đánh giá lại.
-- Trên iPhone: 131 test, 0 fail, 2 skip (opt-in). Build Release đạt. Chưa chạy UI test `NotedUITests` trong phase này.
+- Trên iPhone: 131 test, 0 fail, 2 skip (opt-in). Build Release đạt. UI test `IntelligenceLabelingUITests` (4) + `RemoteAISettingsUITests` (1): 5/5 đạt trên iPhone ngày 2026-11-17.
