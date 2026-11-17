@@ -8,7 +8,7 @@ description: "Report project progress from plans, git history and checks, or wri
 
 ## Default status: /watzup
 
-Inspect the current branch, working-tree changes, recent commits, relevant active plan and available check results. Summarize completed behavior, pending phases, blockers and next steps. Status is read-only by default: do not invent progress percentages or create journal files merely to answer a status request. If Git is unavailable, use the available source and state that limitation.
+Inspect the current branch, working-tree changes, recent commits, relevant active plan and available check results. Summarize completed behavior, pending phases, blockers and next steps. Status is read-only by default: do not invent progress percentages or create journal files merely to answer a status request. When a plan is active, offer to render its HTML view with `kit-plan`'s `scripts/render-plan.mjs plans/<dir> --open` (path relative to the kit-plan skill directory); the generated `plan.html` is git-ignored. If Git is unavailable, use the available source and state that limitation.
 
 ## Journal: --journal
 

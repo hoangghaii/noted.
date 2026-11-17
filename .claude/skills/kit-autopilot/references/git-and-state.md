@@ -45,8 +45,8 @@ A resumed session, such as a new one or one the user chose to `/clear`, knows on
 Only after the user accepts the phase at Gate 2:
 
 1. Tick that phase's todos and set its status to `done`.
-2. Stage only the phase's reviewed changes, by path, never with `git add -A`. Exclude secrets, caches, unrelated user edits and the Codex run files in `reports/` (prompt, `.jsonl`, `.stderr.log`, result): they are local evidence and can be large. Include `plan.md` and phase files only when the project tracks them; never force-add an ignored path.
-3. Commit with a conventional message, following the `kit-git --cm` rules and any commit-message hook, for example `feat(<topic>): phase 02 <phase name>`. Pick the type from the change: `feat`, `fix`, `refactor`, `docs`, `test` or `chore`. Add the attribution trailer the host requires.
+2. Stage only the phase's reviewed changes, by path, never with `git add -A`. Exclude secrets, caches, unrelated user edits and the Codex run files in `reports/` (prompt, `.jsonl`, `.stderr.log`, result): they are local evidence and can be large. Include `plan.md` and phase files only when the project tracks them; never force-add an ignored path. Never commit `plan.html`: it is a generated view, ignored by the plan directory's `.gitignore`.
+3. Commit with a conventional message, following the `kit-git --cm` rules and any commit-message hook, for example `feat(<topic>): phase 02 <phase name>`. Pick the type from the change: `feat`, `fix`, `refactor`, `docs`, `test` or `chore`. Do not add `Co-Authored-By` or other agent/model attribution trailers unless the user asks for them.
 4. Never bypass hooks with `--no-verify`. If a hook fails, treat it like a failing check.
 5. Record the short SHA in the phase's `Commit` cell. When plan files are tracked, include that update in the next phase's commit; after the last phase it goes into the archive commit.
 
@@ -59,4 +59,5 @@ At Finish, once every phase row is `done` and none is `blocked`:
 1. Add `Archived: <YYYY-MM-DD>` under the `Approved` line of `plan.md`.
 2. Move the whole plan directory, including `reports/`, to `plans/archived/<dir>/`, keeping the directory name. If that path already exists, stop and ask. Never overwrite or merge into it.
 3. When the plan files are tracked, use `git mv plans/<dir> plans/archived/<dir>` and commit only that move on the plan branch, for example `chore(plan): archive <dir>`, following the commit rules above. When they are untracked or ignored, move them with the file system and commit nothing.
-4. Report the new path. An archived plan is not resumed: a later `/autopilot` on it reports its final state and stops.
+4. Re-render `plan.html` in the archived directory so the view shows the final state.
+5. Report the new path. An archived plan is not resumed: a later `/autopilot` on it reports its final state and stops.

@@ -17,11 +17,11 @@ plans/YYYYMMDD-HHmm-feature-name/
 └── phase-03-verification.md
 ```
 
-This is an example, not a mandatory phase list. Create one file for each meaningful phase of the actual task. A small plan may need one phase. Avoid empty phases or automatically adding setup, onboarding or project-management work. Create `research/`, `reports/` or `scout/` only when producing those artifacts.
+This is an example, not a mandatory phase list. Create one file for each meaningful phase of the actual task. A small plan may need one phase. Avoid empty phases or automatically adding setup, onboarding or project-management work. Create `research/`, `reports/` or `scout/` only when producing those artifacts. A saved brainstorm lives beside the plan as `brainstorm.md`.
 
 ## Overview: plan.md
 
-Keep the overview concise, preferably under 80 lines. Include the goal, scope and exclusions, key decisions, dependencies, assumptions and unresolved questions. Add a table with each phase's status and a relative Markdown link to its file, for example a link labeled Data model pointing to `phase-01-data-model.md`. Keep phase details in the linked files.
+Keep the overview concise, preferably under 80 lines. Open with an **Understanding** section the user can check before any work starts: the user's idea restated in two or three sentences, what will be built, what will not, and what the user will observe when it is done, written from the user's point of view rather than as file lists or commands. Then include the goal, scope and exclusions, key decisions, dependencies, assumptions and unresolved questions. Add a table with each phase's status and a relative Markdown link to its file, for example a link labeled Data model pointing to `phase-01-data-model.md`. Keep phase details in the linked files.
 
 When the plan will run under autopilot (orchestration pack), add an `Executor` column with `codex` or `claude` for each phase: `codex` by default, `claude` for small configuration, documentation or wiring phases and for phases that depend on judgment a handoff prompt cannot carry.
 
@@ -38,6 +38,15 @@ Include the information needed to execute that phase:
 - Material risks, security considerations and rollback steps where relevant, followed by next actions.
 
 Follow project instructions and applicable development rules. Do not pad small phases with empty headings. Phase links are relative to the phase file, not to the project root.
+
+## HTML view: plan.html
+
+`scripts/render-plan.mjs` (relative to the kit-plan skill directory) renders `plan.md` and its linked phases into `plans/<dir>/plan.html`: a progress bar from the Status column, a Mermaid diagram of the phase chain coloured by status, and each phase with its todo count. Fenced `mermaid` blocks in the Markdown are drawn too. Given a single Markdown file such as `brainstorm.md`, it renders that file to `brainstorm.html` beside it, without phases or progress. The page loads its renderers from a CDN, so it needs a network connection. The Markdown stays the only source of truth: never edit `plan.html`, regenerate it. The script writes `plans/<dir>/.gitignore` so the generated HTML is never committed, and `--open` opens it in the default browser; when no browser is available it only prints the path.
+
+```sh
+node <kit-plan skill dir>/scripts/render-plan.mjs plans/<dir> [--open]
+node <kit-plan skill dir>/scripts/render-plan.mjs plans/<dir>/brainstorm.md [--open]
+```
 
 ## Verification and handoff
 
