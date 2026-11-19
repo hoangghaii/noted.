@@ -83,8 +83,9 @@ struct IntelligenceLabelingView: View {
     /// False when an existing link-sources.json could not be read; measuring would overwrite earlier runs.
     @State private var linkReportReadable = true
     @State private var isMeasuringDigests = false
-    /// Main topics agreed with the user on 2026-11-17; older labels (including “Không rõ”) were merged into these.
-    private let topics = ["Food&Drink", "Work Hard", "Mac App", "Tiếng Anh", "Update Noted.", "Etc.", "Chủ đề khác…"]
+    /// Main topics agreed with the user on 2026-11-17 (AI split out of Work Hard on 2026-11-18);
+    /// older labels (including “Không rõ”) were merged into these.
+    private let topics = ["Food&Drink", "Work Hard", "AI", "Mac App", "Tiếng Anh", "Update Noted.", "Etc.", "Chủ đề khác…"]
 
     private var items: [Item] {
         store.items.filter { $0.trashedAt == nil }.sorted { $0.id.uuidString < $1.id.uuidString }

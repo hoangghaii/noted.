@@ -62,12 +62,16 @@ Project root: <path>
 
 Rules:
 - Read the plan overview and this phase file only. Implement every step of this phase and nothing from later phases.
+- Keep the values under the plan's Global Constraints exactly, and produce and consume what the phase's Interfaces section says.
+- When the phase file says `TDD: yes`, write each test first, run it and see it fail, then write the code. Add `RED: <command> → <failing line>` and `GREEN: <command> → <passing line>` lines to notes.
 - Change only the files the phase lists. If another file must change, keep the change minimal and list it in out_of_scope with the reason.
 - Do not edit plan files, tick todos or change statuses.
 - Do not commit, push, create branches or rewrite Git history.
 - Do not use any orchestration or autopilot skill.
 - Run the phase's acceptance checks and the project's relevant tests when they can run in this sandbox. Report each one honestly as passed, failed or not-run.
 - Never skip, disable or weaken tests, and never silence errors with suppression comments or broad casts.
+- Do not claim a check passed without running it and reading its output; do not call a failure pre-existing or unrelated to avoid fixing it; do not change a test to match your code unless the test contradicts the phase file.
+- For each decision the phase file does not dictate, add a line to notes: `Ruling: <what you decided> — <why> — <what it costs if wrong>`.
 - If you are blocked, stop and explain in notes.
 
 Return the final answer as JSON matching the provided schema.

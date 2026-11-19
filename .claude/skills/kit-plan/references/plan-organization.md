@@ -23,13 +23,19 @@ This is an example, not a mandatory phase list. Create one file for each meaning
 
 Keep the overview concise, preferably under 80 lines. Open with an **Understanding** section the user can check before any work starts: the user's idea restated in two or three sentences, what will be built, what will not, and what the user will observe when it is done, written from the user's point of view rather than as file lists or commands. Then include the goal, scope and exclusions, key decisions, dependencies, assumptions and unresolved questions. Add a table with each phase's status and a relative Markdown link to its file, for example a link labeled Data model pointing to `phase-01-data-model.md`. Keep phase details in the linked files.
 
+Add these sections after Understanding only when they have content; reviewers and implementers read them, so keep them short:
+
+- **Global Constraints**: values the result must keep exactly (names, limits, formats, versions, paths), copied verbatim from the request or the code, each with its source. A paraphrase is not a constraint.
+- **Review Focus**: at most five kinds of defect the tests are likely to miss, such as authorization on an error path or backward compatibility of a public API. Not a restatement of the acceptance checks.
+
 When the plan will run under autopilot (orchestration pack), add an `Executor` column with `codex` or `claude` for each phase: `codex` by default, `claude` for small configuration, documentation or wiring phases and for phases that depend on judgment a handoff prompt cannot carry.
 
 ## Phases: phase-NN-name.md
 
 Include the information needed to execute that phase:
 
-- Scope, local date, priority, dependencies, implementation status and review status.
+- Scope, local date, priority, dependencies, implementation status and review status, and a `TDD: yes | no` line. Write `yes` only when the user chose test-driven development for the plan or this phase; then the phase's acceptance needs tests written before the code.
+- An **Interfaces** section when the phase exchanges anything with another phase: `Consumes:` what earlier phases produce, `Produces:` what later phases use (functions and their signatures, types, endpoints, files, configuration keys). An implementer that reads only this phase relies on it.
 - Relevant context/research links and the insights that affect the implementation.
 - Files to create, modify or delete, with the reason for each change. Mark proposed paths as proposed when they do not exist yet.
 - Requirements and architecture decisions where relevant.
@@ -50,4 +56,15 @@ node <kit-plan skill dir>/scripts/render-plan.mjs plans/<dir>/brainstorm.md [--o
 
 ## Verification and handoff
 
-Read back the saved overview and phases. Check that every phase link resolves and dependencies agree with execution order. Return the real overview path and summarize the phases. Leave pending work pending; update status only when its acceptance criteria have been verified.
+Read back the saved overview and phases. Check that every phase link resolves and dependencies agree with execution order.
+
+When the plan has more than one phase, check interfaces between phases and record the result in `plan.md` below the phase table:
+
+```markdown
+## Interface check
+| Phases | Shared | Finding |
+|---|---|---|
+| 1 → 2 | `parseQuery(input): Query` | matches |
+```
+
+Write one row for each pair of phases that share a file or an interface, comparing what one produces with what the other consumes. When no pair shares anything, write one line saying so instead of the table; a bare "no conflicts" is not a check. Fix a mismatch in the plan before handing it off, or list it as an unresolved question. Return the real overview path and summarize the phases. Leave pending work pending; update status only when its acceptance criteria have been verified.

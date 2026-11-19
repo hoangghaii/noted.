@@ -38,7 +38,9 @@ List affected files with:
 - Follow project instructions and applicable development rules.
 
 ### Writing Style
-**IMPORTANT:** Sacrifice grammar for concision
+**IMPORTANT:** Concise, not lossy. Plans are reread later without this session's context.
+- Never drop negations or limits (not, never, no, only, except)
+- Keep numbers, units, paths, commands and identifiers exact; no invented abbreviations
 - Focus clarity over eloquence
 - Use bullets and lists
 - Short sentences

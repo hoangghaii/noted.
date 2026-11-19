@@ -48,7 +48,7 @@ skills/
 - Each script or referenced markdown file should be also **less than 100 lines**, remember that you can always split them into multiple files (**progressive disclosure** principle).
 - Descriptions in metadata of `SKILL.md` files should be both concise and still contains enough usecases of the references and scripts, this will help skills can be activated automatically during the implementation process of Claude Code.
 - **Referenced markdowns**:
-  - Sacrifice grammar for the sake of concision when writing these files.
+  - Keep these files concise, not lossy: cut filler, but never drop negations or limits (not, never, no, only, except), and keep numbers, paths, commands and identifiers exact. No invented abbreviations.
   - Can reference other markdown files or scripts as well.
 - **Referenced scripts**:
   - Prefer nodejs or python scripts instead of bash script, because bash scripts are not well-supported on Windows.

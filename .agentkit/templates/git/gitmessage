@@ -1,0 +1,10 @@
+# <type>(<scope>): <imperative summary>
+#   lowercase subject, no trailing period; aim for <=72 chars, max 100
+#   add ! before the colon for a breaking change: feat(api)!: drop v1 routes
+#
+# [optional body: why, context, trade-offs; wrap at ~72 chars]
+#
+# [optional footer: Closes #123 | Refs #123 | BREAKING CHANGE: <what and how to migrate>]
+#
+# Types: build chore ci docs feat fix perf refactor revert style test
+# Enable: git config commit.template <path to this file>

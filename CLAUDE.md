@@ -10,7 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - Small, well-understood change: do it directly. Larger work: state the acceptance criteria first, then plan → implement → test → review.
 - Respect the requested stage. Brainstorm compares options, plan writes plans, debug diagnoses, test runs checks, review reports findings. None of these edit application code unless the user also asked for a fix or implementation.
-- Delegate only independent, substantial work: `scout` to locate code, `researcher` for external facts, `planner`, `tester`, `code-reviewer`, `debugger`. Give each one the objective, paths, constraints and expected output. Without delegation, do the same stages yourself.
+- Delegate only independent, substantial work: `scout` to locate code, `researcher` for external facts, `planner`, `tester`, `code-reviewer`, `security-reviewer` for auth, input, secrets or payment changes, `debugger`. Give each one the objective, paths, constraints and expected output. Without delegation, do the same stages yourself.
 - Load only the skills the task needs. Skill resources and scripts resolve relative to the installed skill directory, not the shell directory. Check the version the project actually uses before applying a bundled API example.
 
 ## Workflows
@@ -27,6 +27,10 @@ Plans live in `plans/YYYYMMDD-HHmm-<topic>/`: a `plan.md` overview plus one `pha
 4. Hand off: changed paths, checks run, remaining risks.
 
 Preserve existing project instructions, user edits, configuration and public APIs. Never silence errors with `any`, broad casts, skipped tests or suppression comments. Commit, push, publish or deploy only when the user asks.
+
+## Replies
+
+Answer first. Skip greetings, recaps and sign-offs, and do not narrate routine tool calls. Be concise, not lossy: never drop negations or limits (not, never, no, only, except), and keep numbers, paths, commands and identifiers exact. Use full prose for security warnings, irreversible actions, ordered steps and questions to the user.
 
 ## Principles
 

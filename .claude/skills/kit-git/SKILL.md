@@ -12,6 +12,12 @@ Inspect branch, status and diff. Stage only the task's reviewed changes and excl
 - `--cp`: create the reviewed commit and push to the configured intended branch when that action is authorized. Use a normal push, never silently force or overwrite remote work.
 - `--pr`: preserve the legacy positional arguments: destination/base branch first (default `main`), source/head branch second (default current branch). Verify those branches; if the default base does not exist, report the mismatch rather than creating or silently selecting another branch. Prepare a reviewable title/body and create the requested PR with host/GitHub tooling, describing final behavior and actual validation.
 
+Templates:
+
+- Commit messages follow Conventional Commits: `type(scope): summary`. Follow the project's commitlint config or commit hook when it has one; otherwise use the types and conventions in `.agentkit/templates/git/gitmessage`.
+- PR titles follow the same convention. For the body, fill the headings of the project's PR template when it has one (`.github/pull_request_template.md`, `.github/PULL_REQUEST_TEMPLATE/`, `docs/` or the repository root); otherwise follow the structure in `.agentkit/templates/git/pull_request_template.md`. Tick a checklist box only for work actually done, and do not drop sections.
+- Do not copy these templates into the user's repository unless asked.
+
 Keep commit messages and PR text free of `Co-Authored-By` trailers and generated agent/model signatures (such as "Generated with ...") unless the user explicitly asks for them.
 
 An explicit invocation of the corresponding commit/push/PR command expresses that action's intent; do not ask again when it is already authorized. It does not authorize unrelated publishing or messages. If identity, Git, remote, authentication or a remote-history conflict blocks the action, preserve local work, report the actual blocker and complete unaffected preparation. Never invent a successful commit or push.

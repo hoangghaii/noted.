@@ -162,6 +162,7 @@ Người dùng chốt 6 chủ đề chính. Nhãn cũ được chuyển bằng m
 - Không còn nhãn “Không rõ”: mục không rõ chủ đề giờ thuộc Etc., một nhóm “còn lại” và khó học hơn các nhóm khác.
 - **Baseline từ khóa yếu đi do tên chủ đề:** baseline chỉ dò tên chủ đề trong nội dung. Các tên Food&Drink, Work Hard, Etc. hầu như không xuất hiện trong text, nên coverage của baseline sẽ giảm mạnh. Khi so với các lần trước, đừng hiểu điểm baseline giảm là engine embedding tốt lên.
 - Gate vẫn chưa đạt: cần ≥150 nhãn và mỗi chủ đề ≥10. Mac App, Tiếng Anh và Update Noted. còn thiếu 8–9 mục mỗi chủ đề; tổng còn thiếu khoảng 78 nhãn.
+- **2026-11-18: tách AI khỏi Work Hard** theo yêu cầu người dùng. 6 mục có nhãn gốc là AI được chuyển lại về AI; nhãn gán sau ngày 17 giữ nguyên. Bản trước khi tách lưu trên máy là `labels.before-20261118.json`. Số nhãn (mục không ở Thùng rác, 86 nhãn): Food&Drink 40, Etc. 17, AI 9, Work Hard 9, Tiếng Anh 3, Mac App 2, Update Noted. 2. Còn 4 ghi chú text mang nhãn “example”/“Example”; người dùng sẽ quyết định chuyển vào Thùng rác hay gán lại.
 
 ## Đánh giá lại sau khi có digest link (2026-11-16)
 

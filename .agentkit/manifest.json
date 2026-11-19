@@ -19,9 +19,9 @@
   "files": {
     "AGENTS.md": {
       "type": "block",
-      "fragment": "<!-- agentkit:begin -->\n<!-- Managed by AgentKit Engineer. Put project-specific instructions outside this block; edits inside are kept but stop receiving AgentKit updates. -->\n# AgentKit Engineer\n\n## How to work\n\n- Small, well-understood change: do it directly. Larger work: state the acceptance criteria first, then plan → implement → test → review.\n- Respect the requested stage. Brainstorm compares options, plan writes plans, debug diagnoses, test runs checks, review reports findings. None of these edit application code unless the user also asked for a fix or implementation.\n- Delegate only independent, substantial work: `scout` to locate code, `researcher` for external facts, `planner`, `tester`, `code-reviewer`, `debugger`. Give each one the objective, paths, constraints and expected output. Without delegation, do the same stages yourself.\n- Load only the skills the task needs. Skill resources and scripts resolve relative to the installed skill directory, not the shell directory. Check the version the project actually uses before applying a bundled API example.\n\n## Workflows\n\nInvoke `kit-plan`, `kit-implement`, `kit-debug`, `kit-fix`, `kit-test` and `kit-review` (Codex `$kit-plan`, Claude `/kit-plan` or the installed aliases). Use `kit-tdd` only when TDD is selected and the quality pack is installed.\n\nPlans live in `plans/YYYYMMDD-HHmm-<topic>/`: a `plan.md` overview plus one `phase-NN-<name>.md` per phase, unless the user wants the plan inline. When executing a plan, read the overview and the current phase only. Tick todos and update statuses only after their acceptance checks pass. Workflow details are in `.agentkit/workflows/`.\n\n## Before saying \"done\"\n\n1. Run the project's real test, type-check and build commands for what you changed, and read the output.\n2. Report each command and its result. Say explicitly which checks failed, were skipped or could not run. Never present a skipped check as passing.\n3. Review your own diff for unrelated changes, debugging leftovers and secrets.\n4. Hand off: changed paths, checks run, remaining risks.\n\nPreserve existing project instructions, user edits, configuration and public APIs. Never silence errors with `any`, broad casts, skipped tests or suppression comments. Commit, push, publish or deploy only when the user asks.\n\n## Principles\n\nYAGNI: build only what is required now. KISS: choose the simplest solution that works. DRY: keep one source of truth, but do not abstract prematurely.\n<!-- agentkit:end -->\n",
+      "fragment": "<!-- agentkit:begin -->\n<!-- Managed by AgentKit Engineer. Put project-specific instructions outside this block; edits inside are kept but stop receiving AgentKit updates. -->\n# AgentKit Engineer\n\n## How to work\n\n- Small, well-understood change: do it directly. Larger work: state the acceptance criteria first, then plan → implement → test → review.\n- Respect the requested stage. Brainstorm compares options, plan writes plans, debug diagnoses, test runs checks, review reports findings. None of these edit application code unless the user also asked for a fix or implementation.\n- Delegate only independent, substantial work: `scout` to locate code, `researcher` for external facts, `planner`, `tester`, `code-reviewer`, `security-reviewer` for auth, input, secrets or payment changes, `debugger`. Give each one the objective, paths, constraints and expected output. Without delegation, do the same stages yourself.\n- Load only the skills the task needs. Skill resources and scripts resolve relative to the installed skill directory, not the shell directory. Check the version the project actually uses before applying a bundled API example.\n\n## Workflows\n\nInvoke `kit-plan`, `kit-implement`, `kit-debug`, `kit-fix`, `kit-test` and `kit-review` (Codex `$kit-plan`, Claude `/kit-plan` or the installed aliases). Use `kit-tdd` only when TDD is selected and the quality pack is installed.\n\nPlans live in `plans/YYYYMMDD-HHmm-<topic>/`: a `plan.md` overview plus one `phase-NN-<name>.md` per phase, unless the user wants the plan inline. When executing a plan, read the overview and the current phase only. Tick todos and update statuses only after their acceptance checks pass. Workflow details are in `.agentkit/workflows/`.\n\n## Before saying \"done\"\n\n1. Run the project's real test, type-check and build commands for what you changed, and read the output.\n2. Report each command and its result. Say explicitly which checks failed, were skipped or could not run. Never present a skipped check as passing.\n3. Review your own diff for unrelated changes, debugging leftovers and secrets.\n4. Hand off: changed paths, checks run, remaining risks.\n\nPreserve existing project instructions, user edits, configuration and public APIs. Never silence errors with `any`, broad casts, skipped tests or suppression comments. Commit, push, publish or deploy only when the user asks.\n\n## Replies\n\nAnswer first. Skip greetings, recaps and sign-offs, and do not narrate routine tool calls. Be concise, not lossy: never drop negations or limits (not, never, no, only, except), and keep numbers, paths, commands and identifiers exact. Use full prose for security warnings, irreversible actions, ordered steps and questions to the user.\n\n## Principles\n\nYAGNI: build only what is required now. KISS: choose the simplest solution that works. DRY: keep one source of truth, but do not abstract prematurely.\n<!-- agentkit:end -->\n",
       "original": null,
-      "hash": "7fb06c3322d13b92ad81eade2b115c5261781cc3556bc98da72e8d76f9a8e588"
+      "hash": "5c3e29404388e6cec03fb23f38c121a169cc22b0bea9dbc0d67c667fda5efd18"
     },
     ".agents/skills/package.json": {
       "type": "file",
@@ -141,7 +141,7 @@
     },
     ".agents/skills/kit-skill-authoring/references/guide.md": {
       "type": "file",
-      "hash": "8d2650b3043c6c4dc0afda1202b494e9ad46e74021857a18d16aa549c89822a8"
+      "hash": "b361a90f21d935f49d93129358d403066f51114b8096df047719ff8a845cb9d8"
     },
     ".agents/skills/kit-skill-authoring/scripts/init_skill.py": {
       "type": "file",
@@ -353,7 +353,7 @@
     },
     ".agents/skills/kit-plan/SKILL.md": {
       "type": "file",
-      "hash": "1a97732f555a1244a088e809b01b3880f98b888f0d6c36ebed2231f0bea13924"
+      "hash": "2f435803fddca8c922d1996f3d70f17141c3e7d61266fbf88fdbbb5336483c38"
     },
     ".agents/skills/kit-implement/SKILL.md": {
       "type": "file",
@@ -381,7 +381,7 @@
     },
     ".agents/skills/kit-git/SKILL.md": {
       "type": "file",
-      "hash": "cf0ceaef3b04177c466cc09cbfd721365272c10864c5de5191c2efa1d2453f39"
+      "hash": "e6826fb0db5b8fb34ff4f294d6ec971357e7c5e7a5f5779dac1f4bdd41dcf9c7"
     },
     ".agents/skills/kit-status/SKILL.md": {
       "type": "file",
@@ -1521,7 +1521,7 @@
     },
     ".agents/skills/ui-ux-pro-max/SKILL.md": {
       "type": "file",
-      "hash": "7cf95f458668d98b64a5173ad5c812ca66d983027d51f5d3358af580a15f968e"
+      "hash": "11d5ce38e768da4713e4c62fd7fa293f011a769e8215ce6f7210142b1f207ff3"
     },
     ".agents/skills/ui-ux-pro-max/UPSTREAM-LICENSE.txt": {
       "type": "file",
@@ -1529,7 +1529,7 @@
     },
     ".agents/skills/ui-ux-pro-max/UPSTREAM-NOTICE.md": {
       "type": "file",
-      "hash": "b162446a82a7363abb51ed210801d411ba5a84bf36039c6a630ef48e725b18be"
+      "hash": "613e5a96f26bb5f712a429f9a01f29f8707b9028841acd35b807c50e6ac8a7e0"
     },
     ".agents/skills/ui-ux-pro-max/data/app-interface.csv": {
       "type": "file",
@@ -1537,19 +1537,19 @@
     },
     ".agents/skills/ui-ux-pro-max/data/catalog-summary.json": {
       "type": "file",
-      "hash": "331363c37120a009f9c6713cb8b171794508da9ffca9ae9e8277fec1ce9d33a5"
+      "hash": "e5c1059b61282b5a4bc8c04385e9540fd35fb9cceb605bfcaaf8a2c5c392baf2"
     },
     ".agents/skills/ui-ux-pro-max/data/charts.csv": {
       "type": "file",
-      "hash": "4115cf1120680f2cedef0676cb648f30c7ef4699e2a947535d4113e71ed3b12a"
+      "hash": "80045f5793cbeca3b1373831851c992444a38967960cbba900c1472f1420e978"
     },
     ".agents/skills/ui-ux-pro-max/data/colors.csv": {
       "type": "file",
-      "hash": "f7f1c43602ae915780e19c64882d953219f147ef050f5d9ac6b208b343c4500a"
+      "hash": "e350362b780118db2cfd97cc50813c4bcd64dcd9ad47d648f2576db7f667abc1"
     },
     ".agents/skills/ui-ux-pro-max/data/data-provenance.json": {
       "type": "file",
-      "hash": "90b64677b27aa4db8ed83bd1e1a6de2f71927a388421aae4f9ca9aeb2f37483e"
+      "hash": "de485da3835d1614d49f530c32556db800ccae54a40a18e6ea5a3f007ef4c3af"
     },
     ".agents/skills/ui-ux-pro-max/data/google-font-licenses.json": {
       "type": "file",
@@ -1577,7 +1577,7 @@
     },
     ".agents/skills/ui-ux-pro-max/data/products.csv": {
       "type": "file",
-      "hash": "6a0106af1470ec79115981ee9c18c388ef2cbe3d7248a07a54c4793a98a8976f"
+      "hash": "16bf34f1801ce6a037fbb9aed05368d5ee57e68d0e02ca1ea4b94582e5fb1802"
     },
     ".agents/skills/ui-ux-pro-max/data/react-performance.csv": {
       "type": "file",
@@ -1673,7 +1673,7 @@
     },
     ".agents/skills/ui-ux-pro-max/data/styles.csv": {
       "type": "file",
-      "hash": "5193894bb157cd138929591f0f15ef5c48aa1a3427a85088bcd951f3382ee330"
+      "hash": "a70b0b32b34814100171bfb48c79011b33dbd76833af6db43e50696f1db485e9"
     },
     ".agents/skills/ui-ux-pro-max/data/typography.csv": {
       "type": "file",
@@ -1681,11 +1681,11 @@
     },
     ".agents/skills/ui-ux-pro-max/data/ui-reasoning.csv": {
       "type": "file",
-      "hash": "cb7dc86e1a31c015b6feb33b3e691e34b6867aa2d936f5b8fbcf3752b1a82974"
+      "hash": "b824169fd30c2a9ab4fead7d35ca3ea64333824e95f44e489db656b27dfae5a9"
     },
     ".agents/skills/ui-ux-pro-max/data/ux-guidelines.csv": {
       "type": "file",
-      "hash": "ff81ec613f70ba9fc3fcce52dbe4ae35d44b2079dbe6dc066d2d6e38c28facd5"
+      "hash": "9c473c1104e93f3d985f2d46d8854735e1a1deb8e0ac5ecd39c7e3b04e5d7528"
     },
     ".agents/skills/ui-ux-pro-max/references/pro-rules.md": {
       "type": "file",
@@ -1693,15 +1693,15 @@
     },
     ".agents/skills/ui-ux-pro-max/references/quick-reference.md": {
       "type": "file",
-      "hash": "052be515c75440745a484ceeacc9d3de7e7db27eaf8c003cd1c1856279699ce2"
+      "hash": "29d8e42e0b17f7b85a2ca7f091ca65e78b39b0f421e2e6fab1ce773e6e3112ed"
     },
     ".agents/skills/ui-ux-pro-max/scripts/core.py": {
       "type": "file",
-      "hash": "435544038c979727ab98bcf8557593ec16736a88e55b60bda5d39bf21d41da66"
+      "hash": "84a8d25dd24e2a07201cabfe9ae8a3d58d42bf398710ecec899acde64f19c40c"
     },
     ".agents/skills/ui-ux-pro-max/scripts/design_system.py": {
       "type": "file",
-      "hash": "e7d1c94c4b2eada17c5551157668362659ccf9626d34dbd58e68142410f90103"
+      "hash": "043ed3f404214869ffbf4c8d529afc6c6ceddb211fa4726d67d7a03edf7265db"
     },
     ".agents/skills/ui-ux-pro-max/scripts/reasoning_contract.py": {
       "type": "file",
@@ -1709,11 +1709,11 @@
     },
     ".agents/skills/ui-ux-pro-max/scripts/search.py": {
       "type": "file",
-      "hash": "d6aeb52ed42b158cb0c1bb47c9ef931f3bb4daf413bcf2390320b13f887e69fd"
+      "hash": "6b52ebb01480058cab145d3c2cb57880a529e522c0781cf8cd873fa55c9b9f1d"
     },
     ".agents/skills/ui-ux-pro-max/scripts/validate_data.py": {
       "type": "file",
-      "hash": "a599aa256049cf30954d1f164721b99e453eb7e4cb8241bcab2d5573e6cf58b8"
+      "hash": "e31ef4e1db1e6bb7910fb14b2a4dc139c513bca17d1e2827b292bde87d7120ca"
     },
     ".agents/skills/devops/.env.example": {
       "type": "file",
@@ -2525,7 +2525,7 @@
     },
     ".codex/agents/code-reviewer.toml": {
       "type": "file",
-      "hash": "0ef15e1fb87deb9e4c8e36a6d122e702782cd46d04609a21f40371d8c3b73493"
+      "hash": "5aa58c07889af824136c7662ff5b1667f0331206bf4bdc6585e6918ed959dfe1"
     },
     ".codex/agents/debugger.toml": {
       "type": "file",
@@ -2561,7 +2561,7 @@
     },
     ".agentkit/workflows/orchestration-protocol.md": {
       "type": "file",
-      "hash": "fc2de9a764daf42ab5378a7dff552bfa00521be7fdf39d0110d1d9873e855cd9"
+      "hash": "788b9bec90e7fd9b500cf3ecfdfb6a4b648787a7b4143d6e9ba9e3ffdea6af61"
     },
     ".agentkit/workflows/primary-workflow.md": {
       "type": "file",
@@ -2569,7 +2569,7 @@
     },
     ".agentkit/hooks/adapter.cjs": {
       "type": "file",
-      "hash": "96c78dbce4e001711b622b6ff4cb8574b56163dd30e8a998adb52d60a9688196"
+      "hash": "59009a519dd3c05c2883442fa06ed0ea65f0747fa32baf3cb063feb99ec7bb3d"
     },
     ".codex/hooks.json": {
       "type": "json",
@@ -2620,9 +2620,9 @@
     },
     "CLAUDE.md": {
       "type": "block",
-      "fragment": "<!-- agentkit:begin -->\n<!-- Managed by AgentKit Engineer. Put project-specific instructions outside this block; edits inside are kept but stop receiving AgentKit updates. -->\n# AgentKit Engineer\n\n## How to work\n\n- Small, well-understood change: do it directly. Larger work: state the acceptance criteria first, then plan → implement → test → review.\n- Respect the requested stage. Brainstorm compares options, plan writes plans, debug diagnoses, test runs checks, review reports findings. None of these edit application code unless the user also asked for a fix or implementation.\n- Delegate only independent, substantial work: `scout` to locate code, `researcher` for external facts, `planner`, `tester`, `code-reviewer`, `debugger`. Give each one the objective, paths, constraints and expected output. Without delegation, do the same stages yourself.\n- Load only the skills the task needs. Skill resources and scripts resolve relative to the installed skill directory, not the shell directory. Check the version the project actually uses before applying a bundled API example.\n\n## Workflows\n\nInvoke `kit-plan`, `kit-implement`, `kit-debug`, `kit-fix`, `kit-test` and `kit-review` (Codex `$kit-plan`, Claude `/kit-plan` or the installed aliases). Use `kit-tdd` only when TDD is selected and the quality pack is installed.\n\nPlans live in `plans/YYYYMMDD-HHmm-<topic>/`: a `plan.md` overview plus one `phase-NN-<name>.md` per phase, unless the user wants the plan inline. When executing a plan, read the overview and the current phase only. Tick todos and update statuses only after their acceptance checks pass. Workflow details are in `.agentkit/workflows/`.\n\n## Before saying \"done\"\n\n1. Run the project's real test, type-check and build commands for what you changed, and read the output.\n2. Report each command and its result. Say explicitly which checks failed, were skipped or could not run. Never present a skipped check as passing.\n3. Review your own diff for unrelated changes, debugging leftovers and secrets.\n4. Hand off: changed paths, checks run, remaining risks.\n\nPreserve existing project instructions, user edits, configuration and public APIs. Never silence errors with `any`, broad casts, skipped tests or suppression comments. Commit, push, publish or deploy only when the user asks.\n\n## Principles\n\nYAGNI: build only what is required now. KISS: choose the simplest solution that works. DRY: keep one source of truth, but do not abstract prematurely.\n<!-- agentkit:end -->\n",
+      "fragment": "<!-- agentkit:begin -->\n<!-- Managed by AgentKit Engineer. Put project-specific instructions outside this block; edits inside are kept but stop receiving AgentKit updates. -->\n# AgentKit Engineer\n\n## How to work\n\n- Small, well-understood change: do it directly. Larger work: state the acceptance criteria first, then plan → implement → test → review.\n- Respect the requested stage. Brainstorm compares options, plan writes plans, debug diagnoses, test runs checks, review reports findings. None of these edit application code unless the user also asked for a fix or implementation.\n- Delegate only independent, substantial work: `scout` to locate code, `researcher` for external facts, `planner`, `tester`, `code-reviewer`, `security-reviewer` for auth, input, secrets or payment changes, `debugger`. Give each one the objective, paths, constraints and expected output. Without delegation, do the same stages yourself.\n- Load only the skills the task needs. Skill resources and scripts resolve relative to the installed skill directory, not the shell directory. Check the version the project actually uses before applying a bundled API example.\n\n## Workflows\n\nInvoke `kit-plan`, `kit-implement`, `kit-debug`, `kit-fix`, `kit-test` and `kit-review` (Codex `$kit-plan`, Claude `/kit-plan` or the installed aliases). Use `kit-tdd` only when TDD is selected and the quality pack is installed.\n\nPlans live in `plans/YYYYMMDD-HHmm-<topic>/`: a `plan.md` overview plus one `phase-NN-<name>.md` per phase, unless the user wants the plan inline. When executing a plan, read the overview and the current phase only. Tick todos and update statuses only after their acceptance checks pass. Workflow details are in `.agentkit/workflows/`.\n\n## Before saying \"done\"\n\n1. Run the project's real test, type-check and build commands for what you changed, and read the output.\n2. Report each command and its result. Say explicitly which checks failed, were skipped or could not run. Never present a skipped check as passing.\n3. Review your own diff for unrelated changes, debugging leftovers and secrets.\n4. Hand off: changed paths, checks run, remaining risks.\n\nPreserve existing project instructions, user edits, configuration and public APIs. Never silence errors with `any`, broad casts, skipped tests or suppression comments. Commit, push, publish or deploy only when the user asks.\n\n## Replies\n\nAnswer first. Skip greetings, recaps and sign-offs, and do not narrate routine tool calls. Be concise, not lossy: never drop negations or limits (not, never, no, only, except), and keep numbers, paths, commands and identifiers exact. Use full prose for security warnings, irreversible actions, ordered steps and questions to the user.\n\n## Principles\n\nYAGNI: build only what is required now. KISS: choose the simplest solution that works. DRY: keep one source of truth, but do not abstract prematurely.\n<!-- agentkit:end -->\n",
       "original": null,
-      "hash": "9dccef43194246bf5a3931144aace2d3c407dfcff9309d6900dcdb19ac2efc18"
+      "hash": "6ae9a39a11df813dacd2bd339f387168a38e740dca143dd4ae4b3a6273db09f5"
     },
     ".claude/skills/package.json": {
       "type": "file",
@@ -2742,7 +2742,7 @@
     },
     ".claude/skills/kit-skill-authoring/references/guide.md": {
       "type": "file",
-      "hash": "8d2650b3043c6c4dc0afda1202b494e9ad46e74021857a18d16aa549c89822a8"
+      "hash": "b361a90f21d935f49d93129358d403066f51114b8096df047719ff8a845cb9d8"
     },
     ".claude/skills/kit-skill-authoring/scripts/init_skill.py": {
       "type": "file",
@@ -2954,7 +2954,7 @@
     },
     ".claude/skills/kit-plan/SKILL.md": {
       "type": "file",
-      "hash": "1a97732f555a1244a088e809b01b3880f98b888f0d6c36ebed2231f0bea13924"
+      "hash": "2f435803fddca8c922d1996f3d70f17141c3e7d61266fbf88fdbbb5336483c38"
     },
     ".claude/skills/kit-implement/SKILL.md": {
       "type": "file",
@@ -2982,7 +2982,7 @@
     },
     ".claude/skills/kit-git/SKILL.md": {
       "type": "file",
-      "hash": "cf0ceaef3b04177c466cc09cbfd721365272c10864c5de5191c2efa1d2453f39"
+      "hash": "e6826fb0db5b8fb34ff4f294d6ec971357e7c5e7a5f5779dac1f4bdd41dcf9c7"
     },
     ".claude/skills/kit-status/SKILL.md": {
       "type": "file",
@@ -4122,7 +4122,7 @@
     },
     ".claude/skills/ui-ux-pro-max/SKILL.md": {
       "type": "file",
-      "hash": "7cf95f458668d98b64a5173ad5c812ca66d983027d51f5d3358af580a15f968e"
+      "hash": "11d5ce38e768da4713e4c62fd7fa293f011a769e8215ce6f7210142b1f207ff3"
     },
     ".claude/skills/ui-ux-pro-max/UPSTREAM-LICENSE.txt": {
       "type": "file",
@@ -4130,7 +4130,7 @@
     },
     ".claude/skills/ui-ux-pro-max/UPSTREAM-NOTICE.md": {
       "type": "file",
-      "hash": "b162446a82a7363abb51ed210801d411ba5a84bf36039c6a630ef48e725b18be"
+      "hash": "613e5a96f26bb5f712a429f9a01f29f8707b9028841acd35b807c50e6ac8a7e0"
     },
     ".claude/skills/ui-ux-pro-max/data/app-interface.csv": {
       "type": "file",
@@ -4138,19 +4138,19 @@
     },
     ".claude/skills/ui-ux-pro-max/data/catalog-summary.json": {
       "type": "file",
-      "hash": "331363c37120a009f9c6713cb8b171794508da9ffca9ae9e8277fec1ce9d33a5"
+      "hash": "e5c1059b61282b5a4bc8c04385e9540fd35fb9cceb605bfcaaf8a2c5c392baf2"
     },
     ".claude/skills/ui-ux-pro-max/data/charts.csv": {
       "type": "file",
-      "hash": "4115cf1120680f2cedef0676cb648f30c7ef4699e2a947535d4113e71ed3b12a"
+      "hash": "80045f5793cbeca3b1373831851c992444a38967960cbba900c1472f1420e978"
     },
     ".claude/skills/ui-ux-pro-max/data/colors.csv": {
       "type": "file",
-      "hash": "f7f1c43602ae915780e19c64882d953219f147ef050f5d9ac6b208b343c4500a"
+      "hash": "e350362b780118db2cfd97cc50813c4bcd64dcd9ad47d648f2576db7f667abc1"
     },
     ".claude/skills/ui-ux-pro-max/data/data-provenance.json": {
       "type": "file",
-      "hash": "90b64677b27aa4db8ed83bd1e1a6de2f71927a388421aae4f9ca9aeb2f37483e"
+      "hash": "de485da3835d1614d49f530c32556db800ccae54a40a18e6ea5a3f007ef4c3af"
     },
     ".claude/skills/ui-ux-pro-max/data/google-font-licenses.json": {
       "type": "file",
@@ -4178,7 +4178,7 @@
     },
     ".claude/skills/ui-ux-pro-max/data/products.csv": {
       "type": "file",
-      "hash": "6a0106af1470ec79115981ee9c18c388ef2cbe3d7248a07a54c4793a98a8976f"
+      "hash": "16bf34f1801ce6a037fbb9aed05368d5ee57e68d0e02ca1ea4b94582e5fb1802"
     },
     ".claude/skills/ui-ux-pro-max/data/react-performance.csv": {
       "type": "file",
@@ -4274,7 +4274,7 @@
     },
     ".claude/skills/ui-ux-pro-max/data/styles.csv": {
       "type": "file",
-      "hash": "5193894bb157cd138929591f0f15ef5c48aa1a3427a85088bcd951f3382ee330"
+      "hash": "a70b0b32b34814100171bfb48c79011b33dbd76833af6db43e50696f1db485e9"
     },
     ".claude/skills/ui-ux-pro-max/data/typography.csv": {
       "type": "file",
@@ -4282,11 +4282,11 @@
     },
     ".claude/skills/ui-ux-pro-max/data/ui-reasoning.csv": {
       "type": "file",
-      "hash": "cb7dc86e1a31c015b6feb33b3e691e34b6867aa2d936f5b8fbcf3752b1a82974"
+      "hash": "b824169fd30c2a9ab4fead7d35ca3ea64333824e95f44e489db656b27dfae5a9"
     },
     ".claude/skills/ui-ux-pro-max/data/ux-guidelines.csv": {
       "type": "file",
-      "hash": "ff81ec613f70ba9fc3fcce52dbe4ae35d44b2079dbe6dc066d2d6e38c28facd5"
+      "hash": "9c473c1104e93f3d985f2d46d8854735e1a1deb8e0ac5ecd39c7e3b04e5d7528"
     },
     ".claude/skills/ui-ux-pro-max/references/pro-rules.md": {
       "type": "file",
@@ -4294,15 +4294,15 @@
     },
     ".claude/skills/ui-ux-pro-max/references/quick-reference.md": {
       "type": "file",
-      "hash": "052be515c75440745a484ceeacc9d3de7e7db27eaf8c003cd1c1856279699ce2"
+      "hash": "29d8e42e0b17f7b85a2ca7f091ca65e78b39b0f421e2e6fab1ce773e6e3112ed"
     },
     ".claude/skills/ui-ux-pro-max/scripts/core.py": {
       "type": "file",
-      "hash": "435544038c979727ab98bcf8557593ec16736a88e55b60bda5d39bf21d41da66"
+      "hash": "84a8d25dd24e2a07201cabfe9ae8a3d58d42bf398710ecec899acde64f19c40c"
     },
     ".claude/skills/ui-ux-pro-max/scripts/design_system.py": {
       "type": "file",
-      "hash": "e7d1c94c4b2eada17c5551157668362659ccf9626d34dbd58e68142410f90103"
+      "hash": "043ed3f404214869ffbf4c8d529afc6c6ceddb211fa4726d67d7a03edf7265db"
     },
     ".claude/skills/ui-ux-pro-max/scripts/reasoning_contract.py": {
       "type": "file",
@@ -4310,11 +4310,11 @@
     },
     ".claude/skills/ui-ux-pro-max/scripts/search.py": {
       "type": "file",
-      "hash": "d6aeb52ed42b158cb0c1bb47c9ef931f3bb4daf413bcf2390320b13f887e69fd"
+      "hash": "6b52ebb01480058cab145d3c2cb57880a529e522c0781cf8cd873fa55c9b9f1d"
     },
     ".claude/skills/ui-ux-pro-max/scripts/validate_data.py": {
       "type": "file",
-      "hash": "a599aa256049cf30954d1f164721b99e453eb7e4cb8241bcab2d5573e6cf58b8"
+      "hash": "e31ef4e1db1e6bb7910fb14b2a4dc139c513bca17d1e2827b292bde87d7120ca"
     },
     ".claude/skills/devops/.env.example": {
       "type": "file",
@@ -5126,7 +5126,7 @@
     },
     ".claude/agents/code-reviewer.md": {
       "type": "file",
-      "hash": "2850a06bb7c5b3fc0c326903de70786345e7f14b22fb68d38d4fca39a4ee41a0"
+      "hash": "6ea903091669fff16579cea42c57a7b938cf4b9e8812e89a20f7fa27d4926106"
     },
     ".claude/agents/debugger.md": {
       "type": "file",
@@ -5431,11 +5431,11 @@
     },
     ".agents/skills/kit-plan/references/output-standards.md": {
       "type": "file",
-      "hash": "f6a1f77845e8fdaddec5fe39bef2ddb00cfb2c0b5a1910987a52c04b72bb7aad"
+      "hash": "9dad9f99844e8f0232728b9bc067224857d295224aa7858ad6db2aa7ec514351"
     },
     ".agents/skills/kit-plan/references/plan-organization.md": {
       "type": "file",
-      "hash": "00d1984a59f976bc3f3907d8c5b78b7d0a037b991c777b3e2250a198dc69e643"
+      "hash": "8a78f390042ed0df185df56ff61b6e6dfc9038f27ed7031f39b02b997745853a"
     },
     ".agents/skills/kit-plan/references/research-phase.md": {
       "type": "file",
@@ -5899,11 +5899,11 @@
     },
     ".claude/skills/kit-plan/references/output-standards.md": {
       "type": "file",
-      "hash": "f6a1f77845e8fdaddec5fe39bef2ddb00cfb2c0b5a1910987a52c04b72bb7aad"
+      "hash": "9dad9f99844e8f0232728b9bc067224857d295224aa7858ad6db2aa7ec514351"
     },
     ".claude/skills/kit-plan/references/plan-organization.md": {
       "type": "file",
-      "hash": "00d1984a59f976bc3f3907d8c5b78b7d0a037b991c777b3e2250a198dc69e643"
+      "hash": "8a78f390042ed0df185df56ff61b6e6dfc9038f27ed7031f39b02b997745853a"
     },
     ".claude/skills/kit-plan/references/research-phase.md": {
       "type": "file",
@@ -6383,7 +6383,7 @@
     },
     ".agents/skills/kit-tdd/writing-good-tests.md": {
       "type": "file",
-      "hash": "496876382cfe8f79d65fac81d4420f9507a6bcd1dec50a2128a838688b51750f"
+      "hash": "00a36226f2de6f6b4177a84f4297ba826da087a1aa132e743ba0eb577fdad39c"
     },
     ".claude/skills/kit-tdd/SKILL.md": {
       "type": "file",
@@ -6399,15 +6399,15 @@
     },
     ".claude/skills/kit-tdd/writing-good-tests.md": {
       "type": "file",
-      "hash": "496876382cfe8f79d65fac81d4420f9507a6bcd1dec50a2128a838688b51750f"
+      "hash": "00a36226f2de6f6b4177a84f4297ba826da087a1aa132e743ba0eb577fdad39c"
     },
     ".claude/skills/kit-autopilot/SKILL.md": {
       "type": "file",
-      "hash": "3fa8ea370fb83976a73759c9d520c50ab8909621f07eef9ec2b9ac7c838ec2e8"
+      "hash": "53a955c1cd25f4bb89de298b8a27b70a44051dab94cbcee5ddafb4ea2cc0d22e"
     },
     ".claude/skills/kit-autopilot/references/codex-handoff.md": {
       "type": "file",
-      "hash": "0e0afe79d27879f0d25b6f62e81302fead8a6fe984004ebaa99135059b8fa57d"
+      "hash": "30fc1b3122d1d586e3b86069ac05c125d0e1f5f0c08a22aa4ef90cd6b40f8691"
     },
     ".claude/skills/kit-autopilot/references/codex-result.schema.json": {
       "type": "file",
@@ -6415,15 +6415,15 @@
     },
     ".claude/skills/kit-autopilot/references/fix-routing.md": {
       "type": "file",
-      "hash": "3087b4e69921c586ffa59e179dcd2067f73c5162b9cfc4fa048d892267aab40d"
+      "hash": "c68a4f77a371a65d9aaf5376a301b43d45d29a5c1acf1167089cbfe02a399587"
     },
     ".claude/skills/kit-autopilot/references/git-and-state.md": {
       "type": "file",
-      "hash": "263368562504d169ba654f6d069f2306bfd0c66bc2aa9c86973ace5dc498d1fd"
+      "hash": "9aa078ab52f81d2eabee82c5cf085e90f7d842e03d1db17a6ffd386f61c53a3a"
     },
     ".claude/skills/kit-autopilot/references/phase-worker.md": {
       "type": "file",
-      "hash": "f7ae665bedcceba272137bc3f3170c0db70e6c136a688826fe9cbaab7752af03"
+      "hash": "e8513f5ac9b3f06a447c547ae6053fa8a7106168a4fbc30e6367ee49591d50e3"
     },
     ".claude/commands/autopilot.md": {
       "type": "file",
@@ -6431,7 +6431,7 @@
     },
     ".agents/skills/kit-plan/scripts/render-plan.mjs": {
       "type": "file",
-      "hash": "c7325672a2fd09c1c4bdc40cb3a6c911eaf5f767e34c9ce3d155a4276a197ad8"
+      "hash": "4171eba098d4de443a1a67d0278e478570092f11099e032b883106c54f0b8ea9"
     },
     ".agents/skills/remotion-video/SKILL.md": {
       "type": "file",
@@ -6559,7 +6559,7 @@
     },
     ".claude/skills/kit-plan/scripts/render-plan.mjs": {
       "type": "file",
-      "hash": "c7325672a2fd09c1c4bdc40cb3a6c911eaf5f767e34c9ce3d155a4276a197ad8"
+      "hash": "4171eba098d4de443a1a67d0278e478570092f11099e032b883106c54f0b8ea9"
     },
     ".claude/skills/remotion-video/SKILL.md": {
       "type": "file",
@@ -6687,9 +6687,2625 @@
     },
     ".gitignore": {
       "type": "hash-block",
-      "fragment": "# agentkit:begin\n# AgentKit Engineer: the installed kit and plans stay out of Git. Delete this block to commit them.\n/.agentkit/\n/.agents/skills/aesthetic/\n/.agents/skills/ai-multimodal/\n/.agents/skills/animation-principles/\n/.agents/skills/backend-development/\n/.agents/skills/better-auth/\n/.agents/skills/chart-animation/\n/.agents/skills/chrome-devtools/\n/.agents/skills/claude-code/\n/.agents/skills/common/\n/.agents/skills/databases/\n/.agents/skills/devops/\n/.agents/skills/docs-seeker/\n/.agents/skills/docx/\n/.agents/skills/explainer-video/\n/.agents/skills/figma-designer/\n/.agents/skills/frontend-design/\n/.agents/skills/frontend-development/\n/.agents/skills/google-adk-python/\n/.agents/skills/kit-content/\n/.agents/skills/kit-debug/\n/.agents/skills/kit-design/\n/.agents/skills/kit-docs/\n/.agents/skills/kit-fix/\n/.agents/skills/kit-git/\n/.agents/skills/kit-implement/\n/.agents/skills/kit-integrate/\n/.agents/skills/kit-mcp/\n/.agents/skills/kit-plan/\n/.agents/skills/kit-review/\n/.agents/skills/kit-scout/\n/.agents/skills/kit-skill-authoring/\n/.agents/skills/kit-status/\n/.agents/skills/kit-tdd/\n/.agents/skills/kit-test/\n/.agents/skills/landing-page-design/\n/.agents/skills/manim/\n/.agents/skills/mcp-builder/\n/.agents/skills/media-processing/\n/.agents/skills/mobile-development/\n/.agents/skills/package.json\n/.agents/skills/payment-integration/\n/.agents/skills/pdf/\n/.agents/skills/pptx/\n/.agents/skills/problem-solving/\n/.agents/skills/remotion-video/\n/.agents/skills/repomix/\n/.agents/skills/research/\n/.agents/skills/sequential-thinking/\n/.agents/skills/shopify/\n/.agents/skills/supabase-postgres-best-practices/\n/.agents/skills/threejs/\n/.agents/skills/ui-styling/\n/.agents/skills/ui-ux-pro-max/\n/.agents/skills/vercel-composition-patterns/\n/.agents/skills/vercel-react-best-practices/\n/.agents/skills/web-design-guidelines/\n/.agents/skills/web-frameworks/\n/.agents/skills/webapp-testing/\n/.agents/skills/xlsx/\n/.claude/agents/code-reviewer.md\n/.claude/agents/database-admin.md\n/.claude/agents/debugger.md\n/.claude/agents/planner.md\n/.claude/agents/researcher.md\n/.claude/agents/scout.md\n/.claude/agents/tester.md\n/.claude/agents/ui-ux-designer.md\n/.claude/commands/ask.md\n/.claude/commands/autopilot.md\n/.claude/commands/bootstrap.md\n/.claude/commands/bootstrap/auto.md\n/.claude/commands/bootstrap/auto/fast.md\n/.claude/commands/brainstorm.md\n/.claude/commands/code.md\n/.claude/commands/content/cro.md\n/.claude/commands/content/enhance.md\n/.claude/commands/content/fast.md\n/.claude/commands/content/good.md\n/.claude/commands/cook.md\n/.claude/commands/cook/auto.md\n/.claude/commands/cook/auto/fast.md\n/.claude/commands/design/3d.md\n/.claude/commands/design/describe.md\n/.claude/commands/design/fast.md\n/.claude/commands/design/good.md\n/.claude/commands/design/screenshot.md\n/.claude/commands/design/video.md\n/.claude/commands/docs/init.md\n/.claude/commands/docs/summarize.md\n/.claude/commands/docs/update.md\n/.claude/commands/fix.md\n/.claude/commands/fix/ci.md\n/.claude/commands/fix/fast.md\n/.claude/commands/fix/hard.md\n/.claude/commands/fix/logs.md\n/.claude/commands/fix/test.md\n/.claude/commands/fix/types.md\n/.claude/commands/fix/ui.md\n/.claude/commands/git/cm.md\n/.claude/commands/git/cp.md\n/.claude/commands/git/pr.md\n/.claude/commands/integrate/polar.md\n/.claude/commands/integrate/sepay.md\n/.claude/commands/journal.md\n/.claude/commands/plan/ci.md\n/.claude/commands/plan/cro.md\n/.claude/commands/plan/fast.md\n/.claude/commands/plan/hard.md\n/.claude/commands/plan/two.md\n/.claude/commands/review/codebase.md\n/.claude/commands/scout.md\n/.claude/commands/scout/ext.md\n/.claude/commands/skill/add.md\n/.claude/commands/skill/create.md\n/.claude/commands/skill/fix-logs.md\n/.claude/commands/skill/optimize.md\n/.claude/commands/test.md\n/.claude/commands/use-mcp.md\n/.claude/commands/watzup.md\n/.claude/skills/aesthetic/\n/.claude/skills/ai-multimodal/\n/.claude/skills/animation-principles/\n/.claude/skills/backend-development/\n/.claude/skills/better-auth/\n/.claude/skills/chart-animation/\n/.claude/skills/chrome-devtools/\n/.claude/skills/claude-code/\n/.claude/skills/common/\n/.claude/skills/databases/\n/.claude/skills/devops/\n/.claude/skills/docs-seeker/\n/.claude/skills/docx/\n/.claude/skills/explainer-video/\n/.claude/skills/figma-designer/\n/.claude/skills/frontend-design/\n/.claude/skills/frontend-development/\n/.claude/skills/google-adk-python/\n/.claude/skills/kit-autopilot/\n/.claude/skills/kit-content/\n/.claude/skills/kit-debug/\n/.claude/skills/kit-design/\n/.claude/skills/kit-docs/\n/.claude/skills/kit-fix/\n/.claude/skills/kit-git/\n/.claude/skills/kit-implement/\n/.claude/skills/kit-integrate/\n/.claude/skills/kit-mcp/\n/.claude/skills/kit-plan/\n/.claude/skills/kit-review/\n/.claude/skills/kit-scout/\n/.claude/skills/kit-skill-authoring/\n/.claude/skills/kit-status/\n/.claude/skills/kit-tdd/\n/.claude/skills/kit-test/\n/.claude/skills/landing-page-design/\n/.claude/skills/manim/\n/.claude/skills/mcp-builder/\n/.claude/skills/media-processing/\n/.claude/skills/mobile-development/\n/.claude/skills/package.json\n/.claude/skills/payment-integration/\n/.claude/skills/pdf/\n/.claude/skills/pptx/\n/.claude/skills/problem-solving/\n/.claude/skills/remotion-video/\n/.claude/skills/repomix/\n/.claude/skills/research/\n/.claude/skills/sequential-thinking/\n/.claude/skills/shopify/\n/.claude/skills/supabase-postgres-best-practices/\n/.claude/skills/threejs/\n/.claude/skills/ui-styling/\n/.claude/skills/ui-ux-pro-max/\n/.claude/skills/vercel-composition-patterns/\n/.claude/skills/vercel-react-best-practices/\n/.claude/skills/web-design-guidelines/\n/.claude/skills/web-frameworks/\n/.claude/skills/webapp-testing/\n/.claude/skills/xlsx/\n/.codex/agents/code-reviewer.toml\n/.codex/agents/database-admin.toml\n/.codex/agents/debugger.toml\n/.codex/agents/planner.toml\n/.codex/agents/researcher.toml\n/.codex/agents/scout.toml\n/.codex/agents/tester.toml\n/.codex/agents/ui-ux-designer.toml\n/plans/\n# agentkit:end\n",
+      "fragment": "# agentkit:begin\n# AgentKit Engineer: the installed kit and plans stay out of Git. Delete this block to commit them.\n/.agentkit/\n/.agents/skills/aesthetic/\n/.agents/skills/ai-multimodal/\n/.agents/skills/animation-principles/\n/.agents/skills/backend-development/\n/.agents/skills/better-auth/\n/.agents/skills/chart-animation/\n/.agents/skills/chrome-devtools/\n/.agents/skills/claude-code/\n/.agents/skills/common/\n/.agents/skills/databases/\n/.agents/skills/devops/\n/.agents/skills/diagram-design/\n/.agents/skills/docs-seeker/\n/.agents/skills/docx/\n/.agents/skills/explainer-video/\n/.agents/skills/figma-designer/\n/.agents/skills/frontend-design/\n/.agents/skills/frontend-development/\n/.agents/skills/google-adk-python/\n/.agents/skills/kit-content/\n/.agents/skills/kit-debug/\n/.agents/skills/kit-design/\n/.agents/skills/kit-docs/\n/.agents/skills/kit-fix/\n/.agents/skills/kit-git/\n/.agents/skills/kit-implement/\n/.agents/skills/kit-integrate/\n/.agents/skills/kit-mcp/\n/.agents/skills/kit-plan/\n/.agents/skills/kit-review/\n/.agents/skills/kit-scout/\n/.agents/skills/kit-skill-authoring/\n/.agents/skills/kit-status/\n/.agents/skills/kit-tdd/\n/.agents/skills/kit-test/\n/.agents/skills/landing-page-design/\n/.agents/skills/manim/\n/.agents/skills/mcp-builder/\n/.agents/skills/media-processing/\n/.agents/skills/mobile-development/\n/.agents/skills/package.json\n/.agents/skills/payment-integration/\n/.agents/skills/pdf/\n/.agents/skills/pptx/\n/.agents/skills/problem-solving/\n/.agents/skills/remotion-video/\n/.agents/skills/repomix/\n/.agents/skills/research/\n/.agents/skills/sequential-thinking/\n/.agents/skills/shopify/\n/.agents/skills/supabase-postgres-best-practices/\n/.agents/skills/threejs/\n/.agents/skills/ui-styling/\n/.agents/skills/ui-ux-pro-max/\n/.agents/skills/vercel-composition-patterns/\n/.agents/skills/vercel-react-best-practices/\n/.agents/skills/web-design-guidelines/\n/.agents/skills/web-frameworks/\n/.agents/skills/webapp-testing/\n/.agents/skills/xlsx/\n/.claude/agents/code-reviewer.md\n/.claude/agents/database-admin.md\n/.claude/agents/debugger.md\n/.claude/agents/planner.md\n/.claude/agents/researcher.md\n/.claude/agents/scout.md\n/.claude/agents/security-reviewer.md\n/.claude/agents/tester.md\n/.claude/agents/ui-ux-designer.md\n/.claude/commands/ask.md\n/.claude/commands/autopilot.md\n/.claude/commands/bootstrap.md\n/.claude/commands/bootstrap/auto.md\n/.claude/commands/bootstrap/auto/fast.md\n/.claude/commands/brainstorm.md\n/.claude/commands/code.md\n/.claude/commands/content/cro.md\n/.claude/commands/content/enhance.md\n/.claude/commands/content/fast.md\n/.claude/commands/content/good.md\n/.claude/commands/cook.md\n/.claude/commands/cook/auto.md\n/.claude/commands/cook/auto/fast.md\n/.claude/commands/design/3d.md\n/.claude/commands/design/describe.md\n/.claude/commands/design/fast.md\n/.claude/commands/design/good.md\n/.claude/commands/design/screenshot.md\n/.claude/commands/design/video.md\n/.claude/commands/docs/init.md\n/.claude/commands/docs/summarize.md\n/.claude/commands/docs/update.md\n/.claude/commands/fix.md\n/.claude/commands/fix/ci.md\n/.claude/commands/fix/fast.md\n/.claude/commands/fix/hard.md\n/.claude/commands/fix/logs.md\n/.claude/commands/fix/test.md\n/.claude/commands/fix/types.md\n/.claude/commands/fix/ui.md\n/.claude/commands/git/cm.md\n/.claude/commands/git/cp.md\n/.claude/commands/git/pr.md\n/.claude/commands/integrate/polar.md\n/.claude/commands/integrate/sepay.md\n/.claude/commands/journal.md\n/.claude/commands/plan/ci.md\n/.claude/commands/plan/cro.md\n/.claude/commands/plan/fast.md\n/.claude/commands/plan/hard.md\n/.claude/commands/plan/two.md\n/.claude/commands/review/codebase.md\n/.claude/commands/scout.md\n/.claude/commands/scout/ext.md\n/.claude/commands/skill/add.md\n/.claude/commands/skill/create.md\n/.claude/commands/skill/fix-logs.md\n/.claude/commands/skill/optimize.md\n/.claude/commands/test.md\n/.claude/commands/use-mcp.md\n/.claude/commands/watzup.md\n/.claude/skills/aesthetic/\n/.claude/skills/ai-multimodal/\n/.claude/skills/animation-principles/\n/.claude/skills/backend-development/\n/.claude/skills/better-auth/\n/.claude/skills/chart-animation/\n/.claude/skills/chrome-devtools/\n/.claude/skills/claude-code/\n/.claude/skills/common/\n/.claude/skills/databases/\n/.claude/skills/devops/\n/.claude/skills/diagram-design/\n/.claude/skills/docs-seeker/\n/.claude/skills/docx/\n/.claude/skills/explainer-video/\n/.claude/skills/figma-designer/\n/.claude/skills/frontend-design/\n/.claude/skills/frontend-development/\n/.claude/skills/google-adk-python/\n/.claude/skills/kit-autopilot/\n/.claude/skills/kit-content/\n/.claude/skills/kit-debug/\n/.claude/skills/kit-design/\n/.claude/skills/kit-docs/\n/.claude/skills/kit-fix/\n/.claude/skills/kit-git/\n/.claude/skills/kit-implement/\n/.claude/skills/kit-integrate/\n/.claude/skills/kit-mcp/\n/.claude/skills/kit-plan/\n/.claude/skills/kit-prismantis/\n/.claude/skills/kit-review/\n/.claude/skills/kit-scout/\n/.claude/skills/kit-skill-authoring/\n/.claude/skills/kit-status/\n/.claude/skills/kit-tdd/\n/.claude/skills/kit-test/\n/.claude/skills/landing-page-design/\n/.claude/skills/manim/\n/.claude/skills/mcp-builder/\n/.claude/skills/media-processing/\n/.claude/skills/mobile-development/\n/.claude/skills/package.json\n/.claude/skills/payment-integration/\n/.claude/skills/pdf/\n/.claude/skills/pptx/\n/.claude/skills/problem-solving/\n/.claude/skills/remotion-video/\n/.claude/skills/repomix/\n/.claude/skills/research/\n/.claude/skills/sequential-thinking/\n/.claude/skills/shopify/\n/.claude/skills/supabase-postgres-best-practices/\n/.claude/skills/threejs/\n/.claude/skills/ui-styling/\n/.claude/skills/ui-ux-pro-max/\n/.claude/skills/vercel-composition-patterns/\n/.claude/skills/vercel-react-best-practices/\n/.claude/skills/web-design-guidelines/\n/.claude/skills/web-frameworks/\n/.claude/skills/webapp-testing/\n/.claude/skills/xlsx/\n/.codex/agents/code-reviewer.toml\n/.codex/agents/database-admin.toml\n/.codex/agents/debugger.toml\n/.codex/agents/planner.toml\n/.codex/agents/researcher.toml\n/.codex/agents/scout.toml\n/.codex/agents/security-reviewer.toml\n/.codex/agents/tester.toml\n/.codex/agents/ui-ux-designer.toml\n/plans/\n# agentkit:end\n",
       "original": ".DS_Store\nDerivedData/\n*.xcuserstate\nxcuserdata/\nConfig/Local.xcconfig\n*.xcresult\n.env\n.env.*\n!.env.example\n__pycache__/\n",
-      "hash": "4cc8937ae41c0aa9332ccd1d2005dc985e2061359afa9f9b7654781d9ed8a15d"
+      "hash": "c23c925d37cf122f9ed4ab88d0c45ea500cd242acb1fd38f6f38936b3e226a4d"
+    },
+    ".codex/agents/security-reviewer.toml": {
+      "type": "file",
+      "hash": "28b4abf13d09c7153263361c6ddb1ff2a63a2078e163998438820d0a0ae5b8fb"
+    },
+    ".claude/skills/kit-prismantis/SKILL.md": {
+      "type": "file",
+      "hash": "a84f53039f77a89e5f51de8ab55d67a828f5b629dccafb0363d60605df6e70dc"
+    },
+    ".claude/skills/kit-autopilot/references/phase-review.md": {
+      "type": "file",
+      "hash": "70175e0aab917fc2d5456fc98b0dfc84c1880bb1d3902c058fe2e6390a96fa15"
+    },
+    ".claude/agents/security-reviewer.md": {
+      "type": "file",
+      "hash": "eb1d0a7713842be640f5f8c99e1d6d7d9e9c875cb8c09fb05365dbf935f6667b"
+    },
+    ".agentkit/templates/git/gitmessage": {
+      "type": "file",
+      "hash": "20760da521cc257dd34dcb87a6b8287944faabb868e2112db145631e24c32c0d"
+    },
+    ".agentkit/templates/git/pull_request_template.md": {
+      "type": "file",
+      "hash": "d3ad9017f50dca1cdf40e5b06a5ea859bb60c40809fcd723b6e04ad578c225d8"
+    },
+    ".agents/skills/ui-ux-pro-max/scripts/preview.py": {
+      "type": "file",
+      "hash": "2900f6b4307439c20083aa6a630332f9e8ac6fd95901bd703f75fa9a75b84fbb"
+    },
+    ".agents/skills/diagram-design/SKILL.md": {
+      "type": "file",
+      "hash": "553a2a3135ef3816a26c9bae0c70e7e1fd797f470c36694133174a521159a7b5"
+    },
+    ".agents/skills/diagram-design/UPSTREAM-LICENSE.txt": {
+      "type": "file",
+      "hash": "bb7e12e91fecef43024111123ff784cec6c485585561d8b552557c0173b3ed29"
+    },
+    ".agents/skills/diagram-design/UPSTREAM-NOTICE.md": {
+      "type": "file",
+      "hash": "7d17d36c99933ccbb5a6c6d2e5a17098d22c6359e1f72f2b50c17c435fec20b4"
+    },
+    ".agents/skills/diagram-design/assets/example-arc-diagram-dark.html": {
+      "type": "file",
+      "hash": "acd6b0c9d174b7d915d1e4e1a98a6019c30b02b8e5264f53f4ef2657dcbde77e"
+    },
+    ".agents/skills/diagram-design/assets/example-arc-diagram-full.html": {
+      "type": "file",
+      "hash": "e785227378c5bde8a09d323ba743cf0f53b8dccb5e029325e99cccaed6a8f669"
+    },
+    ".agents/skills/diagram-design/assets/example-arc-diagram.html": {
+      "type": "file",
+      "hash": "49044919cbfcdbd2b4b6025df2d52e42a553dddbf2fde2523e5185ba8d5cec08"
+    },
+    ".agents/skills/diagram-design/assets/example-architecture-containment-dark.html": {
+      "type": "file",
+      "hash": "853399a330a541d63d5ca05834bb9f1545364fff61546754190899a49e54d28a"
+    },
+    ".agents/skills/diagram-design/assets/example-architecture-containment-full.html": {
+      "type": "file",
+      "hash": "4b96ed9774d236c3b4968a10be0f7b5c8805095b0206d249bd8e53b4e893debe"
+    },
+    ".agents/skills/diagram-design/assets/example-architecture-containment.html": {
+      "type": "file",
+      "hash": "10013c62e6449880627c2271edacfdc094f006a16e365a55f117e844097fe2de"
+    },
+    ".agents/skills/diagram-design/assets/example-architecture-dark.html": {
+      "type": "file",
+      "hash": "b471f857f2d8745705925ee49659d8506de291c3a7b3761a3fb47a0394b9c8df"
+    },
+    ".agents/skills/diagram-design/assets/example-architecture-delta-dark.html": {
+      "type": "file",
+      "hash": "d3f0984c7ff145656bb400ff294e9595d7f5f1209d156edbb5e5676e8ee199b9"
+    },
+    ".agents/skills/diagram-design/assets/example-architecture-delta-full.html": {
+      "type": "file",
+      "hash": "cd23ff4b3dcc2a734a13ab31807ce46c1e26dd82c3a91bac7b161f0d3abaeea0"
+    },
+    ".agents/skills/diagram-design/assets/example-architecture-delta.html": {
+      "type": "file",
+      "hash": "0a88e1e44fcac97be87accccb429c4930380938f59534468090e82c45ceabfc6"
+    },
+    ".agents/skills/diagram-design/assets/example-architecture-full.html": {
+      "type": "file",
+      "hash": "6c3951cbb3cdb94b1825efbfabbf5dda996c20106f00fa1d06511d58792b0248"
+    },
+    ".agents/skills/diagram-design/assets/example-architecture.html": {
+      "type": "file",
+      "hash": "a9e8b59854d31e70288abba522509494f82a319bc684c3694e08e67dfc990bc5"
+    },
+    ".agents/skills/diagram-design/assets/example-axonometric-plan-campus-animated.html": {
+      "type": "file",
+      "hash": "72420915d79afb6daaa6f6215ac08754b4d2dc02b8c844cb5e25b52771002350"
+    },
+    ".agents/skills/diagram-design/assets/example-axonometric-plan-campus-dark.html": {
+      "type": "file",
+      "hash": "7d13e33fcfa93e177179c357c0ad884fbb73d826ba79123420ad513ea174ba7c"
+    },
+    ".agents/skills/diagram-design/assets/example-axonometric-plan-campus-full.html": {
+      "type": "file",
+      "hash": "e1d28913537b8e206af137c8e6fbc212cb47203de3f69baa4fac2cee96beea19"
+    },
+    ".agents/skills/diagram-design/assets/example-axonometric-plan-campus.html": {
+      "type": "file",
+      "hash": "5d03a724dd85ec929dd17643294dbec7a6fd6165ee010fd0fef44dc72bdf1e31"
+    },
+    ".agents/skills/diagram-design/assets/example-axonometric-plan-coffee-shop-animated.html": {
+      "type": "file",
+      "hash": "7c948dc5daf9c9568c6ce1b22fae4c2b0c0c330794785f767655ebaf7da6e70e"
+    },
+    ".agents/skills/diagram-design/assets/example-axonometric-plan-coffee-shop-dark.html": {
+      "type": "file",
+      "hash": "0d5836e9b4ca2f85c4a1fd976ef0b7f89a29a29fb169dcb59b483a4e731bd46b"
+    },
+    ".agents/skills/diagram-design/assets/example-axonometric-plan-coffee-shop-full.html": {
+      "type": "file",
+      "hash": "ba03f90070b4bda66dc8cdbe3ba8334fadfa77e94f8ddde3d3aa3aa6b4d97e5a"
+    },
+    ".agents/skills/diagram-design/assets/example-axonometric-plan-coffee-shop.html": {
+      "type": "file",
+      "hash": "90f8f78c306ea5b96b64c6c5c5e68c85e13fdd9a4f40aecc25dccf1f9b34283e"
+    },
+    ".agents/skills/diagram-design/assets/example-axonometric-plan-dark.html": {
+      "type": "file",
+      "hash": "fa041519f9e71e518069334397886c6e545f9286b28dcdbc254a6aaa96a1034a"
+    },
+    ".agents/skills/diagram-design/assets/example-axonometric-plan-full.html": {
+      "type": "file",
+      "hash": "13a7506ec0f4576a4f10313ba954b9c85a88bda258542c0c2017189f15a06adc"
+    },
+    ".agents/skills/diagram-design/assets/example-axonometric-plan-warehouse-animated.html": {
+      "type": "file",
+      "hash": "e43acc91d852143ea615cd30b4251627a3e1224c95e433565c185bb4045620f6"
+    },
+    ".agents/skills/diagram-design/assets/example-axonometric-plan-warehouse-dark.html": {
+      "type": "file",
+      "hash": "a85d79254ec2e1813a13055efb9951b84ea55a04f43aa6fb6c880aa448924d38"
+    },
+    ".agents/skills/diagram-design/assets/example-axonometric-plan-warehouse-full.html": {
+      "type": "file",
+      "hash": "596cf38433b5c5a3c0a1af348863a61e6c31ecff3c1b46e04d989b10822c37a5"
+    },
+    ".agents/skills/diagram-design/assets/example-axonometric-plan-warehouse.html": {
+      "type": "file",
+      "hash": "aed38ba8afc9c560fe22c7cbba1448e3c8f0efe43853d2c457b32e76d1bfef76"
+    },
+    ".agents/skills/diagram-design/assets/example-axonometric-plan.html": {
+      "type": "file",
+      "hash": "1ffd4767dbb9c0fd49190582a7304d0aac4cd6df7cd7d538eb6e84cd1803f30a"
+    },
+    ".agents/skills/diagram-design/assets/example-bar-dark.html": {
+      "type": "file",
+      "hash": "fb96534eff0910a006dabca940d71aeb1019076abfbe9a020758747c2e2cbb0a"
+    },
+    ".agents/skills/diagram-design/assets/example-bar-full.html": {
+      "type": "file",
+      "hash": "ac8eff087cc5f2f04cffda1cb63b4e95641e9b05ca151a580e4df0016ddd08e1"
+    },
+    ".agents/skills/diagram-design/assets/example-bar.html": {
+      "type": "file",
+      "hash": "b82fea59d393f0754f1543cf1e8d9189542fb93cf458bcd256a0c56fa060461b"
+    },
+    ".agents/skills/diagram-design/assets/example-beeswarm-dark.html": {
+      "type": "file",
+      "hash": "597cf05ad582eb0dbe8040949c6f164096ce84631e6d3ba85d5fbf778d2b1dc7"
+    },
+    ".agents/skills/diagram-design/assets/example-beeswarm-full.html": {
+      "type": "file",
+      "hash": "515edbc59376ad9bc99afc8cf9d55c0fa6a7e68f8eca95a02cf282086857e6cc"
+    },
+    ".agents/skills/diagram-design/assets/example-beeswarm.html": {
+      "type": "file",
+      "hash": "e69a9b7ac33fae509c02a1ef06b39e1a548cd3925644e7cefd3ff2119a88a060"
+    },
+    ".agents/skills/diagram-design/assets/example-box-plot-dark.html": {
+      "type": "file",
+      "hash": "28bc2a9b9df1e715b07c11a57b2ab8d0ee59ed5ebc782dacd74f3401e0cdd39b"
+    },
+    ".agents/skills/diagram-design/assets/example-box-plot-full.html": {
+      "type": "file",
+      "hash": "a9bf7fc36d4db874b0fda6d27140fb6d3b9e51b06b13ca657e8dfb414a5fe617"
+    },
+    ".agents/skills/diagram-design/assets/example-box-plot.html": {
+      "type": "file",
+      "hash": "16449419e0cca7dc153bc23c9c416dcb149ddcdfe4ca45c9535708719aa0b909"
+    },
+    ".agents/skills/diagram-design/assets/example-bubble-dark.html": {
+      "type": "file",
+      "hash": "e5297625f2a81cebcd63250dcd7455f5c84160da501354f530dfcf59baf0ab9e"
+    },
+    ".agents/skills/diagram-design/assets/example-bubble-full.html": {
+      "type": "file",
+      "hash": "6aaf526da9c9eccb82c3f88d502e831268003c01f1de6cdc171b2a8970b03b99"
+    },
+    ".agents/skills/diagram-design/assets/example-bubble.html": {
+      "type": "file",
+      "hash": "48f6b009e1a05d780a66a8f9f3c3c9323da5aa3a6f7f6c50003558b4ba163657"
+    },
+    ".agents/skills/diagram-design/assets/example-bump-dark.html": {
+      "type": "file",
+      "hash": "0e1ed31a2850405f60a00df02942532642bcd1bd5c2d728721e2087045c12840"
+    },
+    ".agents/skills/diagram-design/assets/example-bump-full.html": {
+      "type": "file",
+      "hash": "aa62110a0d9dc11b19477013de1da1e09d37efb58f1b56b4af47fe9e80a7de0f"
+    },
+    ".agents/skills/diagram-design/assets/example-bump.html": {
+      "type": "file",
+      "hash": "cdf62733836ff70f2b04e3a9062609b24f17d3b8be60d110a8182f9bc12a02a7"
+    },
+    ".agents/skills/diagram-design/assets/example-data-flow-dark.html": {
+      "type": "file",
+      "hash": "a3f5f27b4a690a6d806c735bf2db42b1e3d7f235387018200830329379829917"
+    },
+    ".agents/skills/diagram-design/assets/example-data-flow-full.html": {
+      "type": "file",
+      "hash": "606d1f7650ea6db8e84f977beb591616fa32df9bc3085c09072da81885db5133"
+    },
+    ".agents/skills/diagram-design/assets/example-data-flow.html": {
+      "type": "file",
+      "hash": "f65978b77410fff9993fc099f4cf0d25bcaf67ce98fea2e281976e2406783b99"
+    },
+    ".agents/skills/diagram-design/assets/example-datalake-dark.html": {
+      "type": "file",
+      "hash": "7eb08a81b703a1fb87877d33c79c0f31fcbd9a8fbc1dac20646e3f68aff93404"
+    },
+    ".agents/skills/diagram-design/assets/example-datalake-full.html": {
+      "type": "file",
+      "hash": "f978706df71ffcdd6b2408aaeab78360ad68010487b9a849459219cd8cb8f5a3"
+    },
+    ".agents/skills/diagram-design/assets/example-datalake.html": {
+      "type": "file",
+      "hash": "311b9143dc66cb96d7fe1ca3fa6d9cbf17b864976b8168ee3e8e8c497fe264d6"
+    },
+    ".agents/skills/diagram-design/assets/example-db-schema-dark.html": {
+      "type": "file",
+      "hash": "c1f566f092642c8c58969b7609598272ea78eae5beb172f35afe1d1366078c6a"
+    },
+    ".agents/skills/diagram-design/assets/example-db-schema-full.html": {
+      "type": "file",
+      "hash": "897c88e8cde6537409e0b0359495dfa33e658dc40581fdf0039bc65a0433cd25"
+    },
+    ".agents/skills/diagram-design/assets/example-db-schema.html": {
+      "type": "file",
+      "hash": "5b65adae081c31b8f4a9772d8ba4a4066e759625197e2111885ac503cf8c2104"
+    },
+    ".agents/skills/diagram-design/assets/example-dependency-dark.html": {
+      "type": "file",
+      "hash": "2e7f6d263d67bd751ca8d00111dcccd4a6a18d4d4241a709321cd043b630785d"
+    },
+    ".agents/skills/diagram-design/assets/example-dependency-full.html": {
+      "type": "file",
+      "hash": "8498d290f2a74e85e99836ca1146879c6068e476ac8f2a847daa837c4cd1cd7d"
+    },
+    ".agents/skills/diagram-design/assets/example-dependency.html": {
+      "type": "file",
+      "hash": "c75e1d72834ed4bbdd57f7470136d272f13d0cc7c41b02e84ae187553a6e893b"
+    },
+    ".agents/skills/diagram-design/assets/example-deployment-dark.html": {
+      "type": "file",
+      "hash": "2c0c99d16f6d85fac54552bd4fe102ce9e0286fdf8eabd97ab4d90e5a97667e6"
+    },
+    ".agents/skills/diagram-design/assets/example-deployment-full.html": {
+      "type": "file",
+      "hash": "9187eaafb9107e979c2e43bcde77edf63e974fc59cf72a50fef33ea8df460650"
+    },
+    ".agents/skills/diagram-design/assets/example-deployment.html": {
+      "type": "file",
+      "hash": "8e4cee0bc1105dcd040b19d0000f84c69f81bde75d4cb16d2261fab617a7aee5"
+    },
+    ".agents/skills/diagram-design/assets/example-dp-integration-dark.html": {
+      "type": "file",
+      "hash": "d28f525d2c7d0666b61d6e80133d006da942f1dfeefa41b0c8d32faf2120ca64"
+    },
+    ".agents/skills/diagram-design/assets/example-dp-integration-full.html": {
+      "type": "file",
+      "hash": "fa9393528e19170873437c3f661fb7aa3cbaa94fa4001985f9d8faa7479708c6"
+    },
+    ".agents/skills/diagram-design/assets/example-dp-integration.html": {
+      "type": "file",
+      "hash": "d521d09532183ee10d5ebdcea9cbc509a45d90cd85c35973ba40dbe94f338291"
+    },
+    ".agents/skills/diagram-design/assets/example-dp-security-matrix-dark.html": {
+      "type": "file",
+      "hash": "1d93ac4553013cbb5d5fe962517601a0dadf03a8d1bf9ae522f10d7a83e05968"
+    },
+    ".agents/skills/diagram-design/assets/example-dp-security-matrix-full.html": {
+      "type": "file",
+      "hash": "8f34f504368ba9fd13c2bb20b028d2fc27800fbb46c238e73b0aa65101ca4ad0"
+    },
+    ".agents/skills/diagram-design/assets/example-dp-security-matrix.html": {
+      "type": "file",
+      "hash": "9ae674dcec652483ea75a9368f88fd4c61a447b34354b2f2386049c10491e83f"
+    },
+    ".agents/skills/diagram-design/assets/example-er-dark.html": {
+      "type": "file",
+      "hash": "c007c14d88a48a8ea30b1144dd4ac392ee7891a2278262e2a6f6836b43aa7fdf"
+    },
+    ".agents/skills/diagram-design/assets/example-er-full.html": {
+      "type": "file",
+      "hash": "e778b7e790c3fd3f9219807aef3115bda4d7b1efb9998df413bcd224f77ed163"
+    },
+    ".agents/skills/diagram-design/assets/example-er.html": {
+      "type": "file",
+      "hash": "dcbca24c5eeeb84711510a60fae190754503f9b57d9551936b086f3fb589f617"
+    },
+    ".agents/skills/diagram-design/assets/example-event-modeling-dark.html": {
+      "type": "file",
+      "hash": "367030eae9b906d2553b2e54cf83ce676b48d14dc219d29f51fd1cd6526810de"
+    },
+    ".agents/skills/diagram-design/assets/example-event-modeling-full.html": {
+      "type": "file",
+      "hash": "d36023c30ecc3a7c1af61ead4fcb6fb2ddafb1793731bd71d1ee55eb3941a6f0"
+    },
+    ".agents/skills/diagram-design/assets/example-event-modeling.html": {
+      "type": "file",
+      "hash": "142b4e758159448e05d31a3b3c55e0da12662920bd22bc9bd21c01cd85abeb74"
+    },
+    ".agents/skills/diagram-design/assets/example-exploded-ai-stack-animated.html": {
+      "type": "file",
+      "hash": "f8448f23ac359dc698cf19a1288080f1f804fb8f157fbc830aa7d50fc1c930a0"
+    },
+    ".agents/skills/diagram-design/assets/example-exploded-ai-stack-dark.html": {
+      "type": "file",
+      "hash": "2c249164a0959ad426b7d6e071c5c66fc05037e6a425601ea1b90025b81f29b0"
+    },
+    ".agents/skills/diagram-design/assets/example-exploded-ai-stack-full.html": {
+      "type": "file",
+      "hash": "0f1ba200c4f6391fde4e1b350889ec50d63c4c1ead0fee680b1bcf4b4e9cce6f"
+    },
+    ".agents/skills/diagram-design/assets/example-exploded-ai-stack.html": {
+      "type": "file",
+      "hash": "d2ac4530f8e3fb8eb9b4f344704ab9c36c3e983e6e5f8725250df1aa06b0ef2b"
+    },
+    ".agents/skills/diagram-design/assets/example-exploded-dark.html": {
+      "type": "file",
+      "hash": "408cdc4779bf0db7456cdda4651cd1678adbb129c5c06ba6bf0d6632b544770c"
+    },
+    ".agents/skills/diagram-design/assets/example-exploded-full.html": {
+      "type": "file",
+      "hash": "3f1ab91f536a6dd3547a61e2150b31a49bf9ba154ecc6f3bb813fd3d9269f16c"
+    },
+    ".agents/skills/diagram-design/assets/example-exploded-keyboard-animated.html": {
+      "type": "file",
+      "hash": "7fac285e6daf22592a35cf1dedd6c54673923815b6c1f2ab20477464978e7566"
+    },
+    ".agents/skills/diagram-design/assets/example-exploded-keyboard-dark.html": {
+      "type": "file",
+      "hash": "95ab0d91853a75c45e8b66de73373ae55bcd71fb722fda15ad586b6b0c04b0b4"
+    },
+    ".agents/skills/diagram-design/assets/example-exploded-keyboard-full.html": {
+      "type": "file",
+      "hash": "8b1fb4cee1d8a80f710296cdf25e3985ae4041a3b6a3084b35e8e695de3527ca"
+    },
+    ".agents/skills/diagram-design/assets/example-exploded-keyboard.html": {
+      "type": "file",
+      "hash": "858d60f2af6025301751a296125aca03cd7ea253d3efa8fef0e74df953992dc8"
+    },
+    ".agents/skills/diagram-design/assets/example-exploded-phone-animated.html": {
+      "type": "file",
+      "hash": "de0bb80121f68b34449a08f028da0d1b5007aae88848ae79c8db7419a8d77067"
+    },
+    ".agents/skills/diagram-design/assets/example-exploded-phone-dark.html": {
+      "type": "file",
+      "hash": "7dc2c3785b4456b54229f8c5fe56a22253614fc464ba7550e7f73c0619c21731"
+    },
+    ".agents/skills/diagram-design/assets/example-exploded-phone-full.html": {
+      "type": "file",
+      "hash": "87c750c84a4e8811e09eef44cb9fba5567ff7fbc559718683b92922b954f6c4f"
+    },
+    ".agents/skills/diagram-design/assets/example-exploded-phone.html": {
+      "type": "file",
+      "hash": "3866a52045df1b95333b09347b010871a73422f785bd7aad5de14fcf1f2189ef"
+    },
+    ".agents/skills/diagram-design/assets/example-exploded-unboxing-animated.html": {
+      "type": "file",
+      "hash": "b0b081c3435ec728c776638757f69b8bbe286d40eadcafb0c1816d65b315eb00"
+    },
+    ".agents/skills/diagram-design/assets/example-exploded-unboxing-dark.html": {
+      "type": "file",
+      "hash": "3bbe1e9be1c611e49796bdfe47bf69c714ec5e0ff5a13921cce548cfafe94f0b"
+    },
+    ".agents/skills/diagram-design/assets/example-exploded-unboxing-full.html": {
+      "type": "file",
+      "hash": "601554b9fc46d378031b89f78454a595821a0a693d4eeb916c088d2ec157c628"
+    },
+    ".agents/skills/diagram-design/assets/example-exploded-unboxing.html": {
+      "type": "file",
+      "hash": "9cbec60cb42ca24315f5e3392485699d24a3d22cd0879e128eae5d3988b4333f"
+    },
+    ".agents/skills/diagram-design/assets/example-exploded.html": {
+      "type": "file",
+      "hash": "07eb320afdaa31516c221a80a9ae6a8e72be62185a8b790841237db823ef638a"
+    },
+    ".agents/skills/diagram-design/assets/example-fishbone-dark.html": {
+      "type": "file",
+      "hash": "f884b81b83f7ce40cf85b8aa6c3a55db99b7fb2d38502deff222aaff36d7db47"
+    },
+    ".agents/skills/diagram-design/assets/example-fishbone-full.html": {
+      "type": "file",
+      "hash": "cb55d2df262eec426d61503758aaef8c1f31322e71ac8fec5a2912655bfc337c"
+    },
+    ".agents/skills/diagram-design/assets/example-fishbone.html": {
+      "type": "file",
+      "hash": "d0925f006f7ae339b7e3467886dc069e73def905e1316a5de00b2baeb61a63b2"
+    },
+    ".agents/skills/diagram-design/assets/example-flowchart-dark.html": {
+      "type": "file",
+      "hash": "9b69415f880744d1c3dff23cf1dfa6bfbcc3bf38178456ce6668a74b783647ef"
+    },
+    ".agents/skills/diagram-design/assets/example-flowchart-full.html": {
+      "type": "file",
+      "hash": "68bdada8201f46df8c76aa27be10194bc8d870a683696d400435817a19f0b696"
+    },
+    ".agents/skills/diagram-design/assets/example-flowchart.html": {
+      "type": "file",
+      "hash": "f9c92596d77b010417b78f710ae96cf161395831ad8e51153caa41fa4a31446c"
+    },
+    ".agents/skills/diagram-design/assets/example-gantt-dark.html": {
+      "type": "file",
+      "hash": "777c051f19001dbfdf9ced01d836622bda2ee5ad9d2d753012cd6f23fdde70d4"
+    },
+    ".agents/skills/diagram-design/assets/example-gantt-full.html": {
+      "type": "file",
+      "hash": "171c7bed870d24976124e3f56aa884bd107d46380dd212bb0300fd92badd91b2"
+    },
+    ".agents/skills/diagram-design/assets/example-gantt.html": {
+      "type": "file",
+      "hash": "4e017a543771aec9338e15df3be5f9278fa4883e306373c4ea0555b65c7c43a4"
+    },
+    ".agents/skills/diagram-design/assets/example-heatmap-dark.html": {
+      "type": "file",
+      "hash": "6ec2953db65dbabcdbd5abe3d43f7e001524317ddd3e1230398f9de927e547c0"
+    },
+    ".agents/skills/diagram-design/assets/example-heatmap-full.html": {
+      "type": "file",
+      "hash": "f3b92bf979a5504fd2c5bc4c107830ec50b43cc6685f662976a28739c9691f2d"
+    },
+    ".agents/skills/diagram-design/assets/example-heatmap.html": {
+      "type": "file",
+      "hash": "18ee707bd2235b0530250218a4aa98574db42abcbfa02dae92c70b48cb0261da"
+    },
+    ".agents/skills/diagram-design/assets/example-high-level-dark.html": {
+      "type": "file",
+      "hash": "d47d9056f2972d8ae68ddaabefdaf65c644cfafa2e19123e9ee0a675d19a0438"
+    },
+    ".agents/skills/diagram-design/assets/example-high-level-full.html": {
+      "type": "file",
+      "hash": "359dc10e77c8de97550dbfab993c4ce4d683bd089a44302e20c1dcd4ad27501e"
+    },
+    ".agents/skills/diagram-design/assets/example-high-level-vertical-dark.html": {
+      "type": "file",
+      "hash": "aabf08d05808d96ef6c5b16395830234022ce1f48abf8c56b2719acdde9a8aa2"
+    },
+    ".agents/skills/diagram-design/assets/example-high-level-vertical-full.html": {
+      "type": "file",
+      "hash": "70a7fd733caba9e8c1bd05ea96b10bb22cb15594f24435058acfd4735f6fa3ae"
+    },
+    ".agents/skills/diagram-design/assets/example-high-level-vertical.html": {
+      "type": "file",
+      "hash": "371385a4fd00a7d9f3896ac44417352bd7276e86488c3f4eaa72bd6df2902ae7"
+    },
+    ".agents/skills/diagram-design/assets/example-high-level.html": {
+      "type": "file",
+      "hash": "7fc2cd00413de7a5221dde192403f87a8bef883984f8331f64c56f3bc387fa5e"
+    },
+    ".agents/skills/diagram-design/assets/example-import-drawio.html": {
+      "type": "file",
+      "hash": "4404af257bf1216ef9959f3340cd82f2117d29d548b571e94ccf7931d4dd6bcd"
+    },
+    ".agents/skills/diagram-design/assets/example-import-excalidraw.html": {
+      "type": "file",
+      "hash": "8a09e53ae6b0efbb9360784917117e784f90da53a4cc1de2a838e3ccef57d712"
+    },
+    ".agents/skills/diagram-design/assets/example-import-mermaid.html": {
+      "type": "file",
+      "hash": "ed6109da74fe8fa2f5d6385ef1dda20e1b2d95c3e3d2d274499362de1aa20db9"
+    },
+    ".agents/skills/diagram-design/assets/example-import-plantuml.html": {
+      "type": "file",
+      "hash": "95cc95bca1bbfc327e442783c71427fabe02383a0d0793bd91fd7b2e5c474106"
+    },
+    ".agents/skills/diagram-design/assets/example-it-state-dark.html": {
+      "type": "file",
+      "hash": "3b571ce2bc0810586d8c125936fa1d90a898bad74b1079a6d8c6699024ae4c15"
+    },
+    ".agents/skills/diagram-design/assets/example-it-state-full.html": {
+      "type": "file",
+      "hash": "ca864942c8d70da13e2ee19a35661c45be8c42ae79317eb08da2b1f5689a51ba"
+    },
+    ".agents/skills/diagram-design/assets/example-it-state.html": {
+      "type": "file",
+      "hash": "9a91ec8959b77734745ddfa19f3dbf2992a3bf1134cb7352b9778ab3253e8d5b"
+    },
+    ".agents/skills/diagram-design/assets/example-journey-dark.html": {
+      "type": "file",
+      "hash": "c1866ca355d8859d27f6e99d9e2415daf204c313ed4463ae9663ba9e930a9949"
+    },
+    ".agents/skills/diagram-design/assets/example-journey-full.html": {
+      "type": "file",
+      "hash": "e739a7a1dbdd24bd3d9faae798ca02ed7d25b6e6944db1f43307287d541b348d"
+    },
+    ".agents/skills/diagram-design/assets/example-journey.html": {
+      "type": "file",
+      "hash": "3703a5f553e1daabbf17d9785626ab63508bde326967bbce1390c1a72a0f2b37"
+    },
+    ".agents/skills/diagram-design/assets/example-kanban-dark.html": {
+      "type": "file",
+      "hash": "30809cae8600a1852131362df275d9ab1c6aeedc65d3855caed264d48e19f5dc"
+    },
+    ".agents/skills/diagram-design/assets/example-kanban-full.html": {
+      "type": "file",
+      "hash": "e557f78ae75b4f088f148ff7e3006d8c4aa0f8dfc0824e237ba656eb566021f8"
+    },
+    ".agents/skills/diagram-design/assets/example-kanban.html": {
+      "type": "file",
+      "hash": "9171e229f6ca68c228a8ab3f47bd4a4b69f2ea77c2738282713a5f6271b32e1e"
+    },
+    ".agents/skills/diagram-design/assets/example-layers-dark.html": {
+      "type": "file",
+      "hash": "412df7b0710cf14cd95c1e806e708241bda6b3bc8e1f142107adf857ed6aa7d1"
+    },
+    ".agents/skills/diagram-design/assets/example-layers-full.html": {
+      "type": "file",
+      "hash": "6d9a2dc1eaa4f2d7309d93b8dedb9e379bb9debe42787030ee474725d26e68d8"
+    },
+    ".agents/skills/diagram-design/assets/example-layers.html": {
+      "type": "file",
+      "hash": "e4edabd125d9d9de3e27d2a530b7e791042910e97ec71c3d8e23912eafda5082"
+    },
+    ".agents/skills/diagram-design/assets/example-line-dark.html": {
+      "type": "file",
+      "hash": "552abdcac08788dac5ee7fa419ab854c5e09451b69822eb48935712880382a9d"
+    },
+    ".agents/skills/diagram-design/assets/example-line-full.html": {
+      "type": "file",
+      "hash": "d121a15bc242986e2ce490ea34623ceba4eca96d6e16a531ab985fbc60dfd079"
+    },
+    ".agents/skills/diagram-design/assets/example-line.html": {
+      "type": "file",
+      "hash": "8d53adb388306a8593a72c4eea063b8a95a0ba79d2134f51313a645c2554e227"
+    },
+    ".agents/skills/diagram-design/assets/example-loop-dark.html": {
+      "type": "file",
+      "hash": "8ef6feecb47dc6043e1a7714fd0a795e357d484d38df35b594be85105029eb01"
+    },
+    ".agents/skills/diagram-design/assets/example-loop-full.html": {
+      "type": "file",
+      "hash": "975a0d3e2954b928473fdc4e6e1720c84ebf23a84cc295434ea2ec74894d4cc5"
+    },
+    ".agents/skills/diagram-design/assets/example-loop-terminal.html": {
+      "type": "file",
+      "hash": "93a2f86cca043537bf472973c6c1d51de54d85208ec54cd448c40e3f09aa73e8"
+    },
+    ".agents/skills/diagram-design/assets/example-loop.html": {
+      "type": "file",
+      "hash": "7346157c67b6994b274772d0ffeb6c5ae2e935991246bd541e4aab84e31f3a8d"
+    },
+    ".agents/skills/diagram-design/assets/example-marimekko-dark.html": {
+      "type": "file",
+      "hash": "91371c8c9915cd5a9fa5d04ddd425d2a17df8b495e2c1a195de8e73130bb3f44"
+    },
+    ".agents/skills/diagram-design/assets/example-marimekko-full.html": {
+      "type": "file",
+      "hash": "e809f059a9df5634a62bcf0444311bb391b2168b45f4c4d4842a2692f1ff48b5"
+    },
+    ".agents/skills/diagram-design/assets/example-marimekko.html": {
+      "type": "file",
+      "hash": "2b1407bcdc69114d3c74ac4a7e257d5081212b87c2aff05913044fc622c46b4a"
+    },
+    ".agents/skills/diagram-design/assets/example-medallion-dark.html": {
+      "type": "file",
+      "hash": "de936de0ee480c4fe9d789f576e1f9bbbc69613c903b73435879f5cbf02cb23e"
+    },
+    ".agents/skills/diagram-design/assets/example-medallion-full.html": {
+      "type": "file",
+      "hash": "8d75d30cb7ae0d3a5479a929d0b288b8ec8cc9072e1ed167d68e97c64321b376"
+    },
+    ".agents/skills/diagram-design/assets/example-medallion.html": {
+      "type": "file",
+      "hash": "ccd63d89878af1f9d1bcc83e126ea11254f4bbfedb3d87a21e7242793cb2c526"
+    },
+    ".agents/skills/diagram-design/assets/example-nested-dark.html": {
+      "type": "file",
+      "hash": "8c9862a5a41d2fc5485b51cb9aab318595ceadd2f799ccab7b57e3183906c4c5"
+    },
+    ".agents/skills/diagram-design/assets/example-nested-full.html": {
+      "type": "file",
+      "hash": "2b87e484fee759346562080dc7639549176af7998389cb0a8be7303649246494"
+    },
+    ".agents/skills/diagram-design/assets/example-nested.html": {
+      "type": "file",
+      "hash": "fd4001be8af64a8aeae2c9b46e6f476030fcd8791ea3f9b508a503fc5bc70ffb"
+    },
+    ".agents/skills/diagram-design/assets/example-org-chart-dark.html": {
+      "type": "file",
+      "hash": "2cb9f912a9ab635fe72924425a23aabb3ddfcbc704e6fdbc12cd0399b2d1de5f"
+    },
+    ".agents/skills/diagram-design/assets/example-org-chart-full.html": {
+      "type": "file",
+      "hash": "f74b14ed6e30a7cf8bcdc8e78dd97c7549d6c73187dea81a13c06edb6e6b1d78"
+    },
+    ".agents/skills/diagram-design/assets/example-org-chart.html": {
+      "type": "file",
+      "hash": "82356766f5d5af0c10fa60a728c784674138c45416933c15f58d5553a7f4b9b4"
+    },
+    ".agents/skills/diagram-design/assets/example-paved-road-animated.html": {
+      "type": "file",
+      "hash": "a17f220a610f0616a1d416bde05cb8591182293ac6cd25e3746eaaf08663fc19"
+    },
+    ".agents/skills/diagram-design/assets/example-polar-dark.html": {
+      "type": "file",
+      "hash": "7c284696cfed61e832dd4dde814840901967cca64bd54a4cddfff7cbeaddb04e"
+    },
+    ".agents/skills/diagram-design/assets/example-polar-full.html": {
+      "type": "file",
+      "hash": "be8080fa08a05dd27191d3a26585d1246153f9fbdcd5122533833ae57eb016b0"
+    },
+    ".agents/skills/diagram-design/assets/example-polar.html": {
+      "type": "file",
+      "hash": "3bbfe08f63c9be96cecfdb7432b8236d2f0788bf6008e69254cbbef18cd3fc39"
+    },
+    ".agents/skills/diagram-design/assets/example-policy-trace-animated.html": {
+      "type": "file",
+      "hash": "1303da75c366e6013dadbc4be0126ab9db34ed0c7a2fdae507c9bd449e871307"
+    },
+    ".agents/skills/diagram-design/assets/example-process-dark.html": {
+      "type": "file",
+      "hash": "eb0a12c31ab57cce1f300e03c40aedb6d1a2d035320901688b12f32a3805475d"
+    },
+    ".agents/skills/diagram-design/assets/example-process-full.html": {
+      "type": "file",
+      "hash": "801c93a1cde612566800cf6a07dd77ce5c030d4d065153946bdb84d2d88b8bf8"
+    },
+    ".agents/skills/diagram-design/assets/example-process.html": {
+      "type": "file",
+      "hash": "7c336a00d6a63fbebd2f9055af8df1b421f25a209900aa70c4028cd747982fb5"
+    },
+    ".agents/skills/diagram-design/assets/example-pyramid-dark.html": {
+      "type": "file",
+      "hash": "831bc6531d0b3b0eba1b348722a0b3e4d5548f287f5380ddb7e26d3f5edcb80c"
+    },
+    ".agents/skills/diagram-design/assets/example-pyramid-full.html": {
+      "type": "file",
+      "hash": "ca4c4c9a61072c25ec6e3446c8247f201b89d781d3d2000783fb7a4d50680e1f"
+    },
+    ".agents/skills/diagram-design/assets/example-pyramid.html": {
+      "type": "file",
+      "hash": "a49c1dd8f932ea82253c7fbbec54365cb722ae65fba975a15c2aa392c27c5fbf"
+    },
+    ".agents/skills/diagram-design/assets/example-quadrant-consultant.html": {
+      "type": "file",
+      "hash": "0eff4b878e56a0ca3104457128254b1c5b329dc7ed6f891c10807063ccdfb983"
+    },
+    ".agents/skills/diagram-design/assets/example-quadrant-dark.html": {
+      "type": "file",
+      "hash": "ac1edf5d9c1251a51a93eb82db17fc1820811f1934ec59c1272ea7f89c501465"
+    },
+    ".agents/skills/diagram-design/assets/example-quadrant-full.html": {
+      "type": "file",
+      "hash": "b4182d3f570e7379b0124667a3268b41f704541d6c6b2e44a4bede954b851457"
+    },
+    ".agents/skills/diagram-design/assets/example-quadrant.html": {
+      "type": "file",
+      "hash": "95f6100d6059a773bcce44d42a9eedba925226c65cacf6613b8488330ae09934"
+    },
+    ".agents/skills/diagram-design/assets/example-queue-animated.html": {
+      "type": "file",
+      "hash": "826566166454ba86fafd1731f6e591bbdbae0cb6bb49f5968222c49660d5535f"
+    },
+    ".agents/skills/diagram-design/assets/example-radar-dark.html": {
+      "type": "file",
+      "hash": "e24eabbc722e67b83ac498407247e1c09d162ff19e047944a323d44594a68258"
+    },
+    ".agents/skills/diagram-design/assets/example-radar-full.html": {
+      "type": "file",
+      "hash": "5a95adc1d24f5f02b0e5f2c27d901b8c221f50d5586da0e387cc58ecbf34976b"
+    },
+    ".agents/skills/diagram-design/assets/example-radar.html": {
+      "type": "file",
+      "hash": "9572164b5aa0d8d1e0e713e8ffb7ef750d0b04e06d3eb842829fa4bdaaaff2c1"
+    },
+    ".agents/skills/diagram-design/assets/example-requirement-traceability-dark.html": {
+      "type": "file",
+      "hash": "57d580a3afc4d55b417c75ec74bb515823f7fe852151f757c6e4d870a83c742d"
+    },
+    ".agents/skills/diagram-design/assets/example-requirement-traceability-full.html": {
+      "type": "file",
+      "hash": "add40cda3a230d2f46a0f8e0b84a993505dd1221a0fe198cf996e8558205016d"
+    },
+    ".agents/skills/diagram-design/assets/example-requirement-traceability.html": {
+      "type": "file",
+      "hash": "2714f14ef1b15264a566997ae523b46ca0c13a4f2cc145817f43eb78ae56de39"
+    },
+    ".agents/skills/diagram-design/assets/example-ridgeline-dark.html": {
+      "type": "file",
+      "hash": "b430c4ec58ab69c044cba2eb39e20adbc8769cbd85fb5f41d8c3f75136d62f90"
+    },
+    ".agents/skills/diagram-design/assets/example-ridgeline-full.html": {
+      "type": "file",
+      "hash": "33fd98b39d5316ca4b65a65c8cd331c55d032ae5d7de3c94feb5e506168718b9"
+    },
+    ".agents/skills/diagram-design/assets/example-ridgeline.html": {
+      "type": "file",
+      "hash": "8c6a17edea0742642bfa991ba353c414d2e7608fff09c073d52c3f9de2d71337"
+    },
+    ".agents/skills/diagram-design/assets/example-sankey-dark.html": {
+      "type": "file",
+      "hash": "4c2a4ff17cfba1412aee8b6569e76c1d314d9ce64d6038c99e89505225b9baf1"
+    },
+    ".agents/skills/diagram-design/assets/example-sankey-full.html": {
+      "type": "file",
+      "hash": "33f52288399db22c20374ecbfd26ec597b77f3512c03115cea240ece21485bb9"
+    },
+    ".agents/skills/diagram-design/assets/example-sankey.html": {
+      "type": "file",
+      "hash": "5997eca7d06b41cc779abed904ef1b782a5d9be160f9dffcb0fef067142b904f"
+    },
+    ".agents/skills/diagram-design/assets/example-sbgn-dark.html": {
+      "type": "file",
+      "hash": "66a7bd8d24698ac6be39b5446ccfcf85b30febaa1624e4f2d494428be377de10"
+    },
+    ".agents/skills/diagram-design/assets/example-sbgn-full.html": {
+      "type": "file",
+      "hash": "9d9abbea9421019070d088212cc05760b69b739213315b97f4dece24732ef410"
+    },
+    ".agents/skills/diagram-design/assets/example-sbgn.html": {
+      "type": "file",
+      "hash": "58fb8b36be1a47d0bcf9a0eaefd4e9eabb3988f69024a184ec740726bc483253"
+    },
+    ".agents/skills/diagram-design/assets/example-scatter-dark.html": {
+      "type": "file",
+      "hash": "347bea032f65f2698f1ce0fe2a5fc01b02dfa03e4fadd84c7a4260369d95fb80"
+    },
+    ".agents/skills/diagram-design/assets/example-scatter-full.html": {
+      "type": "file",
+      "hash": "af03bf90e91b1a4449ee5b776f08df07a40dec1c1fa27457dc75540c8fa4e379"
+    },
+    ".agents/skills/diagram-design/assets/example-scatter.html": {
+      "type": "file",
+      "hash": "baa3fe5115e6a0448fd90629c20729b78eb735d5d95b74501f8d3d0fd8183980"
+    },
+    ".agents/skills/diagram-design/assets/example-schedule-network-dark.html": {
+      "type": "file",
+      "hash": "af2895af046fb61946facf400f83985c9238f998fbfb8beed6b71a3fda4d4f2e"
+    },
+    ".agents/skills/diagram-design/assets/example-schedule-network-full.html": {
+      "type": "file",
+      "hash": "2ef5c8e630d839c40323772f0299acc01e70d1a3086c2d29522d4b0bd2981a1e"
+    },
+    ".agents/skills/diagram-design/assets/example-schedule-network.html": {
+      "type": "file",
+      "hash": "b5694bbc7a480455d4059c7e839127d2fc3f08d7dd0ffdee225c443b4d5fe7dd"
+    },
+    ".agents/skills/diagram-design/assets/example-sequence-dark.html": {
+      "type": "file",
+      "hash": "f2c0fc2e127bce07c78ff09e6b8540f4993d1d85deafbca73af4834b8944e89b"
+    },
+    ".agents/skills/diagram-design/assets/example-sequence-full.html": {
+      "type": "file",
+      "hash": "8e891b0498e318431dbf0a87c7e5a15d4ab51ff513cfea1fc7a71a68642143c9"
+    },
+    ".agents/skills/diagram-design/assets/example-sequence-oauth-dark.html": {
+      "type": "file",
+      "hash": "5d4755a698aa868126b51049445d3468a7b40401e902a80319a62a31a7969e64"
+    },
+    ".agents/skills/diagram-design/assets/example-sequence-oauth-full.html": {
+      "type": "file",
+      "hash": "f067c6bce636a823ac0aaa66c035bb31d75f793f77fb36729110fd9287213fe9"
+    },
+    ".agents/skills/diagram-design/assets/example-sequence-oauth.html": {
+      "type": "file",
+      "hash": "40b38df11cb54fe055c223a44ddaa7363a2ec0c030dc995e7951a1fb8df42083"
+    },
+    ".agents/skills/diagram-design/assets/example-sequence.html": {
+      "type": "file",
+      "hash": "aac9bfcad5a001206567a577e9816e3d0904bb3e1afc9d8505fb576b93292db8"
+    },
+    ".agents/skills/diagram-design/assets/example-service-blueprint-dark.html": {
+      "type": "file",
+      "hash": "b09196833e457a760a435bbee90d21d09525b42ea467e0c0484b8573eb67f6bb"
+    },
+    ".agents/skills/diagram-design/assets/example-service-blueprint-full.html": {
+      "type": "file",
+      "hash": "23a36032d1f4ed031c1bd353a03504e4a53b29a766f2020f9619949f3fd67f53"
+    },
+    ".agents/skills/diagram-design/assets/example-service-blueprint.html": {
+      "type": "file",
+      "hash": "e7c29fa4e09c5a7cff1ec75ee2310e3f1d623f4df80854dc2d72a2dd87c31c87"
+    },
+    ".agents/skills/diagram-design/assets/example-slopegraph-dark.html": {
+      "type": "file",
+      "hash": "36cdffff3d70fa34b091dd0e7814a8892cc6c3436525c666402d790cbbdc5ecc"
+    },
+    ".agents/skills/diagram-design/assets/example-slopegraph-full.html": {
+      "type": "file",
+      "hash": "1815f1854f486c5163780f2d8f9cf9c0b96a7e42594099dfb31bd14c453a1f55"
+    },
+    ".agents/skills/diagram-design/assets/example-slopegraph.html": {
+      "type": "file",
+      "hash": "c20f22a1ba7ae6388d3fae506927242173475f6447da655a96f06f92adfd706e"
+    },
+    ".agents/skills/diagram-design/assets/example-state-dark.html": {
+      "type": "file",
+      "hash": "d5a29f22ee80fef6fe6f857e767fb0bf4afca8bc8f8cbb478f33286d76f88706"
+    },
+    ".agents/skills/diagram-design/assets/example-state-full.html": {
+      "type": "file",
+      "hash": "683febd8bf1c1658f52f44829d2e72e73453484b54d36409737961718fa2a83c"
+    },
+    ".agents/skills/diagram-design/assets/example-state-lifecycle-dark.html": {
+      "type": "file",
+      "hash": "caf933ffcfffd7cc46e4354d5d3dd4d2c0ea8fc5c56e5fefb9b0ec63dc3358d9"
+    },
+    ".agents/skills/diagram-design/assets/example-state-lifecycle-full.html": {
+      "type": "file",
+      "hash": "6b354ce8290c458d3fdce5d30f8f759c8879c9ca490c115156ff6e746c4d3cc2"
+    },
+    ".agents/skills/diagram-design/assets/example-state-lifecycle.html": {
+      "type": "file",
+      "hash": "0c8406d87facec01143bc4356d896a3ffdc7c429ae481e7ee9fbcd06bfae674c"
+    },
+    ".agents/skills/diagram-design/assets/example-state.html": {
+      "type": "file",
+      "hash": "33a210ded8261c3117222a7d897a17ccddae89267c4779f19eeaf868a5545a15"
+    },
+    ".agents/skills/diagram-design/assets/example-steps-dark.html": {
+      "type": "file",
+      "hash": "8b843dc4b13dab50ee21655c3fda409a391e8b2c4e57a9e1e677a1388d2c6bcc"
+    },
+    ".agents/skills/diagram-design/assets/example-steps-full.html": {
+      "type": "file",
+      "hash": "7b61dc17af1da242c6ddbb3957b592975a400482b359cb7649355ac82f77cda5"
+    },
+    ".agents/skills/diagram-design/assets/example-steps.html": {
+      "type": "file",
+      "hash": "86c1a6acba504c9d04237c5a66d94dce01ef64ec4f89edca16a5fa8a74f6f14d"
+    },
+    ".agents/skills/diagram-design/assets/example-story-map-dark.html": {
+      "type": "file",
+      "hash": "0c288216307ff36b43b513445e0e63fa83ed5902695ead17fdd507a470acc6b7"
+    },
+    ".agents/skills/diagram-design/assets/example-story-map-full.html": {
+      "type": "file",
+      "hash": "fd3a8394c161f8db01c51eb8c3e89b3e0e6fbc85da45c221820dc4ff18036362"
+    },
+    ".agents/skills/diagram-design/assets/example-story-map.html": {
+      "type": "file",
+      "hash": "2e8765e83ee8fb3c62bd31105d3a73b9f11400035036466d14ec59874e194dde"
+    },
+    ".agents/skills/diagram-design/assets/example-streamgraph-dark.html": {
+      "type": "file",
+      "hash": "986d4485111c165a18f0eb86055aa326f932c618d26c32f90d6b9457f9189515"
+    },
+    ".agents/skills/diagram-design/assets/example-streamgraph-full.html": {
+      "type": "file",
+      "hash": "dbc513480b04e07056c6ca0532017ea56b107c278eb70360868fa484b762aedc"
+    },
+    ".agents/skills/diagram-design/assets/example-streamgraph.html": {
+      "type": "file",
+      "hash": "92f45dca6ce38436d1a790424ec1212b4b5eed74a1a309f85fa037c68facbff5"
+    },
+    ".agents/skills/diagram-design/assets/example-swimlane-dark.html": {
+      "type": "file",
+      "hash": "d7038fab163c5fc5f56b58502a0d1e07d2961d08a6f6cd10a729864d670186de"
+    },
+    ".agents/skills/diagram-design/assets/example-swimlane-full.html": {
+      "type": "file",
+      "hash": "dc7bf931bb2ee07072f0fe1e151b0b39a79e0da0317836f897c46b5d2a88953d"
+    },
+    ".agents/skills/diagram-design/assets/example-swimlane.html": {
+      "type": "file",
+      "hash": "c044be167127091b9bc442fdfe7d1dea439a7de23ea2c9819fb8382e511bb6e9"
+    },
+    ".agents/skills/diagram-design/assets/example-timeline-dark.html": {
+      "type": "file",
+      "hash": "fb9a45991b281e7937e8288abbfeb6eb12e0140ee5dcac17821721d5129fb647"
+    },
+    ".agents/skills/diagram-design/assets/example-timeline-full.html": {
+      "type": "file",
+      "hash": "03b38d6dc44286113cf6680ece546affa53ff13092118fb8b4a68b671f55069f"
+    },
+    ".agents/skills/diagram-design/assets/example-timeline.html": {
+      "type": "file",
+      "hash": "d853c86bfd40491d5b747a07ca10b9d55d3349701ca01f508d83ba972b805788"
+    },
+    ".agents/skills/diagram-design/assets/example-tree-block-decomposition-dark.html": {
+      "type": "file",
+      "hash": "1a862a84bb85391a850e6c6cc5d657dd019a1c2a4efe8e7d05f6045b876856df"
+    },
+    ".agents/skills/diagram-design/assets/example-tree-block-decomposition-full.html": {
+      "type": "file",
+      "hash": "9c315f8dcb3693c6c79e9057198e13cb6bd10eb2faa6ed2a5a1956f489271543"
+    },
+    ".agents/skills/diagram-design/assets/example-tree-block-decomposition.html": {
+      "type": "file",
+      "hash": "c5f3051ea93495e6b040d25642ca7a5e67664678bb5e3147509404ed068551da"
+    },
+    ".agents/skills/diagram-design/assets/example-tree-dark.html": {
+      "type": "file",
+      "hash": "43aa056d0761d323cad0bd6205de3083fe7413af4e10639cad5e92c8ed41beac"
+    },
+    ".agents/skills/diagram-design/assets/example-tree-full.html": {
+      "type": "file",
+      "hash": "ee52773ac71a12d584fbe33569da0a64481e05c94ac1ab4729653552e631d8cc"
+    },
+    ".agents/skills/diagram-design/assets/example-tree.html": {
+      "type": "file",
+      "hash": "6812d3e99c21ddc29d346cfb3713ea997bd6ac1fcb5b29b5c764c200afa0ea20"
+    },
+    ".agents/skills/diagram-design/assets/example-treemap-dark.html": {
+      "type": "file",
+      "hash": "43cbbb2ec7c30a71edf5f5436e51dd8369cedb1da80f6e6241b62278ea4e5698"
+    },
+    ".agents/skills/diagram-design/assets/example-treemap-full.html": {
+      "type": "file",
+      "hash": "9339c9007d81969f6d04c30edcf9d3ef558f753ecf9cd8f401978551cfc5c069"
+    },
+    ".agents/skills/diagram-design/assets/example-treemap.html": {
+      "type": "file",
+      "hash": "224c33a048dc64cbbd687bd826a3a09c8178dcd3d311ea3b53bc43f767f420f6"
+    },
+    ".agents/skills/diagram-design/assets/example-uml-class-dark.html": {
+      "type": "file",
+      "hash": "eca2e26603714d4df494532a2a712101321a484cc2d1263f7629b8f0e214357d"
+    },
+    ".agents/skills/diagram-design/assets/example-uml-class-full.html": {
+      "type": "file",
+      "hash": "0c73c3f1b9b4dd569d264a0caff859bf0a3a82849432294c73fed8435a4772e7"
+    },
+    ".agents/skills/diagram-design/assets/example-uml-class.html": {
+      "type": "file",
+      "hash": "98e58c2833cc6b4f2b3e176bbf173907e7168aedf5310cb900d7bdfeb6e22c8d"
+    },
+    ".agents/skills/diagram-design/assets/example-unit-grid-dark.html": {
+      "type": "file",
+      "hash": "5d7accc0bfe99114f1ada56883406d25bf5db9fc5ea8792a45e11ca16ea8cbb6"
+    },
+    ".agents/skills/diagram-design/assets/example-unit-grid-full.html": {
+      "type": "file",
+      "hash": "29edee8fd8e0a05475dc44af632e101fbb840fda3ce6fe751d814f64b3322fea"
+    },
+    ".agents/skills/diagram-design/assets/example-unit-grid.html": {
+      "type": "file",
+      "hash": "a09af380f38271521a32d5f0959a440d736071d0a96ebf97586d19e2c96c83e0"
+    },
+    ".agents/skills/diagram-design/assets/example-venn-dark.html": {
+      "type": "file",
+      "hash": "ea604fc7ff3c2da573bba856b54b0ac6a95491f26cb707caefda94ac64215a4f"
+    },
+    ".agents/skills/diagram-design/assets/example-venn-full.html": {
+      "type": "file",
+      "hash": "7dc6a440cc8881f70f6184200e3557a7501d21f93495a5aa209c6c8c479dd0ba"
+    },
+    ".agents/skills/diagram-design/assets/example-venn.html": {
+      "type": "file",
+      "hash": "a9f6ab1f15906f7618a2f876bc9cd998a1b0be9b31b7e49eeaf42c3c156340f6"
+    },
+    ".agents/skills/diagram-design/assets/example-wardley-dark.html": {
+      "type": "file",
+      "hash": "80aff4e268d3775541eca4cf1c1cac918f0895637cd79568d4895e84b9f2046b"
+    },
+    ".agents/skills/diagram-design/assets/example-wardley-full.html": {
+      "type": "file",
+      "hash": "1986784529ddb529a3d321e6dbc2add1046abccba5fd8bcab23679742731769d"
+    },
+    ".agents/skills/diagram-design/assets/example-wardley.html": {
+      "type": "file",
+      "hash": "a386727c65063f36df75e096f963c305ca540799c5005daf079ff05e05428436"
+    },
+    ".agents/skills/diagram-design/assets/example-waterfall-dark.html": {
+      "type": "file",
+      "hash": "ce4eb6038b09b87eca88b6981a7b43d19f603f480b6e91fb16d5d7c58a9103a6"
+    },
+    ".agents/skills/diagram-design/assets/example-waterfall-full.html": {
+      "type": "file",
+      "hash": "5a5987e9988cad66b26f769e07eca805796895a951a8cc084f0e0aa8503fca09"
+    },
+    ".agents/skills/diagram-design/assets/example-waterfall.html": {
+      "type": "file",
+      "hash": "501231921ae5065423f75efa6a37fbfc4753ef76d26b9ab116902dc9964ad818"
+    },
+    ".agents/skills/diagram-design/assets/icons.html": {
+      "type": "file",
+      "hash": "8301219558a40abce2d739def01feda6a8b72adce00f8d60154c989dfb581090"
+    },
+    ".agents/skills/diagram-design/assets/index.html": {
+      "type": "file",
+      "hash": "934f9c3278efe136519f0fc67a538bb479cc473efc82d3e9ecdc6bf7d9a27476"
+    },
+    ".agents/skills/diagram-design/assets/template-dark.html": {
+      "type": "file",
+      "hash": "98428c8de2c4fe8e799d7110606421effb876e2e788f8639140854c1033d82d5"
+    },
+    ".agents/skills/diagram-design/assets/template-full.html": {
+      "type": "file",
+      "hash": "bfe0aa003eb264f4a2b6f10c540d9d7a53950574ed0f5dba2af3cac61fc2f52a"
+    },
+    ".agents/skills/diagram-design/assets/template-motion.html": {
+      "type": "file",
+      "hash": "0dc228e58e5810fe99d80b0895515bb9a7f129ced1de2960d343f1e9539d5359"
+    },
+    ".agents/skills/diagram-design/assets/template-terminal.html": {
+      "type": "file",
+      "hash": "d449b50f439214cef9025b91f7ad4d8f786c0f329496aa95b5ea864c1586708d"
+    },
+    ".agents/skills/diagram-design/assets/template.html": {
+      "type": "file",
+      "hash": "f6978a9d50dd286f32ab149bcf505261b9fc331df7320071f87509a285dee7f4"
+    },
+    ".agents/skills/diagram-design/references/animation.md": {
+      "type": "file",
+      "hash": "a270359a2c7306c7c80a264277ec5ed32df930599ea51d5812fd2ba140d52a59"
+    },
+    ".agents/skills/diagram-design/references/doctor.md": {
+      "type": "file",
+      "hash": "f0c0ba27b40e2c115509939af4f08ac6456e57d7690c96f7cd7f2b1ef7bdc962"
+    },
+    ".agents/skills/diagram-design/references/export-registry.md": {
+      "type": "file",
+      "hash": "9f5622a5e918877847a5b1ee63e8c91744e11906b79e5640758b0aba1f495b11"
+    },
+    ".agents/skills/diagram-design/references/export.md": {
+      "type": "file",
+      "hash": "2bf0f33623e488e5f3898679983d3bf6de271b5254e884922495c1b5f6535c51"
+    },
+    ".agents/skills/diagram-design/references/import-drawio.md": {
+      "type": "file",
+      "hash": "9889ab45a894d6d66532a05f5493bb9ab21e19f516b472f29a56837910f3d6d5"
+    },
+    ".agents/skills/diagram-design/references/import-excalidraw.md": {
+      "type": "file",
+      "hash": "c4da4ce9fcc201b163f8dbbb4e4b266c43f89959658b006b4c63a75ee0abceb2"
+    },
+    ".agents/skills/diagram-design/references/import-mermaid.md": {
+      "type": "file",
+      "hash": "b1a5d5adbcb6536c6b67d0de8ee5fc81610ce6186fd09d74a3c426f96a2fe423"
+    },
+    ".agents/skills/diagram-design/references/import-plantuml.md": {
+      "type": "file",
+      "hash": "88d71ffc46cd709ddc524c0afa6e6b1b9bfd36fc2d8ee508facf9baf851d0ab7"
+    },
+    ".agents/skills/diagram-design/references/layout-budget.md": {
+      "type": "file",
+      "hash": "e7b0a77026d0a13e25294a9d190af6d51280ff5266d2cf65b895fd07d5689c38"
+    },
+    ".agents/skills/diagram-design/references/onboarding.md": {
+      "type": "file",
+      "hash": "9ce3a9fb6d47287de114b56a9d9d7683295b6280073a8ffe9ca5c19aa017397d"
+    },
+    ".agents/skills/diagram-design/references/output-spec.md": {
+      "type": "file",
+      "hash": "0554311e5c5e026e76889400992a0ec774e242342dae2f74ddb9076e91a75404"
+    },
+    ".agents/skills/diagram-design/references/primitive-annotation.md": {
+      "type": "file",
+      "hash": "1a93e37fd21f5032bbd5628bcca956a5ceb21fa6ae2fc79900ebdef7a3239181"
+    },
+    ".agents/skills/diagram-design/references/primitive-icons.md": {
+      "type": "file",
+      "hash": "b927c3f73452e44c3424c8b8d513390e758b29c3b8b2fed47ae6beebe393b18f"
+    },
+    ".agents/skills/diagram-design/references/primitive-sketchy.md": {
+      "type": "file",
+      "hash": "05e1009a94eee95c99468e8019d0b382eabe923af6044ccf4a840ae667512b8a"
+    },
+    ".agents/skills/diagram-design/references/primitive-terminal.md": {
+      "type": "file",
+      "hash": "aa95b077bb8a4977a5e8c499abc35a6d5be0943427d706e64a911ae47f937f5b"
+    },
+    ".agents/skills/diagram-design/references/primitives-core.md": {
+      "type": "file",
+      "hash": "d1fd562c61198cc05d36ac3e6775550e912598afae5791446621d3a7b8ee5a6d"
+    },
+    ".agents/skills/diagram-design/references/profiles.md": {
+      "type": "file",
+      "hash": "20fa3617e086437c3d1c7efc62800fc982f2784d3805ad785ad23c71af6f27b4"
+    },
+    ".agents/skills/diagram-design/references/semantic-patterns.md": {
+      "type": "file",
+      "hash": "d962bc644c67d3325b55e31ae0433d0daddda02b501a5a665be054599bcb8d74"
+    },
+    ".agents/skills/diagram-design/references/style-guide.md": {
+      "type": "file",
+      "hash": "31472f4b12c5c1a68016db54cd2e749302c1c8e11bf8551641595aa6ecad65be"
+    },
+    ".agents/skills/diagram-design/references/type-architecture-delta.md": {
+      "type": "file",
+      "hash": "8fc9cc4b728944181c6e6ffef1a048ccf6eeb121267c4335333a35d77b6444ac"
+    },
+    ".agents/skills/diagram-design/references/type-architecture.md": {
+      "type": "file",
+      "hash": "3246a11e3a6cc24e0c861e20651654c3ddfc272361e9c07b8dffce99c6108220"
+    },
+    ".agents/skills/diagram-design/references/type-axonometric-plan.md": {
+      "type": "file",
+      "hash": "0e1ef839a8c19079091f50eb7261d27c9266557f9ad55d8be13f18d67515ae3a"
+    },
+    ".agents/skills/diagram-design/references/type-bar.md": {
+      "type": "file",
+      "hash": "7fc1f98ecaa9907373af6c650c17c908b0aef3d2d096cf775c1e5b2491dfea36"
+    },
+    ".agents/skills/diagram-design/references/type-data-flow.md": {
+      "type": "file",
+      "hash": "752fa74dc15ca88c09dff3ee46813a046c17460d496989d70cba7ffa20ce4dc2"
+    },
+    ".agents/skills/diagram-design/references/type-db-schema.md": {
+      "type": "file",
+      "hash": "7bae8d01ceeb4ad058317c132d23117ab31077f04f305e206a8a081cc419ed49"
+    },
+    ".agents/skills/diagram-design/references/type-dependency.md": {
+      "type": "file",
+      "hash": "477b22df7241a00e7a7cc60b001cde5b1e3237f01a7c4f2f676d9dac2495ee40"
+    },
+    ".agents/skills/diagram-design/references/type-deployment.md": {
+      "type": "file",
+      "hash": "9283f197ddd5f6771b1b861f19b387f9e086535c562a49a943ade6d4bda22dc9"
+    },
+    ".agents/skills/diagram-design/references/type-dp-integration.md": {
+      "type": "file",
+      "hash": "a9bcb88d5d5a79b495733b8e786efd0b5a35a0736bbb85bfca0c67a3a9617d35"
+    },
+    ".agents/skills/diagram-design/references/type-dp-security-matrix.md": {
+      "type": "file",
+      "hash": "ff41a44061c64fb1381865e5be1bf72ddbeb49d35bc64930139a8c734debe0d5"
+    },
+    ".agents/skills/diagram-design/references/type-er.md": {
+      "type": "file",
+      "hash": "065274dc39f3190c809d2b20c8e1cd7d7e48618ceaced390d44110a573f836d0"
+    },
+    ".agents/skills/diagram-design/references/type-event-modeling.md": {
+      "type": "file",
+      "hash": "9fdca5013ab4620b3bb96265b37343b3875aeadc81b6e0e1d3daad589c5f258d"
+    },
+    ".agents/skills/diagram-design/references/type-exploded.md": {
+      "type": "file",
+      "hash": "bfee9f6f203a47c0e1a165888f7b257d200b715caca856e5d676676cfd7211bc"
+    },
+    ".agents/skills/diagram-design/references/type-fishbone.md": {
+      "type": "file",
+      "hash": "204b9dc4ae2a8c546ca7aa67cb5c2cb22348a7c3ac9a539fc7258f414fec48d1"
+    },
+    ".agents/skills/diagram-design/references/type-flowchart.md": {
+      "type": "file",
+      "hash": "b0381e2d291b3c07ba2dfdb81da9c90344bf19ddad411963c4a329f802456cd6"
+    },
+    ".agents/skills/diagram-design/references/type-gantt.md": {
+      "type": "file",
+      "hash": "f19de79ce4735ff8f42e3fe4a4f0d0288456e2c96edc1cfd516c67aa37603039"
+    },
+    ".agents/skills/diagram-design/references/type-heatmap.md": {
+      "type": "file",
+      "hash": "ad99f7c74f4582610e4ff375106bbe4693e883e9d2ab13f6169ddf279a7e1d61"
+    },
+    ".agents/skills/diagram-design/references/type-high-level.md": {
+      "type": "file",
+      "hash": "4c4f54e19fdad768182a7bd3a7043cdbfe21f4d01319c5c2b6ab36a4dbc63c84"
+    },
+    ".agents/skills/diagram-design/references/type-it-state.md": {
+      "type": "file",
+      "hash": "0d8aac564e9402a0acd94dbc3469de2f152ee4480030ef68f360290c5dc3f6bf"
+    },
+    ".agents/skills/diagram-design/references/type-journey.md": {
+      "type": "file",
+      "hash": "faf3e0cd88a6f72edc9eddc60a4acd8eba51e6f50c73b26e4eda3fb3610f0292"
+    },
+    ".agents/skills/diagram-design/references/type-kanban.md": {
+      "type": "file",
+      "hash": "e9bbaa52875c09f34eee68f88215c2887897d08718f70bc33e2d1f656e44c42a"
+    },
+    ".agents/skills/diagram-design/references/type-layers.md": {
+      "type": "file",
+      "hash": "d8b3b18f0b2036616f85835b017938266b1b80505f9294bfeb7608fd72f1c3ea"
+    },
+    ".agents/skills/diagram-design/references/type-line.md": {
+      "type": "file",
+      "hash": "f125657cd305f9db18acd6cc356d2623dd092e106393b5aaea5c26ac6de6cf1d"
+    },
+    ".agents/skills/diagram-design/references/type-loop.md": {
+      "type": "file",
+      "hash": "e40d8ba65491526a581fcfb687a8558826c3b5b55b43c725127b549c219e840e"
+    },
+    ".agents/skills/diagram-design/references/type-medallion.md": {
+      "type": "file",
+      "hash": "f94139372a5ac51391e6c40cc43ce87c57a4243d474c7f2cd59ee9c8c0db2418"
+    },
+    ".agents/skills/diagram-design/references/type-nested.md": {
+      "type": "file",
+      "hash": "d6a4feea97cb7318f7db7977eed5385bf65d3da5a83c432283d7f78373099a81"
+    },
+    ".agents/skills/diagram-design/references/type-org-chart.md": {
+      "type": "file",
+      "hash": "a7448c82c53a26ec52c0774f1abaa0a2610489ba7be2eca876153089ca2c547f"
+    },
+    ".agents/skills/diagram-design/references/type-polar.md": {
+      "type": "file",
+      "hash": "a70108d22bd089c2902de3c4f027f8585b80de87100c1eaf98ac80c1958d54ba"
+    },
+    ".agents/skills/diagram-design/references/type-process.md": {
+      "type": "file",
+      "hash": "dedbdc16398289bd060fbafa265365ebb27f41daf704a207442e00ce94258fe2"
+    },
+    ".agents/skills/diagram-design/references/type-pyramid.md": {
+      "type": "file",
+      "hash": "71dd0b0912bd9791bd21412f41aa64d2401f63b494484d6e2207aa752d80b4be"
+    },
+    ".agents/skills/diagram-design/references/type-quadrant.md": {
+      "type": "file",
+      "hash": "db9f4f4ad6086f49b45197b59f3e31db9e470b04d7d279089c579f73af52d1b4"
+    },
+    ".agents/skills/diagram-design/references/type-radar.md": {
+      "type": "file",
+      "hash": "dd4b6b2067c61649c3c903fb16c39c7c34d3843b4c43d927f41c2804bb460df0"
+    },
+    ".agents/skills/diagram-design/references/type-requirement-traceability.md": {
+      "type": "file",
+      "hash": "b6fc5346df12844f612eb2ab419b26df6360d8c03f10fe19bd9b2e3e9531d249"
+    },
+    ".agents/skills/diagram-design/references/type-sankey.md": {
+      "type": "file",
+      "hash": "f71e761842ce0067a0adc43e8b14835b4177db1a2e11bf35bcf617de400190b1"
+    },
+    ".agents/skills/diagram-design/references/type-sbgn.md": {
+      "type": "file",
+      "hash": "92207a93beaddcc9de24ace966e237d5112c53b0719e5356312d889df00b9acb"
+    },
+    ".agents/skills/diagram-design/references/type-scatter.md": {
+      "type": "file",
+      "hash": "c4212718535795cfe7fe61174dd9c4e9665bfc7be342ffd008ce69f6640e25bd"
+    },
+    ".agents/skills/diagram-design/references/type-schedule-network.md": {
+      "type": "file",
+      "hash": "586b7588d01a5fe40764b108a57cfbf787d98e9580e6eaa67005e206fe2a1822"
+    },
+    ".agents/skills/diagram-design/references/type-sequence.md": {
+      "type": "file",
+      "hash": "4e9bb221f591186777da86ab81307efc47ade5e12e2ff64b8d0faa5ac2b08869"
+    },
+    ".agents/skills/diagram-design/references/type-service-blueprint.md": {
+      "type": "file",
+      "hash": "a2acc7512f9b66e703459f4cd21541d461e6a2a00962b5a3d2fb6f50a0423886"
+    },
+    ".agents/skills/diagram-design/references/type-state.md": {
+      "type": "file",
+      "hash": "d7cd680efa79f9abf720832879b6a4a37d96527e58e3a56774f68650dccbdbc3"
+    },
+    ".agents/skills/diagram-design/references/type-steps.md": {
+      "type": "file",
+      "hash": "3cb32876ff38d91203548762f8a2dc724827b5f0a392c87b4d978c5adf5c1fd9"
+    },
+    ".agents/skills/diagram-design/references/type-story-map.md": {
+      "type": "file",
+      "hash": "62560580b492894fdf95a85d3baf9f23e4cc52844bfce6a21fd95021895797b5"
+    },
+    ".agents/skills/diagram-design/references/type-swimlane.md": {
+      "type": "file",
+      "hash": "6f94ef0ab1be53a91a6632af5ea90dfe9d4b5a5a53f915084d2642b5d3cbc8c1"
+    },
+    ".agents/skills/diagram-design/references/type-timeline.md": {
+      "type": "file",
+      "hash": "0d57116beb31a96fdebacc763e4e4eaf9179b9b8d76a8b1a93f40f473ee7a934"
+    },
+    ".agents/skills/diagram-design/references/type-tree.md": {
+      "type": "file",
+      "hash": "4cc3235990dcd748a87aa46bb61962e5b1828aa7b53cd5c5a0f00740349e7f38"
+    },
+    ".agents/skills/diagram-design/references/type-treemap.md": {
+      "type": "file",
+      "hash": "42085c0a52c9bb63014a6563bc2be88f4f49471c34915910f33c330ad81ded4a"
+    },
+    ".agents/skills/diagram-design/references/type-uml-class.md": {
+      "type": "file",
+      "hash": "e3b71c04e2ee1244cbb0b1385d3d97a16b6a2b28e2941ad980bba1698da35476"
+    },
+    ".agents/skills/diagram-design/references/type-unit-grid.md": {
+      "type": "file",
+      "hash": "b618f04dc506b85cf564c7ffd5b4b82034b30c372436bb36e1e67dcc3ccddf26"
+    },
+    ".agents/skills/diagram-design/references/type-venn.md": {
+      "type": "file",
+      "hash": "b52b56e044157bfebcc98d7373d0bc11ed5be54ff69d15993f164ed1489ec0b2"
+    },
+    ".agents/skills/diagram-design/references/type-wardley.md": {
+      "type": "file",
+      "hash": "71138a603014395521bdf506c2c9058ec6a05ba22eddaee5432dea046c2eab4d"
+    },
+    ".agents/skills/diagram-design/references/type-waterfall.md": {
+      "type": "file",
+      "hash": "6d0715b17b8456d5e09088f9c483cdd46819eca6ff206ce9c64221100b3390ad"
+    },
+    ".agents/skills/diagram-design/scripts/drawio_extract.py": {
+      "type": "file",
+      "hash": "328e683a2d536a15a45ea8dfc1887bd62f9f1195910f21384dfed6206ae1f7c7"
+    },
+    ".agents/skills/diagram-design/scripts/excalidraw_extract.py": {
+      "type": "file",
+      "hash": "58f7284b6ee4c1d98d3ec5d7b59221ed273ef2efe76b34ac386de2d194fc087b"
+    },
+    ".agents/skills/diagram-design/scripts/export_png.py": {
+      "type": "file",
+      "hash": "430ddcc2d39441808bd4217fbdeb944dbb6de0be281782705a81747986d7d348"
+    },
+    ".agents/skills/diagram-design/scripts/export_svg.py": {
+      "type": "file",
+      "hash": "b5f45b8a36138874e095e07d22c3eaa2322a53927616c8eec5861ddbe9e89d2e"
+    },
+    ".agents/skills/diagram-design/scripts/mermaid_extract.py": {
+      "type": "file",
+      "hash": "5788098ca6fcbe329b42ff279d2e22e90303ee4850e3489619d746d84b6444ac"
+    },
+    ".agents/skills/diagram-design/scripts/plantuml_extract.py": {
+      "type": "file",
+      "hash": "d4c2fe72ed59b1f046aeea88adad7f2d94da7471e25ce2b616323f00cf61863c"
+    },
+    ".agents/skills/diagram-design/scripts/self_check.py": {
+      "type": "file",
+      "hash": "94055febf79eff9bfef42b4fc2635ad83f35fffeb798985fa8477c0bc8e133c5"
+    },
+    ".agents/skills/diagram-design/scripts/verify_geometry.py": {
+      "type": "file",
+      "hash": "e87c22d2720bfe354b595940d2cf93b555fb5176c823ed3ea46c31a68a10ffd3"
+    },
+    ".claude/skills/ui-ux-pro-max/scripts/preview.py": {
+      "type": "file",
+      "hash": "2900f6b4307439c20083aa6a630332f9e8ac6fd95901bd703f75fa9a75b84fbb"
+    },
+    ".claude/skills/diagram-design/SKILL.md": {
+      "type": "file",
+      "hash": "553a2a3135ef3816a26c9bae0c70e7e1fd797f470c36694133174a521159a7b5"
+    },
+    ".claude/skills/diagram-design/UPSTREAM-LICENSE.txt": {
+      "type": "file",
+      "hash": "bb7e12e91fecef43024111123ff784cec6c485585561d8b552557c0173b3ed29"
+    },
+    ".claude/skills/diagram-design/UPSTREAM-NOTICE.md": {
+      "type": "file",
+      "hash": "7d17d36c99933ccbb5a6c6d2e5a17098d22c6359e1f72f2b50c17c435fec20b4"
+    },
+    ".claude/skills/diagram-design/assets/example-arc-diagram-dark.html": {
+      "type": "file",
+      "hash": "acd6b0c9d174b7d915d1e4e1a98a6019c30b02b8e5264f53f4ef2657dcbde77e"
+    },
+    ".claude/skills/diagram-design/assets/example-arc-diagram-full.html": {
+      "type": "file",
+      "hash": "e785227378c5bde8a09d323ba743cf0f53b8dccb5e029325e99cccaed6a8f669"
+    },
+    ".claude/skills/diagram-design/assets/example-arc-diagram.html": {
+      "type": "file",
+      "hash": "49044919cbfcdbd2b4b6025df2d52e42a553dddbf2fde2523e5185ba8d5cec08"
+    },
+    ".claude/skills/diagram-design/assets/example-architecture-containment-dark.html": {
+      "type": "file",
+      "hash": "853399a330a541d63d5ca05834bb9f1545364fff61546754190899a49e54d28a"
+    },
+    ".claude/skills/diagram-design/assets/example-architecture-containment-full.html": {
+      "type": "file",
+      "hash": "4b96ed9774d236c3b4968a10be0f7b5c8805095b0206d249bd8e53b4e893debe"
+    },
+    ".claude/skills/diagram-design/assets/example-architecture-containment.html": {
+      "type": "file",
+      "hash": "10013c62e6449880627c2271edacfdc094f006a16e365a55f117e844097fe2de"
+    },
+    ".claude/skills/diagram-design/assets/example-architecture-dark.html": {
+      "type": "file",
+      "hash": "b471f857f2d8745705925ee49659d8506de291c3a7b3761a3fb47a0394b9c8df"
+    },
+    ".claude/skills/diagram-design/assets/example-architecture-delta-dark.html": {
+      "type": "file",
+      "hash": "d3f0984c7ff145656bb400ff294e9595d7f5f1209d156edbb5e5676e8ee199b9"
+    },
+    ".claude/skills/diagram-design/assets/example-architecture-delta-full.html": {
+      "type": "file",
+      "hash": "cd23ff4b3dcc2a734a13ab31807ce46c1e26dd82c3a91bac7b161f0d3abaeea0"
+    },
+    ".claude/skills/diagram-design/assets/example-architecture-delta.html": {
+      "type": "file",
+      "hash": "0a88e1e44fcac97be87accccb429c4930380938f59534468090e82c45ceabfc6"
+    },
+    ".claude/skills/diagram-design/assets/example-architecture-full.html": {
+      "type": "file",
+      "hash": "6c3951cbb3cdb94b1825efbfabbf5dda996c20106f00fa1d06511d58792b0248"
+    },
+    ".claude/skills/diagram-design/assets/example-architecture.html": {
+      "type": "file",
+      "hash": "a9e8b59854d31e70288abba522509494f82a319bc684c3694e08e67dfc990bc5"
+    },
+    ".claude/skills/diagram-design/assets/example-axonometric-plan-campus-animated.html": {
+      "type": "file",
+      "hash": "72420915d79afb6daaa6f6215ac08754b4d2dc02b8c844cb5e25b52771002350"
+    },
+    ".claude/skills/diagram-design/assets/example-axonometric-plan-campus-dark.html": {
+      "type": "file",
+      "hash": "7d13e33fcfa93e177179c357c0ad884fbb73d826ba79123420ad513ea174ba7c"
+    },
+    ".claude/skills/diagram-design/assets/example-axonometric-plan-campus-full.html": {
+      "type": "file",
+      "hash": "e1d28913537b8e206af137c8e6fbc212cb47203de3f69baa4fac2cee96beea19"
+    },
+    ".claude/skills/diagram-design/assets/example-axonometric-plan-campus.html": {
+      "type": "file",
+      "hash": "5d03a724dd85ec929dd17643294dbec7a6fd6165ee010fd0fef44dc72bdf1e31"
+    },
+    ".claude/skills/diagram-design/assets/example-axonometric-plan-coffee-shop-animated.html": {
+      "type": "file",
+      "hash": "7c948dc5daf9c9568c6ce1b22fae4c2b0c0c330794785f767655ebaf7da6e70e"
+    },
+    ".claude/skills/diagram-design/assets/example-axonometric-plan-coffee-shop-dark.html": {
+      "type": "file",
+      "hash": "0d5836e9b4ca2f85c4a1fd976ef0b7f89a29a29fb169dcb59b483a4e731bd46b"
+    },
+    ".claude/skills/diagram-design/assets/example-axonometric-plan-coffee-shop-full.html": {
+      "type": "file",
+      "hash": "ba03f90070b4bda66dc8cdbe3ba8334fadfa77e94f8ddde3d3aa3aa6b4d97e5a"
+    },
+    ".claude/skills/diagram-design/assets/example-axonometric-plan-coffee-shop.html": {
+      "type": "file",
+      "hash": "90f8f78c306ea5b96b64c6c5c5e68c85e13fdd9a4f40aecc25dccf1f9b34283e"
+    },
+    ".claude/skills/diagram-design/assets/example-axonometric-plan-dark.html": {
+      "type": "file",
+      "hash": "fa041519f9e71e518069334397886c6e545f9286b28dcdbc254a6aaa96a1034a"
+    },
+    ".claude/skills/diagram-design/assets/example-axonometric-plan-full.html": {
+      "type": "file",
+      "hash": "13a7506ec0f4576a4f10313ba954b9c85a88bda258542c0c2017189f15a06adc"
+    },
+    ".claude/skills/diagram-design/assets/example-axonometric-plan-warehouse-animated.html": {
+      "type": "file",
+      "hash": "e43acc91d852143ea615cd30b4251627a3e1224c95e433565c185bb4045620f6"
+    },
+    ".claude/skills/diagram-design/assets/example-axonometric-plan-warehouse-dark.html": {
+      "type": "file",
+      "hash": "a85d79254ec2e1813a13055efb9951b84ea55a04f43aa6fb6c880aa448924d38"
+    },
+    ".claude/skills/diagram-design/assets/example-axonometric-plan-warehouse-full.html": {
+      "type": "file",
+      "hash": "596cf38433b5c5a3c0a1af348863a61e6c31ecff3c1b46e04d989b10822c37a5"
+    },
+    ".claude/skills/diagram-design/assets/example-axonometric-plan-warehouse.html": {
+      "type": "file",
+      "hash": "aed38ba8afc9c560fe22c7cbba1448e3c8f0efe43853d2c457b32e76d1bfef76"
+    },
+    ".claude/skills/diagram-design/assets/example-axonometric-plan.html": {
+      "type": "file",
+      "hash": "1ffd4767dbb9c0fd49190582a7304d0aac4cd6df7cd7d538eb6e84cd1803f30a"
+    },
+    ".claude/skills/diagram-design/assets/example-bar-dark.html": {
+      "type": "file",
+      "hash": "fb96534eff0910a006dabca940d71aeb1019076abfbe9a020758747c2e2cbb0a"
+    },
+    ".claude/skills/diagram-design/assets/example-bar-full.html": {
+      "type": "file",
+      "hash": "ac8eff087cc5f2f04cffda1cb63b4e95641e9b05ca151a580e4df0016ddd08e1"
+    },
+    ".claude/skills/diagram-design/assets/example-bar.html": {
+      "type": "file",
+      "hash": "b82fea59d393f0754f1543cf1e8d9189542fb93cf458bcd256a0c56fa060461b"
+    },
+    ".claude/skills/diagram-design/assets/example-beeswarm-dark.html": {
+      "type": "file",
+      "hash": "597cf05ad582eb0dbe8040949c6f164096ce84631e6d3ba85d5fbf778d2b1dc7"
+    },
+    ".claude/skills/diagram-design/assets/example-beeswarm-full.html": {
+      "type": "file",
+      "hash": "515edbc59376ad9bc99afc8cf9d55c0fa6a7e68f8eca95a02cf282086857e6cc"
+    },
+    ".claude/skills/diagram-design/assets/example-beeswarm.html": {
+      "type": "file",
+      "hash": "e69a9b7ac33fae509c02a1ef06b39e1a548cd3925644e7cefd3ff2119a88a060"
+    },
+    ".claude/skills/diagram-design/assets/example-box-plot-dark.html": {
+      "type": "file",
+      "hash": "28bc2a9b9df1e715b07c11a57b2ab8d0ee59ed5ebc782dacd74f3401e0cdd39b"
+    },
+    ".claude/skills/diagram-design/assets/example-box-plot-full.html": {
+      "type": "file",
+      "hash": "a9bf7fc36d4db874b0fda6d27140fb6d3b9e51b06b13ca657e8dfb414a5fe617"
+    },
+    ".claude/skills/diagram-design/assets/example-box-plot.html": {
+      "type": "file",
+      "hash": "16449419e0cca7dc153bc23c9c416dcb149ddcdfe4ca45c9535708719aa0b909"
+    },
+    ".claude/skills/diagram-design/assets/example-bubble-dark.html": {
+      "type": "file",
+      "hash": "e5297625f2a81cebcd63250dcd7455f5c84160da501354f530dfcf59baf0ab9e"
+    },
+    ".claude/skills/diagram-design/assets/example-bubble-full.html": {
+      "type": "file",
+      "hash": "6aaf526da9c9eccb82c3f88d502e831268003c01f1de6cdc171b2a8970b03b99"
+    },
+    ".claude/skills/diagram-design/assets/example-bubble.html": {
+      "type": "file",
+      "hash": "48f6b009e1a05d780a66a8f9f3c3c9323da5aa3a6f7f6c50003558b4ba163657"
+    },
+    ".claude/skills/diagram-design/assets/example-bump-dark.html": {
+      "type": "file",
+      "hash": "0e1ed31a2850405f60a00df02942532642bcd1bd5c2d728721e2087045c12840"
+    },
+    ".claude/skills/diagram-design/assets/example-bump-full.html": {
+      "type": "file",
+      "hash": "aa62110a0d9dc11b19477013de1da1e09d37efb58f1b56b4af47fe9e80a7de0f"
+    },
+    ".claude/skills/diagram-design/assets/example-bump.html": {
+      "type": "file",
+      "hash": "cdf62733836ff70f2b04e3a9062609b24f17d3b8be60d110a8182f9bc12a02a7"
+    },
+    ".claude/skills/diagram-design/assets/example-data-flow-dark.html": {
+      "type": "file",
+      "hash": "a3f5f27b4a690a6d806c735bf2db42b1e3d7f235387018200830329379829917"
+    },
+    ".claude/skills/diagram-design/assets/example-data-flow-full.html": {
+      "type": "file",
+      "hash": "606d1f7650ea6db8e84f977beb591616fa32df9bc3085c09072da81885db5133"
+    },
+    ".claude/skills/diagram-design/assets/example-data-flow.html": {
+      "type": "file",
+      "hash": "f65978b77410fff9993fc099f4cf0d25bcaf67ce98fea2e281976e2406783b99"
+    },
+    ".claude/skills/diagram-design/assets/example-datalake-dark.html": {
+      "type": "file",
+      "hash": "7eb08a81b703a1fb87877d33c79c0f31fcbd9a8fbc1dac20646e3f68aff93404"
+    },
+    ".claude/skills/diagram-design/assets/example-datalake-full.html": {
+      "type": "file",
+      "hash": "f978706df71ffcdd6b2408aaeab78360ad68010487b9a849459219cd8cb8f5a3"
+    },
+    ".claude/skills/diagram-design/assets/example-datalake.html": {
+      "type": "file",
+      "hash": "311b9143dc66cb96d7fe1ca3fa6d9cbf17b864976b8168ee3e8e8c497fe264d6"
+    },
+    ".claude/skills/diagram-design/assets/example-db-schema-dark.html": {
+      "type": "file",
+      "hash": "c1f566f092642c8c58969b7609598272ea78eae5beb172f35afe1d1366078c6a"
+    },
+    ".claude/skills/diagram-design/assets/example-db-schema-full.html": {
+      "type": "file",
+      "hash": "897c88e8cde6537409e0b0359495dfa33e658dc40581fdf0039bc65a0433cd25"
+    },
+    ".claude/skills/diagram-design/assets/example-db-schema.html": {
+      "type": "file",
+      "hash": "5b65adae081c31b8f4a9772d8ba4a4066e759625197e2111885ac503cf8c2104"
+    },
+    ".claude/skills/diagram-design/assets/example-dependency-dark.html": {
+      "type": "file",
+      "hash": "2e7f6d263d67bd751ca8d00111dcccd4a6a18d4d4241a709321cd043b630785d"
+    },
+    ".claude/skills/diagram-design/assets/example-dependency-full.html": {
+      "type": "file",
+      "hash": "8498d290f2a74e85e99836ca1146879c6068e476ac8f2a847daa837c4cd1cd7d"
+    },
+    ".claude/skills/diagram-design/assets/example-dependency.html": {
+      "type": "file",
+      "hash": "c75e1d72834ed4bbdd57f7470136d272f13d0cc7c41b02e84ae187553a6e893b"
+    },
+    ".claude/skills/diagram-design/assets/example-deployment-dark.html": {
+      "type": "file",
+      "hash": "2c0c99d16f6d85fac54552bd4fe102ce9e0286fdf8eabd97ab4d90e5a97667e6"
+    },
+    ".claude/skills/diagram-design/assets/example-deployment-full.html": {
+      "type": "file",
+      "hash": "9187eaafb9107e979c2e43bcde77edf63e974fc59cf72a50fef33ea8df460650"
+    },
+    ".claude/skills/diagram-design/assets/example-deployment.html": {
+      "type": "file",
+      "hash": "8e4cee0bc1105dcd040b19d0000f84c69f81bde75d4cb16d2261fab617a7aee5"
+    },
+    ".claude/skills/diagram-design/assets/example-dp-integration-dark.html": {
+      "type": "file",
+      "hash": "d28f525d2c7d0666b61d6e80133d006da942f1dfeefa41b0c8d32faf2120ca64"
+    },
+    ".claude/skills/diagram-design/assets/example-dp-integration-full.html": {
+      "type": "file",
+      "hash": "fa9393528e19170873437c3f661fb7aa3cbaa94fa4001985f9d8faa7479708c6"
+    },
+    ".claude/skills/diagram-design/assets/example-dp-integration.html": {
+      "type": "file",
+      "hash": "d521d09532183ee10d5ebdcea9cbc509a45d90cd85c35973ba40dbe94f338291"
+    },
+    ".claude/skills/diagram-design/assets/example-dp-security-matrix-dark.html": {
+      "type": "file",
+      "hash": "1d93ac4553013cbb5d5fe962517601a0dadf03a8d1bf9ae522f10d7a83e05968"
+    },
+    ".claude/skills/diagram-design/assets/example-dp-security-matrix-full.html": {
+      "type": "file",
+      "hash": "8f34f504368ba9fd13c2bb20b028d2fc27800fbb46c238e73b0aa65101ca4ad0"
+    },
+    ".claude/skills/diagram-design/assets/example-dp-security-matrix.html": {
+      "type": "file",
+      "hash": "9ae674dcec652483ea75a9368f88fd4c61a447b34354b2f2386049c10491e83f"
+    },
+    ".claude/skills/diagram-design/assets/example-er-dark.html": {
+      "type": "file",
+      "hash": "c007c14d88a48a8ea30b1144dd4ac392ee7891a2278262e2a6f6836b43aa7fdf"
+    },
+    ".claude/skills/diagram-design/assets/example-er-full.html": {
+      "type": "file",
+      "hash": "e778b7e790c3fd3f9219807aef3115bda4d7b1efb9998df413bcd224f77ed163"
+    },
+    ".claude/skills/diagram-design/assets/example-er.html": {
+      "type": "file",
+      "hash": "dcbca24c5eeeb84711510a60fae190754503f9b57d9551936b086f3fb589f617"
+    },
+    ".claude/skills/diagram-design/assets/example-event-modeling-dark.html": {
+      "type": "file",
+      "hash": "367030eae9b906d2553b2e54cf83ce676b48d14dc219d29f51fd1cd6526810de"
+    },
+    ".claude/skills/diagram-design/assets/example-event-modeling-full.html": {
+      "type": "file",
+      "hash": "d36023c30ecc3a7c1af61ead4fcb6fb2ddafb1793731bd71d1ee55eb3941a6f0"
+    },
+    ".claude/skills/diagram-design/assets/example-event-modeling.html": {
+      "type": "file",
+      "hash": "142b4e758159448e05d31a3b3c55e0da12662920bd22bc9bd21c01cd85abeb74"
+    },
+    ".claude/skills/diagram-design/assets/example-exploded-ai-stack-animated.html": {
+      "type": "file",
+      "hash": "f8448f23ac359dc698cf19a1288080f1f804fb8f157fbc830aa7d50fc1c930a0"
+    },
+    ".claude/skills/diagram-design/assets/example-exploded-ai-stack-dark.html": {
+      "type": "file",
+      "hash": "2c249164a0959ad426b7d6e071c5c66fc05037e6a425601ea1b90025b81f29b0"
+    },
+    ".claude/skills/diagram-design/assets/example-exploded-ai-stack-full.html": {
+      "type": "file",
+      "hash": "0f1ba200c4f6391fde4e1b350889ec50d63c4c1ead0fee680b1bcf4b4e9cce6f"
+    },
+    ".claude/skills/diagram-design/assets/example-exploded-ai-stack.html": {
+      "type": "file",
+      "hash": "d2ac4530f8e3fb8eb9b4f344704ab9c36c3e983e6e5f8725250df1aa06b0ef2b"
+    },
+    ".claude/skills/diagram-design/assets/example-exploded-dark.html": {
+      "type": "file",
+      "hash": "408cdc4779bf0db7456cdda4651cd1678adbb129c5c06ba6bf0d6632b544770c"
+    },
+    ".claude/skills/diagram-design/assets/example-exploded-full.html": {
+      "type": "file",
+      "hash": "3f1ab91f536a6dd3547a61e2150b31a49bf9ba154ecc6f3bb813fd3d9269f16c"
+    },
+    ".claude/skills/diagram-design/assets/example-exploded-keyboard-animated.html": {
+      "type": "file",
+      "hash": "7fac285e6daf22592a35cf1dedd6c54673923815b6c1f2ab20477464978e7566"
+    },
+    ".claude/skills/diagram-design/assets/example-exploded-keyboard-dark.html": {
+      "type": "file",
+      "hash": "95ab0d91853a75c45e8b66de73373ae55bcd71fb722fda15ad586b6b0c04b0b4"
+    },
+    ".claude/skills/diagram-design/assets/example-exploded-keyboard-full.html": {
+      "type": "file",
+      "hash": "8b1fb4cee1d8a80f710296cdf25e3985ae4041a3b6a3084b35e8e695de3527ca"
+    },
+    ".claude/skills/diagram-design/assets/example-exploded-keyboard.html": {
+      "type": "file",
+      "hash": "858d60f2af6025301751a296125aca03cd7ea253d3efa8fef0e74df953992dc8"
+    },
+    ".claude/skills/diagram-design/assets/example-exploded-phone-animated.html": {
+      "type": "file",
+      "hash": "de0bb80121f68b34449a08f028da0d1b5007aae88848ae79c8db7419a8d77067"
+    },
+    ".claude/skills/diagram-design/assets/example-exploded-phone-dark.html": {
+      "type": "file",
+      "hash": "7dc2c3785b4456b54229f8c5fe56a22253614fc464ba7550e7f73c0619c21731"
+    },
+    ".claude/skills/diagram-design/assets/example-exploded-phone-full.html": {
+      "type": "file",
+      "hash": "87c750c84a4e8811e09eef44cb9fba5567ff7fbc559718683b92922b954f6c4f"
+    },
+    ".claude/skills/diagram-design/assets/example-exploded-phone.html": {
+      "type": "file",
+      "hash": "3866a52045df1b95333b09347b010871a73422f785bd7aad5de14fcf1f2189ef"
+    },
+    ".claude/skills/diagram-design/assets/example-exploded-unboxing-animated.html": {
+      "type": "file",
+      "hash": "b0b081c3435ec728c776638757f69b8bbe286d40eadcafb0c1816d65b315eb00"
+    },
+    ".claude/skills/diagram-design/assets/example-exploded-unboxing-dark.html": {
+      "type": "file",
+      "hash": "3bbe1e9be1c611e49796bdfe47bf69c714ec5e0ff5a13921cce548cfafe94f0b"
+    },
+    ".claude/skills/diagram-design/assets/example-exploded-unboxing-full.html": {
+      "type": "file",
+      "hash": "601554b9fc46d378031b89f78454a595821a0a693d4eeb916c088d2ec157c628"
+    },
+    ".claude/skills/diagram-design/assets/example-exploded-unboxing.html": {
+      "type": "file",
+      "hash": "9cbec60cb42ca24315f5e3392485699d24a3d22cd0879e128eae5d3988b4333f"
+    },
+    ".claude/skills/diagram-design/assets/example-exploded.html": {
+      "type": "file",
+      "hash": "07eb320afdaa31516c221a80a9ae6a8e72be62185a8b790841237db823ef638a"
+    },
+    ".claude/skills/diagram-design/assets/example-fishbone-dark.html": {
+      "type": "file",
+      "hash": "f884b81b83f7ce40cf85b8aa6c3a55db99b7fb2d38502deff222aaff36d7db47"
+    },
+    ".claude/skills/diagram-design/assets/example-fishbone-full.html": {
+      "type": "file",
+      "hash": "cb55d2df262eec426d61503758aaef8c1f31322e71ac8fec5a2912655bfc337c"
+    },
+    ".claude/skills/diagram-design/assets/example-fishbone.html": {
+      "type": "file",
+      "hash": "d0925f006f7ae339b7e3467886dc069e73def905e1316a5de00b2baeb61a63b2"
+    },
+    ".claude/skills/diagram-design/assets/example-flowchart-dark.html": {
+      "type": "file",
+      "hash": "9b69415f880744d1c3dff23cf1dfa6bfbcc3bf38178456ce6668a74b783647ef"
+    },
+    ".claude/skills/diagram-design/assets/example-flowchart-full.html": {
+      "type": "file",
+      "hash": "68bdada8201f46df8c76aa27be10194bc8d870a683696d400435817a19f0b696"
+    },
+    ".claude/skills/diagram-design/assets/example-flowchart.html": {
+      "type": "file",
+      "hash": "f9c92596d77b010417b78f710ae96cf161395831ad8e51153caa41fa4a31446c"
+    },
+    ".claude/skills/diagram-design/assets/example-gantt-dark.html": {
+      "type": "file",
+      "hash": "777c051f19001dbfdf9ced01d836622bda2ee5ad9d2d753012cd6f23fdde70d4"
+    },
+    ".claude/skills/diagram-design/assets/example-gantt-full.html": {
+      "type": "file",
+      "hash": "171c7bed870d24976124e3f56aa884bd107d46380dd212bb0300fd92badd91b2"
+    },
+    ".claude/skills/diagram-design/assets/example-gantt.html": {
+      "type": "file",
+      "hash": "4e017a543771aec9338e15df3be5f9278fa4883e306373c4ea0555b65c7c43a4"
+    },
+    ".claude/skills/diagram-design/assets/example-heatmap-dark.html": {
+      "type": "file",
+      "hash": "6ec2953db65dbabcdbd5abe3d43f7e001524317ddd3e1230398f9de927e547c0"
+    },
+    ".claude/skills/diagram-design/assets/example-heatmap-full.html": {
+      "type": "file",
+      "hash": "f3b92bf979a5504fd2c5bc4c107830ec50b43cc6685f662976a28739c9691f2d"
+    },
+    ".claude/skills/diagram-design/assets/example-heatmap.html": {
+      "type": "file",
+      "hash": "18ee707bd2235b0530250218a4aa98574db42abcbfa02dae92c70b48cb0261da"
+    },
+    ".claude/skills/diagram-design/assets/example-high-level-dark.html": {
+      "type": "file",
+      "hash": "d47d9056f2972d8ae68ddaabefdaf65c644cfafa2e19123e9ee0a675d19a0438"
+    },
+    ".claude/skills/diagram-design/assets/example-high-level-full.html": {
+      "type": "file",
+      "hash": "359dc10e77c8de97550dbfab993c4ce4d683bd089a44302e20c1dcd4ad27501e"
+    },
+    ".claude/skills/diagram-design/assets/example-high-level-vertical-dark.html": {
+      "type": "file",
+      "hash": "aabf08d05808d96ef6c5b16395830234022ce1f48abf8c56b2719acdde9a8aa2"
+    },
+    ".claude/skills/diagram-design/assets/example-high-level-vertical-full.html": {
+      "type": "file",
+      "hash": "70a7fd733caba9e8c1bd05ea96b10bb22cb15594f24435058acfd4735f6fa3ae"
+    },
+    ".claude/skills/diagram-design/assets/example-high-level-vertical.html": {
+      "type": "file",
+      "hash": "371385a4fd00a7d9f3896ac44417352bd7276e86488c3f4eaa72bd6df2902ae7"
+    },
+    ".claude/skills/diagram-design/assets/example-high-level.html": {
+      "type": "file",
+      "hash": "7fc2cd00413de7a5221dde192403f87a8bef883984f8331f64c56f3bc387fa5e"
+    },
+    ".claude/skills/diagram-design/assets/example-import-drawio.html": {
+      "type": "file",
+      "hash": "4404af257bf1216ef9959f3340cd82f2117d29d548b571e94ccf7931d4dd6bcd"
+    },
+    ".claude/skills/diagram-design/assets/example-import-excalidraw.html": {
+      "type": "file",
+      "hash": "8a09e53ae6b0efbb9360784917117e784f90da53a4cc1de2a838e3ccef57d712"
+    },
+    ".claude/skills/diagram-design/assets/example-import-mermaid.html": {
+      "type": "file",
+      "hash": "ed6109da74fe8fa2f5d6385ef1dda20e1b2d95c3e3d2d274499362de1aa20db9"
+    },
+    ".claude/skills/diagram-design/assets/example-import-plantuml.html": {
+      "type": "file",
+      "hash": "95cc95bca1bbfc327e442783c71427fabe02383a0d0793bd91fd7b2e5c474106"
+    },
+    ".claude/skills/diagram-design/assets/example-it-state-dark.html": {
+      "type": "file",
+      "hash": "3b571ce2bc0810586d8c125936fa1d90a898bad74b1079a6d8c6699024ae4c15"
+    },
+    ".claude/skills/diagram-design/assets/example-it-state-full.html": {
+      "type": "file",
+      "hash": "ca864942c8d70da13e2ee19a35661c45be8c42ae79317eb08da2b1f5689a51ba"
+    },
+    ".claude/skills/diagram-design/assets/example-it-state.html": {
+      "type": "file",
+      "hash": "9a91ec8959b77734745ddfa19f3dbf2992a3bf1134cb7352b9778ab3253e8d5b"
+    },
+    ".claude/skills/diagram-design/assets/example-journey-dark.html": {
+      "type": "file",
+      "hash": "c1866ca355d8859d27f6e99d9e2415daf204c313ed4463ae9663ba9e930a9949"
+    },
+    ".claude/skills/diagram-design/assets/example-journey-full.html": {
+      "type": "file",
+      "hash": "e739a7a1dbdd24bd3d9faae798ca02ed7d25b6e6944db1f43307287d541b348d"
+    },
+    ".claude/skills/diagram-design/assets/example-journey.html": {
+      "type": "file",
+      "hash": "3703a5f553e1daabbf17d9785626ab63508bde326967bbce1390c1a72a0f2b37"
+    },
+    ".claude/skills/diagram-design/assets/example-kanban-dark.html": {
+      "type": "file",
+      "hash": "30809cae8600a1852131362df275d9ab1c6aeedc65d3855caed264d48e19f5dc"
+    },
+    ".claude/skills/diagram-design/assets/example-kanban-full.html": {
+      "type": "file",
+      "hash": "e557f78ae75b4f088f148ff7e3006d8c4aa0f8dfc0824e237ba656eb566021f8"
+    },
+    ".claude/skills/diagram-design/assets/example-kanban.html": {
+      "type": "file",
+      "hash": "9171e229f6ca68c228a8ab3f47bd4a4b69f2ea77c2738282713a5f6271b32e1e"
+    },
+    ".claude/skills/diagram-design/assets/example-layers-dark.html": {
+      "type": "file",
+      "hash": "412df7b0710cf14cd95c1e806e708241bda6b3bc8e1f142107adf857ed6aa7d1"
+    },
+    ".claude/skills/diagram-design/assets/example-layers-full.html": {
+      "type": "file",
+      "hash": "6d9a2dc1eaa4f2d7309d93b8dedb9e379bb9debe42787030ee474725d26e68d8"
+    },
+    ".claude/skills/diagram-design/assets/example-layers.html": {
+      "type": "file",
+      "hash": "e4edabd125d9d9de3e27d2a530b7e791042910e97ec71c3d8e23912eafda5082"
+    },
+    ".claude/skills/diagram-design/assets/example-line-dark.html": {
+      "type": "file",
+      "hash": "552abdcac08788dac5ee7fa419ab854c5e09451b69822eb48935712880382a9d"
+    },
+    ".claude/skills/diagram-design/assets/example-line-full.html": {
+      "type": "file",
+      "hash": "d121a15bc242986e2ce490ea34623ceba4eca96d6e16a531ab985fbc60dfd079"
+    },
+    ".claude/skills/diagram-design/assets/example-line.html": {
+      "type": "file",
+      "hash": "8d53adb388306a8593a72c4eea063b8a95a0ba79d2134f51313a645c2554e227"
+    },
+    ".claude/skills/diagram-design/assets/example-loop-dark.html": {
+      "type": "file",
+      "hash": "8ef6feecb47dc6043e1a7714fd0a795e357d484d38df35b594be85105029eb01"
+    },
+    ".claude/skills/diagram-design/assets/example-loop-full.html": {
+      "type": "file",
+      "hash": "975a0d3e2954b928473fdc4e6e1720c84ebf23a84cc295434ea2ec74894d4cc5"
+    },
+    ".claude/skills/diagram-design/assets/example-loop-terminal.html": {
+      "type": "file",
+      "hash": "93a2f86cca043537bf472973c6c1d51de54d85208ec54cd448c40e3f09aa73e8"
+    },
+    ".claude/skills/diagram-design/assets/example-loop.html": {
+      "type": "file",
+      "hash": "7346157c67b6994b274772d0ffeb6c5ae2e935991246bd541e4aab84e31f3a8d"
+    },
+    ".claude/skills/diagram-design/assets/example-marimekko-dark.html": {
+      "type": "file",
+      "hash": "91371c8c9915cd5a9fa5d04ddd425d2a17df8b495e2c1a195de8e73130bb3f44"
+    },
+    ".claude/skills/diagram-design/assets/example-marimekko-full.html": {
+      "type": "file",
+      "hash": "e809f059a9df5634a62bcf0444311bb391b2168b45f4c4d4842a2692f1ff48b5"
+    },
+    ".claude/skills/diagram-design/assets/example-marimekko.html": {
+      "type": "file",
+      "hash": "2b1407bcdc69114d3c74ac4a7e257d5081212b87c2aff05913044fc622c46b4a"
+    },
+    ".claude/skills/diagram-design/assets/example-medallion-dark.html": {
+      "type": "file",
+      "hash": "de936de0ee480c4fe9d789f576e1f9bbbc69613c903b73435879f5cbf02cb23e"
+    },
+    ".claude/skills/diagram-design/assets/example-medallion-full.html": {
+      "type": "file",
+      "hash": "8d75d30cb7ae0d3a5479a929d0b288b8ec8cc9072e1ed167d68e97c64321b376"
+    },
+    ".claude/skills/diagram-design/assets/example-medallion.html": {
+      "type": "file",
+      "hash": "ccd63d89878af1f9d1bcc83e126ea11254f4bbfedb3d87a21e7242793cb2c526"
+    },
+    ".claude/skills/diagram-design/assets/example-nested-dark.html": {
+      "type": "file",
+      "hash": "8c9862a5a41d2fc5485b51cb9aab318595ceadd2f799ccab7b57e3183906c4c5"
+    },
+    ".claude/skills/diagram-design/assets/example-nested-full.html": {
+      "type": "file",
+      "hash": "2b87e484fee759346562080dc7639549176af7998389cb0a8be7303649246494"
+    },
+    ".claude/skills/diagram-design/assets/example-nested.html": {
+      "type": "file",
+      "hash": "fd4001be8af64a8aeae2c9b46e6f476030fcd8791ea3f9b508a503fc5bc70ffb"
+    },
+    ".claude/skills/diagram-design/assets/example-org-chart-dark.html": {
+      "type": "file",
+      "hash": "2cb9f912a9ab635fe72924425a23aabb3ddfcbc704e6fdbc12cd0399b2d1de5f"
+    },
+    ".claude/skills/diagram-design/assets/example-org-chart-full.html": {
+      "type": "file",
+      "hash": "f74b14ed6e30a7cf8bcdc8e78dd97c7549d6c73187dea81a13c06edb6e6b1d78"
+    },
+    ".claude/skills/diagram-design/assets/example-org-chart.html": {
+      "type": "file",
+      "hash": "82356766f5d5af0c10fa60a728c784674138c45416933c15f58d5553a7f4b9b4"
+    },
+    ".claude/skills/diagram-design/assets/example-paved-road-animated.html": {
+      "type": "file",
+      "hash": "a17f220a610f0616a1d416bde05cb8591182293ac6cd25e3746eaaf08663fc19"
+    },
+    ".claude/skills/diagram-design/assets/example-polar-dark.html": {
+      "type": "file",
+      "hash": "7c284696cfed61e832dd4dde814840901967cca64bd54a4cddfff7cbeaddb04e"
+    },
+    ".claude/skills/diagram-design/assets/example-polar-full.html": {
+      "type": "file",
+      "hash": "be8080fa08a05dd27191d3a26585d1246153f9fbdcd5122533833ae57eb016b0"
+    },
+    ".claude/skills/diagram-design/assets/example-polar.html": {
+      "type": "file",
+      "hash": "3bbfe08f63c9be96cecfdb7432b8236d2f0788bf6008e69254cbbef18cd3fc39"
+    },
+    ".claude/skills/diagram-design/assets/example-policy-trace-animated.html": {
+      "type": "file",
+      "hash": "1303da75c366e6013dadbc4be0126ab9db34ed0c7a2fdae507c9bd449e871307"
+    },
+    ".claude/skills/diagram-design/assets/example-process-dark.html": {
+      "type": "file",
+      "hash": "eb0a12c31ab57cce1f300e03c40aedb6d1a2d035320901688b12f32a3805475d"
+    },
+    ".claude/skills/diagram-design/assets/example-process-full.html": {
+      "type": "file",
+      "hash": "801c93a1cde612566800cf6a07dd77ce5c030d4d065153946bdb84d2d88b8bf8"
+    },
+    ".claude/skills/diagram-design/assets/example-process.html": {
+      "type": "file",
+      "hash": "7c336a00d6a63fbebd2f9055af8df1b421f25a209900aa70c4028cd747982fb5"
+    },
+    ".claude/skills/diagram-design/assets/example-pyramid-dark.html": {
+      "type": "file",
+      "hash": "831bc6531d0b3b0eba1b348722a0b3e4d5548f287f5380ddb7e26d3f5edcb80c"
+    },
+    ".claude/skills/diagram-design/assets/example-pyramid-full.html": {
+      "type": "file",
+      "hash": "ca4c4c9a61072c25ec6e3446c8247f201b89d781d3d2000783fb7a4d50680e1f"
+    },
+    ".claude/skills/diagram-design/assets/example-pyramid.html": {
+      "type": "file",
+      "hash": "a49c1dd8f932ea82253c7fbbec54365cb722ae65fba975a15c2aa392c27c5fbf"
+    },
+    ".claude/skills/diagram-design/assets/example-quadrant-consultant.html": {
+      "type": "file",
+      "hash": "0eff4b878e56a0ca3104457128254b1c5b329dc7ed6f891c10807063ccdfb983"
+    },
+    ".claude/skills/diagram-design/assets/example-quadrant-dark.html": {
+      "type": "file",
+      "hash": "ac1edf5d9c1251a51a93eb82db17fc1820811f1934ec59c1272ea7f89c501465"
+    },
+    ".claude/skills/diagram-design/assets/example-quadrant-full.html": {
+      "type": "file",
+      "hash": "b4182d3f570e7379b0124667a3268b41f704541d6c6b2e44a4bede954b851457"
+    },
+    ".claude/skills/diagram-design/assets/example-quadrant.html": {
+      "type": "file",
+      "hash": "95f6100d6059a773bcce44d42a9eedba925226c65cacf6613b8488330ae09934"
+    },
+    ".claude/skills/diagram-design/assets/example-queue-animated.html": {
+      "type": "file",
+      "hash": "826566166454ba86fafd1731f6e591bbdbae0cb6bb49f5968222c49660d5535f"
+    },
+    ".claude/skills/diagram-design/assets/example-radar-dark.html": {
+      "type": "file",
+      "hash": "e24eabbc722e67b83ac498407247e1c09d162ff19e047944a323d44594a68258"
+    },
+    ".claude/skills/diagram-design/assets/example-radar-full.html": {
+      "type": "file",
+      "hash": "5a95adc1d24f5f02b0e5f2c27d901b8c221f50d5586da0e387cc58ecbf34976b"
+    },
+    ".claude/skills/diagram-design/assets/example-radar.html": {
+      "type": "file",
+      "hash": "9572164b5aa0d8d1e0e713e8ffb7ef750d0b04e06d3eb842829fa4bdaaaff2c1"
+    },
+    ".claude/skills/diagram-design/assets/example-requirement-traceability-dark.html": {
+      "type": "file",
+      "hash": "57d580a3afc4d55b417c75ec74bb515823f7fe852151f757c6e4d870a83c742d"
+    },
+    ".claude/skills/diagram-design/assets/example-requirement-traceability-full.html": {
+      "type": "file",
+      "hash": "add40cda3a230d2f46a0f8e0b84a993505dd1221a0fe198cf996e8558205016d"
+    },
+    ".claude/skills/diagram-design/assets/example-requirement-traceability.html": {
+      "type": "file",
+      "hash": "2714f14ef1b15264a566997ae523b46ca0c13a4f2cc145817f43eb78ae56de39"
+    },
+    ".claude/skills/diagram-design/assets/example-ridgeline-dark.html": {
+      "type": "file",
+      "hash": "b430c4ec58ab69c044cba2eb39e20adbc8769cbd85fb5f41d8c3f75136d62f90"
+    },
+    ".claude/skills/diagram-design/assets/example-ridgeline-full.html": {
+      "type": "file",
+      "hash": "33fd98b39d5316ca4b65a65c8cd331c55d032ae5d7de3c94feb5e506168718b9"
+    },
+    ".claude/skills/diagram-design/assets/example-ridgeline.html": {
+      "type": "file",
+      "hash": "8c6a17edea0742642bfa991ba353c414d2e7608fff09c073d52c3f9de2d71337"
+    },
+    ".claude/skills/diagram-design/assets/example-sankey-dark.html": {
+      "type": "file",
+      "hash": "4c2a4ff17cfba1412aee8b6569e76c1d314d9ce64d6038c99e89505225b9baf1"
+    },
+    ".claude/skills/diagram-design/assets/example-sankey-full.html": {
+      "type": "file",
+      "hash": "33f52288399db22c20374ecbfd26ec597b77f3512c03115cea240ece21485bb9"
+    },
+    ".claude/skills/diagram-design/assets/example-sankey.html": {
+      "type": "file",
+      "hash": "5997eca7d06b41cc779abed904ef1b782a5d9be160f9dffcb0fef067142b904f"
+    },
+    ".claude/skills/diagram-design/assets/example-sbgn-dark.html": {
+      "type": "file",
+      "hash": "66a7bd8d24698ac6be39b5446ccfcf85b30febaa1624e4f2d494428be377de10"
+    },
+    ".claude/skills/diagram-design/assets/example-sbgn-full.html": {
+      "type": "file",
+      "hash": "9d9abbea9421019070d088212cc05760b69b739213315b97f4dece24732ef410"
+    },
+    ".claude/skills/diagram-design/assets/example-sbgn.html": {
+      "type": "file",
+      "hash": "58fb8b36be1a47d0bcf9a0eaefd4e9eabb3988f69024a184ec740726bc483253"
+    },
+    ".claude/skills/diagram-design/assets/example-scatter-dark.html": {
+      "type": "file",
+      "hash": "347bea032f65f2698f1ce0fe2a5fc01b02dfa03e4fadd84c7a4260369d95fb80"
+    },
+    ".claude/skills/diagram-design/assets/example-scatter-full.html": {
+      "type": "file",
+      "hash": "af03bf90e91b1a4449ee5b776f08df07a40dec1c1fa27457dc75540c8fa4e379"
+    },
+    ".claude/skills/diagram-design/assets/example-scatter.html": {
+      "type": "file",
+      "hash": "baa3fe5115e6a0448fd90629c20729b78eb735d5d95b74501f8d3d0fd8183980"
+    },
+    ".claude/skills/diagram-design/assets/example-schedule-network-dark.html": {
+      "type": "file",
+      "hash": "af2895af046fb61946facf400f83985c9238f998fbfb8beed6b71a3fda4d4f2e"
+    },
+    ".claude/skills/diagram-design/assets/example-schedule-network-full.html": {
+      "type": "file",
+      "hash": "2ef5c8e630d839c40323772f0299acc01e70d1a3086c2d29522d4b0bd2981a1e"
+    },
+    ".claude/skills/diagram-design/assets/example-schedule-network.html": {
+      "type": "file",
+      "hash": "b5694bbc7a480455d4059c7e839127d2fc3f08d7dd0ffdee225c443b4d5fe7dd"
+    },
+    ".claude/skills/diagram-design/assets/example-sequence-dark.html": {
+      "type": "file",
+      "hash": "f2c0fc2e127bce07c78ff09e6b8540f4993d1d85deafbca73af4834b8944e89b"
+    },
+    ".claude/skills/diagram-design/assets/example-sequence-full.html": {
+      "type": "file",
+      "hash": "8e891b0498e318431dbf0a87c7e5a15d4ab51ff513cfea1fc7a71a68642143c9"
+    },
+    ".claude/skills/diagram-design/assets/example-sequence-oauth-dark.html": {
+      "type": "file",
+      "hash": "5d4755a698aa868126b51049445d3468a7b40401e902a80319a62a31a7969e64"
+    },
+    ".claude/skills/diagram-design/assets/example-sequence-oauth-full.html": {
+      "type": "file",
+      "hash": "f067c6bce636a823ac0aaa66c035bb31d75f793f77fb36729110fd9287213fe9"
+    },
+    ".claude/skills/diagram-design/assets/example-sequence-oauth.html": {
+      "type": "file",
+      "hash": "40b38df11cb54fe055c223a44ddaa7363a2ec0c030dc995e7951a1fb8df42083"
+    },
+    ".claude/skills/diagram-design/assets/example-sequence.html": {
+      "type": "file",
+      "hash": "aac9bfcad5a001206567a577e9816e3d0904bb3e1afc9d8505fb576b93292db8"
+    },
+    ".claude/skills/diagram-design/assets/example-service-blueprint-dark.html": {
+      "type": "file",
+      "hash": "b09196833e457a760a435bbee90d21d09525b42ea467e0c0484b8573eb67f6bb"
+    },
+    ".claude/skills/diagram-design/assets/example-service-blueprint-full.html": {
+      "type": "file",
+      "hash": "23a36032d1f4ed031c1bd353a03504e4a53b29a766f2020f9619949f3fd67f53"
+    },
+    ".claude/skills/diagram-design/assets/example-service-blueprint.html": {
+      "type": "file",
+      "hash": "e7c29fa4e09c5a7cff1ec75ee2310e3f1d623f4df80854dc2d72a2dd87c31c87"
+    },
+    ".claude/skills/diagram-design/assets/example-slopegraph-dark.html": {
+      "type": "file",
+      "hash": "36cdffff3d70fa34b091dd0e7814a8892cc6c3436525c666402d790cbbdc5ecc"
+    },
+    ".claude/skills/diagram-design/assets/example-slopegraph-full.html": {
+      "type": "file",
+      "hash": "1815f1854f486c5163780f2d8f9cf9c0b96a7e42594099dfb31bd14c453a1f55"
+    },
+    ".claude/skills/diagram-design/assets/example-slopegraph.html": {
+      "type": "file",
+      "hash": "c20f22a1ba7ae6388d3fae506927242173475f6447da655a96f06f92adfd706e"
+    },
+    ".claude/skills/diagram-design/assets/example-state-dark.html": {
+      "type": "file",
+      "hash": "d5a29f22ee80fef6fe6f857e767fb0bf4afca8bc8f8cbb478f33286d76f88706"
+    },
+    ".claude/skills/diagram-design/assets/example-state-full.html": {
+      "type": "file",
+      "hash": "683febd8bf1c1658f52f44829d2e72e73453484b54d36409737961718fa2a83c"
+    },
+    ".claude/skills/diagram-design/assets/example-state-lifecycle-dark.html": {
+      "type": "file",
+      "hash": "caf933ffcfffd7cc46e4354d5d3dd4d2c0ea8fc5c56e5fefb9b0ec63dc3358d9"
+    },
+    ".claude/skills/diagram-design/assets/example-state-lifecycle-full.html": {
+      "type": "file",
+      "hash": "6b354ce8290c458d3fdce5d30f8f759c8879c9ca490c115156ff6e746c4d3cc2"
+    },
+    ".claude/skills/diagram-design/assets/example-state-lifecycle.html": {
+      "type": "file",
+      "hash": "0c8406d87facec01143bc4356d896a3ffdc7c429ae481e7ee9fbcd06bfae674c"
+    },
+    ".claude/skills/diagram-design/assets/example-state.html": {
+      "type": "file",
+      "hash": "33a210ded8261c3117222a7d897a17ccddae89267c4779f19eeaf868a5545a15"
+    },
+    ".claude/skills/diagram-design/assets/example-steps-dark.html": {
+      "type": "file",
+      "hash": "8b843dc4b13dab50ee21655c3fda409a391e8b2c4e57a9e1e677a1388d2c6bcc"
+    },
+    ".claude/skills/diagram-design/assets/example-steps-full.html": {
+      "type": "file",
+      "hash": "7b61dc17af1da242c6ddbb3957b592975a400482b359cb7649355ac82f77cda5"
+    },
+    ".claude/skills/diagram-design/assets/example-steps.html": {
+      "type": "file",
+      "hash": "86c1a6acba504c9d04237c5a66d94dce01ef64ec4f89edca16a5fa8a74f6f14d"
+    },
+    ".claude/skills/diagram-design/assets/example-story-map-dark.html": {
+      "type": "file",
+      "hash": "0c288216307ff36b43b513445e0e63fa83ed5902695ead17fdd507a470acc6b7"
+    },
+    ".claude/skills/diagram-design/assets/example-story-map-full.html": {
+      "type": "file",
+      "hash": "fd3a8394c161f8db01c51eb8c3e89b3e0e6fbc85da45c221820dc4ff18036362"
+    },
+    ".claude/skills/diagram-design/assets/example-story-map.html": {
+      "type": "file",
+      "hash": "2e8765e83ee8fb3c62bd31105d3a73b9f11400035036466d14ec59874e194dde"
+    },
+    ".claude/skills/diagram-design/assets/example-streamgraph-dark.html": {
+      "type": "file",
+      "hash": "986d4485111c165a18f0eb86055aa326f932c618d26c32f90d6b9457f9189515"
+    },
+    ".claude/skills/diagram-design/assets/example-streamgraph-full.html": {
+      "type": "file",
+      "hash": "dbc513480b04e07056c6ca0532017ea56b107c278eb70360868fa484b762aedc"
+    },
+    ".claude/skills/diagram-design/assets/example-streamgraph.html": {
+      "type": "file",
+      "hash": "92f45dca6ce38436d1a790424ec1212b4b5eed74a1a309f85fa037c68facbff5"
+    },
+    ".claude/skills/diagram-design/assets/example-swimlane-dark.html": {
+      "type": "file",
+      "hash": "d7038fab163c5fc5f56b58502a0d1e07d2961d08a6f6cd10a729864d670186de"
+    },
+    ".claude/skills/diagram-design/assets/example-swimlane-full.html": {
+      "type": "file",
+      "hash": "dc7bf931bb2ee07072f0fe1e151b0b39a79e0da0317836f897c46b5d2a88953d"
+    },
+    ".claude/skills/diagram-design/assets/example-swimlane.html": {
+      "type": "file",
+      "hash": "c044be167127091b9bc442fdfe7d1dea439a7de23ea2c9819fb8382e511bb6e9"
+    },
+    ".claude/skills/diagram-design/assets/example-timeline-dark.html": {
+      "type": "file",
+      "hash": "fb9a45991b281e7937e8288abbfeb6eb12e0140ee5dcac17821721d5129fb647"
+    },
+    ".claude/skills/diagram-design/assets/example-timeline-full.html": {
+      "type": "file",
+      "hash": "03b38d6dc44286113cf6680ece546affa53ff13092118fb8b4a68b671f55069f"
+    },
+    ".claude/skills/diagram-design/assets/example-timeline.html": {
+      "type": "file",
+      "hash": "d853c86bfd40491d5b747a07ca10b9d55d3349701ca01f508d83ba972b805788"
+    },
+    ".claude/skills/diagram-design/assets/example-tree-block-decomposition-dark.html": {
+      "type": "file",
+      "hash": "1a862a84bb85391a850e6c6cc5d657dd019a1c2a4efe8e7d05f6045b876856df"
+    },
+    ".claude/skills/diagram-design/assets/example-tree-block-decomposition-full.html": {
+      "type": "file",
+      "hash": "9c315f8dcb3693c6c79e9057198e13cb6bd10eb2faa6ed2a5a1956f489271543"
+    },
+    ".claude/skills/diagram-design/assets/example-tree-block-decomposition.html": {
+      "type": "file",
+      "hash": "c5f3051ea93495e6b040d25642ca7a5e67664678bb5e3147509404ed068551da"
+    },
+    ".claude/skills/diagram-design/assets/example-tree-dark.html": {
+      "type": "file",
+      "hash": "43aa056d0761d323cad0bd6205de3083fe7413af4e10639cad5e92c8ed41beac"
+    },
+    ".claude/skills/diagram-design/assets/example-tree-full.html": {
+      "type": "file",
+      "hash": "ee52773ac71a12d584fbe33569da0a64481e05c94ac1ab4729653552e631d8cc"
+    },
+    ".claude/skills/diagram-design/assets/example-tree.html": {
+      "type": "file",
+      "hash": "6812d3e99c21ddc29d346cfb3713ea997bd6ac1fcb5b29b5c764c200afa0ea20"
+    },
+    ".claude/skills/diagram-design/assets/example-treemap-dark.html": {
+      "type": "file",
+      "hash": "43cbbb2ec7c30a71edf5f5436e51dd8369cedb1da80f6e6241b62278ea4e5698"
+    },
+    ".claude/skills/diagram-design/assets/example-treemap-full.html": {
+      "type": "file",
+      "hash": "9339c9007d81969f6d04c30edcf9d3ef558f753ecf9cd8f401978551cfc5c069"
+    },
+    ".claude/skills/diagram-design/assets/example-treemap.html": {
+      "type": "file",
+      "hash": "224c33a048dc64cbbd687bd826a3a09c8178dcd3d311ea3b53bc43f767f420f6"
+    },
+    ".claude/skills/diagram-design/assets/example-uml-class-dark.html": {
+      "type": "file",
+      "hash": "eca2e26603714d4df494532a2a712101321a484cc2d1263f7629b8f0e214357d"
+    },
+    ".claude/skills/diagram-design/assets/example-uml-class-full.html": {
+      "type": "file",
+      "hash": "0c73c3f1b9b4dd569d264a0caff859bf0a3a82849432294c73fed8435a4772e7"
+    },
+    ".claude/skills/diagram-design/assets/example-uml-class.html": {
+      "type": "file",
+      "hash": "98e58c2833cc6b4f2b3e176bbf173907e7168aedf5310cb900d7bdfeb6e22c8d"
+    },
+    ".claude/skills/diagram-design/assets/example-unit-grid-dark.html": {
+      "type": "file",
+      "hash": "5d7accc0bfe99114f1ada56883406d25bf5db9fc5ea8792a45e11ca16ea8cbb6"
+    },
+    ".claude/skills/diagram-design/assets/example-unit-grid-full.html": {
+      "type": "file",
+      "hash": "29edee8fd8e0a05475dc44af632e101fbb840fda3ce6fe751d814f64b3322fea"
+    },
+    ".claude/skills/diagram-design/assets/example-unit-grid.html": {
+      "type": "file",
+      "hash": "a09af380f38271521a32d5f0959a440d736071d0a96ebf97586d19e2c96c83e0"
+    },
+    ".claude/skills/diagram-design/assets/example-venn-dark.html": {
+      "type": "file",
+      "hash": "ea604fc7ff3c2da573bba856b54b0ac6a95491f26cb707caefda94ac64215a4f"
+    },
+    ".claude/skills/diagram-design/assets/example-venn-full.html": {
+      "type": "file",
+      "hash": "7dc6a440cc8881f70f6184200e3557a7501d21f93495a5aa209c6c8c479dd0ba"
+    },
+    ".claude/skills/diagram-design/assets/example-venn.html": {
+      "type": "file",
+      "hash": "a9f6ab1f15906f7618a2f876bc9cd998a1b0be9b31b7e49eeaf42c3c156340f6"
+    },
+    ".claude/skills/diagram-design/assets/example-wardley-dark.html": {
+      "type": "file",
+      "hash": "80aff4e268d3775541eca4cf1c1cac918f0895637cd79568d4895e84b9f2046b"
+    },
+    ".claude/skills/diagram-design/assets/example-wardley-full.html": {
+      "type": "file",
+      "hash": "1986784529ddb529a3d321e6dbc2add1046abccba5fd8bcab23679742731769d"
+    },
+    ".claude/skills/diagram-design/assets/example-wardley.html": {
+      "type": "file",
+      "hash": "a386727c65063f36df75e096f963c305ca540799c5005daf079ff05e05428436"
+    },
+    ".claude/skills/diagram-design/assets/example-waterfall-dark.html": {
+      "type": "file",
+      "hash": "ce4eb6038b09b87eca88b6981a7b43d19f603f480b6e91fb16d5d7c58a9103a6"
+    },
+    ".claude/skills/diagram-design/assets/example-waterfall-full.html": {
+      "type": "file",
+      "hash": "5a5987e9988cad66b26f769e07eca805796895a951a8cc084f0e0aa8503fca09"
+    },
+    ".claude/skills/diagram-design/assets/example-waterfall.html": {
+      "type": "file",
+      "hash": "501231921ae5065423f75efa6a37fbfc4753ef76d26b9ab116902dc9964ad818"
+    },
+    ".claude/skills/diagram-design/assets/icons.html": {
+      "type": "file",
+      "hash": "8301219558a40abce2d739def01feda6a8b72adce00f8d60154c989dfb581090"
+    },
+    ".claude/skills/diagram-design/assets/index.html": {
+      "type": "file",
+      "hash": "934f9c3278efe136519f0fc67a538bb479cc473efc82d3e9ecdc6bf7d9a27476"
+    },
+    ".claude/skills/diagram-design/assets/template-dark.html": {
+      "type": "file",
+      "hash": "98428c8de2c4fe8e799d7110606421effb876e2e788f8639140854c1033d82d5"
+    },
+    ".claude/skills/diagram-design/assets/template-full.html": {
+      "type": "file",
+      "hash": "bfe0aa003eb264f4a2b6f10c540d9d7a53950574ed0f5dba2af3cac61fc2f52a"
+    },
+    ".claude/skills/diagram-design/assets/template-motion.html": {
+      "type": "file",
+      "hash": "0dc228e58e5810fe99d80b0895515bb9a7f129ced1de2960d343f1e9539d5359"
+    },
+    ".claude/skills/diagram-design/assets/template-terminal.html": {
+      "type": "file",
+      "hash": "d449b50f439214cef9025b91f7ad4d8f786c0f329496aa95b5ea864c1586708d"
+    },
+    ".claude/skills/diagram-design/assets/template.html": {
+      "type": "file",
+      "hash": "f6978a9d50dd286f32ab149bcf505261b9fc331df7320071f87509a285dee7f4"
+    },
+    ".claude/skills/diagram-design/references/animation.md": {
+      "type": "file",
+      "hash": "a270359a2c7306c7c80a264277ec5ed32df930599ea51d5812fd2ba140d52a59"
+    },
+    ".claude/skills/diagram-design/references/doctor.md": {
+      "type": "file",
+      "hash": "f0c0ba27b40e2c115509939af4f08ac6456e57d7690c96f7cd7f2b1ef7bdc962"
+    },
+    ".claude/skills/diagram-design/references/export-registry.md": {
+      "type": "file",
+      "hash": "9f5622a5e918877847a5b1ee63e8c91744e11906b79e5640758b0aba1f495b11"
+    },
+    ".claude/skills/diagram-design/references/export.md": {
+      "type": "file",
+      "hash": "2bf0f33623e488e5f3898679983d3bf6de271b5254e884922495c1b5f6535c51"
+    },
+    ".claude/skills/diagram-design/references/import-drawio.md": {
+      "type": "file",
+      "hash": "9889ab45a894d6d66532a05f5493bb9ab21e19f516b472f29a56837910f3d6d5"
+    },
+    ".claude/skills/diagram-design/references/import-excalidraw.md": {
+      "type": "file",
+      "hash": "c4da4ce9fcc201b163f8dbbb4e4b266c43f89959658b006b4c63a75ee0abceb2"
+    },
+    ".claude/skills/diagram-design/references/import-mermaid.md": {
+      "type": "file",
+      "hash": "b1a5d5adbcb6536c6b67d0de8ee5fc81610ce6186fd09d74a3c426f96a2fe423"
+    },
+    ".claude/skills/diagram-design/references/import-plantuml.md": {
+      "type": "file",
+      "hash": "88d71ffc46cd709ddc524c0afa6e6b1b9bfd36fc2d8ee508facf9baf851d0ab7"
+    },
+    ".claude/skills/diagram-design/references/layout-budget.md": {
+      "type": "file",
+      "hash": "e7b0a77026d0a13e25294a9d190af6d51280ff5266d2cf65b895fd07d5689c38"
+    },
+    ".claude/skills/diagram-design/references/onboarding.md": {
+      "type": "file",
+      "hash": "9ce3a9fb6d47287de114b56a9d9d7683295b6280073a8ffe9ca5c19aa017397d"
+    },
+    ".claude/skills/diagram-design/references/output-spec.md": {
+      "type": "file",
+      "hash": "0554311e5c5e026e76889400992a0ec774e242342dae2f74ddb9076e91a75404"
+    },
+    ".claude/skills/diagram-design/references/primitive-annotation.md": {
+      "type": "file",
+      "hash": "1a93e37fd21f5032bbd5628bcca956a5ceb21fa6ae2fc79900ebdef7a3239181"
+    },
+    ".claude/skills/diagram-design/references/primitive-icons.md": {
+      "type": "file",
+      "hash": "b927c3f73452e44c3424c8b8d513390e758b29c3b8b2fed47ae6beebe393b18f"
+    },
+    ".claude/skills/diagram-design/references/primitive-sketchy.md": {
+      "type": "file",
+      "hash": "05e1009a94eee95c99468e8019d0b382eabe923af6044ccf4a840ae667512b8a"
+    },
+    ".claude/skills/diagram-design/references/primitive-terminal.md": {
+      "type": "file",
+      "hash": "aa95b077bb8a4977a5e8c499abc35a6d5be0943427d706e64a911ae47f937f5b"
+    },
+    ".claude/skills/diagram-design/references/primitives-core.md": {
+      "type": "file",
+      "hash": "d1fd562c61198cc05d36ac3e6775550e912598afae5791446621d3a7b8ee5a6d"
+    },
+    ".claude/skills/diagram-design/references/profiles.md": {
+      "type": "file",
+      "hash": "20fa3617e086437c3d1c7efc62800fc982f2784d3805ad785ad23c71af6f27b4"
+    },
+    ".claude/skills/diagram-design/references/semantic-patterns.md": {
+      "type": "file",
+      "hash": "d962bc644c67d3325b55e31ae0433d0daddda02b501a5a665be054599bcb8d74"
+    },
+    ".claude/skills/diagram-design/references/style-guide.md": {
+      "type": "file",
+      "hash": "31472f4b12c5c1a68016db54cd2e749302c1c8e11bf8551641595aa6ecad65be"
+    },
+    ".claude/skills/diagram-design/references/type-architecture-delta.md": {
+      "type": "file",
+      "hash": "8fc9cc4b728944181c6e6ffef1a048ccf6eeb121267c4335333a35d77b6444ac"
+    },
+    ".claude/skills/diagram-design/references/type-architecture.md": {
+      "type": "file",
+      "hash": "3246a11e3a6cc24e0c861e20651654c3ddfc272361e9c07b8dffce99c6108220"
+    },
+    ".claude/skills/diagram-design/references/type-axonometric-plan.md": {
+      "type": "file",
+      "hash": "0e1ef839a8c19079091f50eb7261d27c9266557f9ad55d8be13f18d67515ae3a"
+    },
+    ".claude/skills/diagram-design/references/type-bar.md": {
+      "type": "file",
+      "hash": "7fc1f98ecaa9907373af6c650c17c908b0aef3d2d096cf775c1e5b2491dfea36"
+    },
+    ".claude/skills/diagram-design/references/type-data-flow.md": {
+      "type": "file",
+      "hash": "752fa74dc15ca88c09dff3ee46813a046c17460d496989d70cba7ffa20ce4dc2"
+    },
+    ".claude/skills/diagram-design/references/type-db-schema.md": {
+      "type": "file",
+      "hash": "7bae8d01ceeb4ad058317c132d23117ab31077f04f305e206a8a081cc419ed49"
+    },
+    ".claude/skills/diagram-design/references/type-dependency.md": {
+      "type": "file",
+      "hash": "477b22df7241a00e7a7cc60b001cde5b1e3237f01a7c4f2f676d9dac2495ee40"
+    },
+    ".claude/skills/diagram-design/references/type-deployment.md": {
+      "type": "file",
+      "hash": "9283f197ddd5f6771b1b861f19b387f9e086535c562a49a943ade6d4bda22dc9"
+    },
+    ".claude/skills/diagram-design/references/type-dp-integration.md": {
+      "type": "file",
+      "hash": "a9bcb88d5d5a79b495733b8e786efd0b5a35a0736bbb85bfca0c67a3a9617d35"
+    },
+    ".claude/skills/diagram-design/references/type-dp-security-matrix.md": {
+      "type": "file",
+      "hash": "ff41a44061c64fb1381865e5be1bf72ddbeb49d35bc64930139a8c734debe0d5"
+    },
+    ".claude/skills/diagram-design/references/type-er.md": {
+      "type": "file",
+      "hash": "065274dc39f3190c809d2b20c8e1cd7d7e48618ceaced390d44110a573f836d0"
+    },
+    ".claude/skills/diagram-design/references/type-event-modeling.md": {
+      "type": "file",
+      "hash": "9fdca5013ab4620b3bb96265b37343b3875aeadc81b6e0e1d3daad589c5f258d"
+    },
+    ".claude/skills/diagram-design/references/type-exploded.md": {
+      "type": "file",
+      "hash": "bfee9f6f203a47c0e1a165888f7b257d200b715caca856e5d676676cfd7211bc"
+    },
+    ".claude/skills/diagram-design/references/type-fishbone.md": {
+      "type": "file",
+      "hash": "204b9dc4ae2a8c546ca7aa67cb5c2cb22348a7c3ac9a539fc7258f414fec48d1"
+    },
+    ".claude/skills/diagram-design/references/type-flowchart.md": {
+      "type": "file",
+      "hash": "b0381e2d291b3c07ba2dfdb81da9c90344bf19ddad411963c4a329f802456cd6"
+    },
+    ".claude/skills/diagram-design/references/type-gantt.md": {
+      "type": "file",
+      "hash": "f19de79ce4735ff8f42e3fe4a4f0d0288456e2c96edc1cfd516c67aa37603039"
+    },
+    ".claude/skills/diagram-design/references/type-heatmap.md": {
+      "type": "file",
+      "hash": "ad99f7c74f4582610e4ff375106bbe4693e883e9d2ab13f6169ddf279a7e1d61"
+    },
+    ".claude/skills/diagram-design/references/type-high-level.md": {
+      "type": "file",
+      "hash": "4c4f54e19fdad768182a7bd3a7043cdbfe21f4d01319c5c2b6ab36a4dbc63c84"
+    },
+    ".claude/skills/diagram-design/references/type-it-state.md": {
+      "type": "file",
+      "hash": "0d8aac564e9402a0acd94dbc3469de2f152ee4480030ef68f360290c5dc3f6bf"
+    },
+    ".claude/skills/diagram-design/references/type-journey.md": {
+      "type": "file",
+      "hash": "faf3e0cd88a6f72edc9eddc60a4acd8eba51e6f50c73b26e4eda3fb3610f0292"
+    },
+    ".claude/skills/diagram-design/references/type-kanban.md": {
+      "type": "file",
+      "hash": "e9bbaa52875c09f34eee68f88215c2887897d08718f70bc33e2d1f656e44c42a"
+    },
+    ".claude/skills/diagram-design/references/type-layers.md": {
+      "type": "file",
+      "hash": "d8b3b18f0b2036616f85835b017938266b1b80505f9294bfeb7608fd72f1c3ea"
+    },
+    ".claude/skills/diagram-design/references/type-line.md": {
+      "type": "file",
+      "hash": "f125657cd305f9db18acd6cc356d2623dd092e106393b5aaea5c26ac6de6cf1d"
+    },
+    ".claude/skills/diagram-design/references/type-loop.md": {
+      "type": "file",
+      "hash": "e40d8ba65491526a581fcfb687a8558826c3b5b55b43c725127b549c219e840e"
+    },
+    ".claude/skills/diagram-design/references/type-medallion.md": {
+      "type": "file",
+      "hash": "f94139372a5ac51391e6c40cc43ce87c57a4243d474c7f2cd59ee9c8c0db2418"
+    },
+    ".claude/skills/diagram-design/references/type-nested.md": {
+      "type": "file",
+      "hash": "d6a4feea97cb7318f7db7977eed5385bf65d3da5a83c432283d7f78373099a81"
+    },
+    ".claude/skills/diagram-design/references/type-org-chart.md": {
+      "type": "file",
+      "hash": "a7448c82c53a26ec52c0774f1abaa0a2610489ba7be2eca876153089ca2c547f"
+    },
+    ".claude/skills/diagram-design/references/type-polar.md": {
+      "type": "file",
+      "hash": "a70108d22bd089c2902de3c4f027f8585b80de87100c1eaf98ac80c1958d54ba"
+    },
+    ".claude/skills/diagram-design/references/type-process.md": {
+      "type": "file",
+      "hash": "dedbdc16398289bd060fbafa265365ebb27f41daf704a207442e00ce94258fe2"
+    },
+    ".claude/skills/diagram-design/references/type-pyramid.md": {
+      "type": "file",
+      "hash": "71dd0b0912bd9791bd21412f41aa64d2401f63b494484d6e2207aa752d80b4be"
+    },
+    ".claude/skills/diagram-design/references/type-quadrant.md": {
+      "type": "file",
+      "hash": "db9f4f4ad6086f49b45197b59f3e31db9e470b04d7d279089c579f73af52d1b4"
+    },
+    ".claude/skills/diagram-design/references/type-radar.md": {
+      "type": "file",
+      "hash": "dd4b6b2067c61649c3c903fb16c39c7c34d3843b4c43d927f41c2804bb460df0"
+    },
+    ".claude/skills/diagram-design/references/type-requirement-traceability.md": {
+      "type": "file",
+      "hash": "b6fc5346df12844f612eb2ab419b26df6360d8c03f10fe19bd9b2e3e9531d249"
+    },
+    ".claude/skills/diagram-design/references/type-sankey.md": {
+      "type": "file",
+      "hash": "f71e761842ce0067a0adc43e8b14835b4177db1a2e11bf35bcf617de400190b1"
+    },
+    ".claude/skills/diagram-design/references/type-sbgn.md": {
+      "type": "file",
+      "hash": "92207a93beaddcc9de24ace966e237d5112c53b0719e5356312d889df00b9acb"
+    },
+    ".claude/skills/diagram-design/references/type-scatter.md": {
+      "type": "file",
+      "hash": "c4212718535795cfe7fe61174dd9c4e9665bfc7be342ffd008ce69f6640e25bd"
+    },
+    ".claude/skills/diagram-design/references/type-schedule-network.md": {
+      "type": "file",
+      "hash": "586b7588d01a5fe40764b108a57cfbf787d98e9580e6eaa67005e206fe2a1822"
+    },
+    ".claude/skills/diagram-design/references/type-sequence.md": {
+      "type": "file",
+      "hash": "4e9bb221f591186777da86ab81307efc47ade5e12e2ff64b8d0faa5ac2b08869"
+    },
+    ".claude/skills/diagram-design/references/type-service-blueprint.md": {
+      "type": "file",
+      "hash": "a2acc7512f9b66e703459f4cd21541d461e6a2a00962b5a3d2fb6f50a0423886"
+    },
+    ".claude/skills/diagram-design/references/type-state.md": {
+      "type": "file",
+      "hash": "d7cd680efa79f9abf720832879b6a4a37d96527e58e3a56774f68650dccbdbc3"
+    },
+    ".claude/skills/diagram-design/references/type-steps.md": {
+      "type": "file",
+      "hash": "3cb32876ff38d91203548762f8a2dc724827b5f0a392c87b4d978c5adf5c1fd9"
+    },
+    ".claude/skills/diagram-design/references/type-story-map.md": {
+      "type": "file",
+      "hash": "62560580b492894fdf95a85d3baf9f23e4cc52844bfce6a21fd95021895797b5"
+    },
+    ".claude/skills/diagram-design/references/type-swimlane.md": {
+      "type": "file",
+      "hash": "6f94ef0ab1be53a91a6632af5ea90dfe9d4b5a5a53f915084d2642b5d3cbc8c1"
+    },
+    ".claude/skills/diagram-design/references/type-timeline.md": {
+      "type": "file",
+      "hash": "0d57116beb31a96fdebacc763e4e4eaf9179b9b8d76a8b1a93f40f473ee7a934"
+    },
+    ".claude/skills/diagram-design/references/type-tree.md": {
+      "type": "file",
+      "hash": "4cc3235990dcd748a87aa46bb61962e5b1828aa7b53cd5c5a0f00740349e7f38"
+    },
+    ".claude/skills/diagram-design/references/type-treemap.md": {
+      "type": "file",
+      "hash": "42085c0a52c9bb63014a6563bc2be88f4f49471c34915910f33c330ad81ded4a"
+    },
+    ".claude/skills/diagram-design/references/type-uml-class.md": {
+      "type": "file",
+      "hash": "e3b71c04e2ee1244cbb0b1385d3d97a16b6a2b28e2941ad980bba1698da35476"
+    },
+    ".claude/skills/diagram-design/references/type-unit-grid.md": {
+      "type": "file",
+      "hash": "b618f04dc506b85cf564c7ffd5b4b82034b30c372436bb36e1e67dcc3ccddf26"
+    },
+    ".claude/skills/diagram-design/references/type-venn.md": {
+      "type": "file",
+      "hash": "b52b56e044157bfebcc98d7373d0bc11ed5be54ff69d15993f164ed1489ec0b2"
+    },
+    ".claude/skills/diagram-design/references/type-wardley.md": {
+      "type": "file",
+      "hash": "71138a603014395521bdf506c2c9058ec6a05ba22eddaee5432dea046c2eab4d"
+    },
+    ".claude/skills/diagram-design/references/type-waterfall.md": {
+      "type": "file",
+      "hash": "6d0715b17b8456d5e09088f9c483cdd46819eca6ff206ce9c64221100b3390ad"
+    },
+    ".claude/skills/diagram-design/scripts/drawio_extract.py": {
+      "type": "file",
+      "hash": "328e683a2d536a15a45ea8dfc1887bd62f9f1195910f21384dfed6206ae1f7c7"
+    },
+    ".claude/skills/diagram-design/scripts/excalidraw_extract.py": {
+      "type": "file",
+      "hash": "58f7284b6ee4c1d98d3ec5d7b59221ed273ef2efe76b34ac386de2d194fc087b"
+    },
+    ".claude/skills/diagram-design/scripts/export_png.py": {
+      "type": "file",
+      "hash": "430ddcc2d39441808bd4217fbdeb944dbb6de0be281782705a81747986d7d348"
+    },
+    ".claude/skills/diagram-design/scripts/export_svg.py": {
+      "type": "file",
+      "hash": "b5f45b8a36138874e095e07d22c3eaa2322a53927616c8eec5861ddbe9e89d2e"
+    },
+    ".claude/skills/diagram-design/scripts/mermaid_extract.py": {
+      "type": "file",
+      "hash": "5788098ca6fcbe329b42ff279d2e22e90303ee4850e3489619d746d84b6444ac"
+    },
+    ".claude/skills/diagram-design/scripts/plantuml_extract.py": {
+      "type": "file",
+      "hash": "d4c2fe72ed59b1f046aeea88adad7f2d94da7471e25ce2b616323f00cf61863c"
+    },
+    ".claude/skills/diagram-design/scripts/self_check.py": {
+      "type": "file",
+      "hash": "94055febf79eff9bfef42b4fc2635ad83f35fffeb798985fa8477c0bc8e133c5"
+    },
+    ".claude/skills/diagram-design/scripts/verify_geometry.py": {
+      "type": "file",
+      "hash": "e87c22d2720bfe354b595940d2cf93b555fb5176c823ed3ea46c31a68a10ffd3"
     }
   }
 }

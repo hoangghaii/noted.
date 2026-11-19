@@ -26,11 +26,13 @@ Before each round, classify the failures from `kit-test`:
 
 If Codex is unavailable, Claude handles every round.
 
+Blocking review findings ([phase review](phase-review.md#fix-round-from-a-review)) go through the same table: count their distinct root causes the same way. A Claude round passes them to a `verify` worker as `Review findings`; a Codex round sends them as the evidence of `codex exec resume`.
+
 A phase Claude implemented is fixed by Claude. Hand it to Codex only for a large rework, and only through a fresh `codex exec` with the implement prompt plus the failure evidence, because there is no session to resume.
 
 ## Budget
 
-- At most 3 fix rounds per phase, counting Claude and Codex rounds together. Record the count in `plan.md`.
+- At most 3 fix rounds per phase, counting Claude and Codex rounds together, whether a round fixes failing checks or review findings. Record the count in `plan.md`.
 - A Codex retry after an unknown infrastructure failure does not count. A Codex run that returns a result does count.
 - When the third round still fails, set the phase to `blocked` and stop. Report the failing commands with their real output, what each round tried, and a suggested next step.
 

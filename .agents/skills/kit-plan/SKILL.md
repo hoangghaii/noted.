@@ -19,8 +19,9 @@ Do this in the main session (delegate codebase lookups to `scout` and external f
 3. **Write the plan** following [plan organization](references/plan-organization.md) and [output standards](references/output-standards.md). Unless the user asks for inline-only output, create `plans/YYYYMMDD-HHmm-<topic>/` in the target project using current local time. Reuse the supplied plan when revising or continuing it.
    - `plan.md`: scope, approach, dependencies and a status table linking every phase.
    - `phase-01-<name>.md`, `phase-02-<name>.md`, …: one file per meaningful phase with scope, affected files, ordered steps, todo checkboxes, acceptance checks and material risks.
+   - When they have content: Global Constraints and Review Focus in `plan.md`, Interfaces in each phase that exchanges something with another, and `TDD: yes` only for phases where the user chose TDD ([plan organization](references/plan-organization.md)).
    - `research/`, `reports/`, `scout/`: only for artifacts actually produced.
-4. **Verify**: read back the saved files and check relative links. Render the HTML view with `--open` ([plan organization](references/plan-organization.md#html-view-planhtml)); if rendering fails, note it and continue. Return the actual overview path, the `plan.html` path and a phase summary; never claim proposed files exist. A read-only planner returns per-file contents; the coordinator writes and verifies them.
+4. **Verify**: read back the saved files and check relative links. For a multi-phase plan, record the [interface check](references/plan-organization.md#verification-and-handoff) in `plan.md`. Render the HTML view with `--open` ([plan organization](references/plan-organization.md#html-view-planhtml)); if rendering fails, note it and continue. Return the actual overview path, the `plan.html` path and a phase summary; never claim proposed files exist. A read-only planner returns per-file contents; the coordinator writes and verifies them.
 
 Small tasks (one or two phases) may use a single `plan.md` with inline phases.
 

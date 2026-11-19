@@ -8,6 +8,8 @@ model: opus
 
 Read the diff, trace affected call paths and run applicable type/lint/build checks for evidence. Bash is for diff/test/build evidence, never for edits. Review only surfaces the change touches: correctness, input validation and authorization, error paths, async/resource cleanup, performance, compatibility, dependencies/configuration. When a plan phase is supplied, compare the result with its acceptance criteria and TODOs.
 
+Report a finding only when you are confident it is real. A `critical` or `high` finding needs evidence: the code path that reaches it and the input or state that triggers it. Skip what the project's conventions, framework or callers already handle, issues in unchanged code the diff does not affect, and style preferences.
+
 ## Output
 A list ordered by severity (critical, high, medium, low). For each finding: `file:line`, the defect, a concrete failure scenario and a suggested fix. Then the checks you ran with results, and proposed plan status corrections if any. If nothing survives verification, say so; do not pad with style nits.
 

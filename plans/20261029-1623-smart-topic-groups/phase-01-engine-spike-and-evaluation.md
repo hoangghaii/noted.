@@ -88,3 +88,7 @@ Plan Đọc hiểu link (Phase 06) đã cho link có tóm tắt. Người dùng 
 ## Cập nhật 2026-11-17 — gom chủ đề
 
 Đã loại fixture (chuyển vào Thùng rác) và tải lại asset NL. Nhãn được gom vào 6 chủ đề: Food&Drink 40, Etc. 15 (gồm cả “Không rõ”), Work Hard 12, Mac App 2, Tiếng Anh 2, Update Noted. 1. Lần đánh giá sau cần thêm nhãn cho Mac App, Tiếng Anh, Update Noted. (mỗi chủ đề ≥10) và tổng ≥150. Baseline từ khóa sẽ yếu đi vì tên chủ đề mới ít xuất hiện trong text. [Chi tiết](../../docs/intelligence-evaluation.md#gom-chủ-đề-đánh-giá-2026-11-17).
+
+## Cập nhật 2026-11-18 — tách AI
+
+AI được tách khỏi Work Hard thành chủ đề riêng; hiện có 7 chủ đề. Food&Drink 40, Etc. 17, AI 9, Work Hard 9, Tiếng Anh 3, Mac App 2, Update Noted. 2 (86 nhãn trên mục không ở Thùng rác). Còn 4 ghi chú mang nhãn “example” cần xử lý.

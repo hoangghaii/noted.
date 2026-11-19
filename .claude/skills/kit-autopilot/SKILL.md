@@ -8,7 +8,7 @@ metadata:
 
 # kit-autopilot
 
-You are the coordinator. You own the plan files, every status update, the branch and every commit, and you talk to the user. Keep your own context small: Codex implements one phase per call and stops, and Claude's heavy work for each phase runs in a fresh [phase worker](references/phase-worker.md). Never run `kit-implement`, `kit-test` or `kit-fix` yourself, and after the baseline never run a project check yourself; start a phase worker for that work. Reuse `kit-plan` and `kit-git` rather than restating them. Resources below resolve relative to this skill's directory.
+You are the coordinator. You own the plan files, every status update, the branch and every commit, and you talk to the user. Keep your own context small: Codex implements one phase per call and stops, and Claude's heavy work for each phase runs in a fresh [phase worker](references/phase-worker.md). An independent `code-reviewer` agent reads each phase's change and, at Finish, the whole branch ([phase review](references/phase-review.md)). Never run `kit-implement`, `kit-test` or `kit-fix` yourself, and after the baseline never run a project check yourself; start a phase worker for that work. Reuse `kit-plan` and `kit-git` rather than restating them. Resources below resolve relative to this skill's directory.
 
 ## Modes
 
@@ -26,7 +26,7 @@ All state lives in `plan.md` ([git and state](references/git-and-state.md#state-
 1. **Plan.** Use the supplied or clearly active `plans/<dir>/plan.md`; plans under `plans/archived/` are finished and never active. When the supplied plan is already archived, or its path is gone because it was archived, report its final state and stop. With only an idea, run `kit-plan --brainstorm` for open questions, then `kit-plan` to write the plan. Every phase row needs an `Executor` of `codex` or `claude` ([routing](references/fix-routing.md#choosing-the-executor)).
 2. **Codex preflight** once per session ([Codex handoff](references/codex-handoff.md#preflight)). If Codex is unavailable, say why in one line and switch every `codex` phase to `claude`.
 3. **Baseline.** Only when `plan.md` has no `Approved` yet: before Gate 1, run the project's test, type-check and build commands once on the current tree, with their output written to `plans/<dir>/reports/<ts>-baseline.log` (`<ts>` is a local `YYYYMMDD-HHmm` timestamp). Read only the exit codes and the failing part of the log. Record any check that already fails as `Baseline:` in `plan.md`, so a pre-existing failure is not found halfway through the run.
-4. **Gate 1.** Skip it when `plan.md` already records `Approved`. Otherwise render and open `plan.html`, then show the phase table (phase, executor, status), the mode, the Codex state and the baseline failures, ask whether those failures block phases, and wait for approval or edits. On approval record `Approved: <date>` and `Mode`, then go straight to step 5 in the same session.
+4. **Gate 1.** Skip it when `plan.md` already records `Approved`. Otherwise render and open `plan.html`, then show the phase table (phase, executor, status), the mode, the Codex state, the baseline failures, the plan's interface check with any mismatch it records, and the phases marked `TDD: yes`, ask whether those failures block phases, and wait for approval or edits. On approval record `Approved: <date>` and `Mode`, then go straight to step 5 in the same session.
 5. **Resume.** Follow [resume](references/git-and-state.md#resume): switch to the recorded branch and continue from the first phase that is not `done`.
 
 ## Per phase
@@ -41,21 +41,25 @@ Run phases in dependency order. Load only the current phase file.
 3. **Scope check.** Compare `git status --porcelain`, ignoring the plan directory, with the phase's file list and Codex's `out_of_scope` list. Unexpected paths: always ask the user.
 4. **Test.** Set status `testing` and start a `verify` phase worker. The worker, not you, runs `kit-test` against the phase acceptance checks and the project's real test, type-check and build commands, and fixes failures with `kit-fix` when [fix routing](references/fix-routing.md) picks Claude. A failure listed in `Baseline` blocks only if the user said so at Gate 1; report it either way.
 5. **Fix loop.** Act on the worker's report ([using the report](references/phase-worker.md#using-the-report)) and record its `fix_rounds_used`. When it is `failed` or `needs-codex` with budget left, set status `fixing`. On `needs-codex`, run `codex exec resume` in the background yourself ([resume](references/codex-handoff.md#resume-for-a-fix-round)), count it as one round, then start a new `verify` worker. At most 3 fix rounds per phase, Claude and Codex combined. After the third failed round set status `blocked` and stop with the real failing output.
-6. **Gate 2.** Always runs. Set status `awaiting-review` and report, from the worker's report and `git diff --stat`:
+6. **Review.** When the worker reports `passed`, set status `reviewing` and start a `code-reviewer` ([phase review](references/phase-review.md#review)). `critical` and `high` findings block: route them as a fix round ([fix round from a review](references/phase-review.md#fix-round-from-a-review)), then a `verify` worker, then a [re-review](references/phase-review.md#re-review). These rounds share the 3-round budget; with it used up, set status `blocked` and stop with the open findings. `medium` and `low` findings are recorded as `Deferred:` and never fixed in the loop.
+7. **Gate 2.** Always runs. Set status `awaiting-review` and report, from the worker and reviewer reports and `git diff --stat`:
    - changed files (names only, no diff);
    - each check command and its result;
    - executor, fix rounds used, any Codex fallback and why;
    - remaining risks.
 
-   Ask: accept, reject with feedback, or stop. A reject starts a new cycle with a fresh budget (0 of 3 rounds used): pass the feedback verbatim to a new `revise` phase worker, or to Codex (`resume`) followed by a new `verify` worker when [fix routing](references/fix-routing.md#user-rejection) picks Codex. A `passed` report leads back to Gate 2. Never apply the feedback yourself.
-7. **Done.** Only after the user accepts: tick the phase todos, set status `done`, then commit the phase ([git and state](references/git-and-state.md#commit)) and record the commit. Never push and never open a pull request.
-8. **Next.** Continue with the next phase in the same session, with new phase workers. After the last phase, go to Finish.
+   - review verdict, blocking findings fixed or ruled out, deferred findings and `cannot_verify` items ([Gate 2 additions](references/phase-review.md#gate-2-additions));
+   - rulings: decisions the worker or Codex made that the phase file did not dictate.
+
+   Ask: accept, reject with feedback, or stop. A reject starts a new cycle with a fresh budget (0 of 3 rounds used): pass the feedback verbatim to a new `revise` phase worker, or to Codex (`resume`) followed by a new `verify` worker when [fix routing](references/fix-routing.md#user-rejection) picks Codex. A `passed` report leads to a new review, then back to Gate 2. Never apply the feedback yourself.
+8. **Done.** Only after the user accepts: tick the phase todos, set status `done`, then commit the phase ([git and state](references/git-and-state.md#commit)) and record the commit. Never push and never open a pull request.
+9. **Next.** Continue with the next phase in the same session, with new phase workers. After the last phase, go to Finish.
 
 ## Context
 
 - Never stop to ask the user to run `/clear`.
 - Work from worker reports, the Codex result JSON and `git diff --stat`. Open a project file only when the scope check flags a path or the user asks about one at Gate 2.
-- Take a worker report as written. Do not re-run a check, run project code or read the changed files to confirm it. When a report is unclear or looks wrong, start a new `verify` worker.
+- Take a worker or reviewer report as written. Do not re-run a check, run project code or read the changed files to confirm it. When a worker report is unclear or looks wrong, start a new `verify` worker; when a review is, start a new review.
 - A prompt for a worker or for Codex holds the fields of its template and nothing else. Do not add notes, lessons or feedback from another phase; what a later phase needs to know belongs in its phase file.
 - After the conversation is compacted, or whenever you are unsure of the state, reread `plan.md` and `git status` before continuing.
 - The user may run `/clear` at any time and call `/autopilot <plan>` again; the new session picks up from `plan.md` ([resume](references/git-and-state.md#resume)).
@@ -75,5 +79,6 @@ Never commit while a check fails. Never skip, disable or weaken a test to pass t
 
 When every phase is `done`:
 
-1. [Archive the plan](references/git-and-state.md#archive): move `plans/<dir>/` to `plans/archived/<dir>/`. Do not archive a plan with any phase that is not `done`.
-2. Report the branch, its base, one commit per phase, the checks run and the archived plan path. Suggest `kit-git --pr <base> <branch>` and leave the decision to the user.
+1. **Final review.** Run the [final review](references/phase-review.md#final-review) of the whole branch. With blocking findings: one `revise` worker for the whole list, one `verify` worker, one re-review, then [Gate 3](references/phase-review.md#gate-3). Never commit those fixes before the user accepts at Gate 3.
+2. [Archive the plan](references/git-and-state.md#archive): move `plans/<dir>/` to `plans/archived/<dir>/`. Do not archive a plan with any phase that is not `done`, or while `Final review` is `pending` or Gate 3 is unanswered.
+3. Report the branch, its base, one commit per phase, the final review result with any finding still open or deferred, the checks run and the archived plan path. Suggest `kit-git --pr <base> <branch>` and leave the decision to the user.
