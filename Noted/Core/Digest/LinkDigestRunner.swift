@@ -36,6 +36,9 @@ final class LinkDigestRunner {
     /// Set when the last run stopped for lack of a usable network; cleared by the next run.
     private(set) var isOffline = false
     var lastError: String?
+    /// Download + extraction time of each link's latest fetch in this process, for the Phase 06 report.
+    /// In memory only; an attempt that failed for lack of network is not recorded.
+    @ObservationIgnored private(set) var fetchMilliseconds: [UUID: Double] = [:]
 
     init(intelligence: IntelligenceStore,
          loader: @escaping @Sendable (URL) async throws -> LinkDigestFetch = { try await LinkDigestRunner.fetch($0) },
@@ -161,8 +164,13 @@ final class LinkDigestRunner {
 
         let loader = self.loader
         let result: Result<LinkDigestFetch, Error>
+        let started = ContinuousClock.now
         do { result = .success(try await Task.detached(priority: .utility) { try await loader(url) }.value) }
         catch { result = .failure(error) }
+        if case .failure(let error) = result, Self.isOffline(error) {} else {
+            let elapsed = started.duration(to: .now).components
+            fetchMilliseconds[job.itemID] = Double(elapsed.seconds) * 1000 + Double(elapsed.attoseconds) / 1e15
+        }
 
         // The digest may have been pruned while the request was in flight.
         guard let digest = try intelligence.linkDigest(for: job.itemID) else { return true }
@@ -266,3 +274,20 @@ final class LinkDigestRunner {
         return false
     }
 }
+
+#if DEBUG
+extension LinkDigestRunner {
+    /// Phase 06 acceptance: every stored digest goes back to `pending` so the next run reads all links again.
+    func retryAll() throws {
+        for digest in try intelligence.linkDigests() {
+            digest.state = .pending
+            digest.attempts = 0
+            digest.nextRetryAt = nil
+            digest.updatedAt = now()
+        }
+        try intelligence.saveChanges()
+        fetchMilliseconds = [:]
+        refreshDigests()
+    }
+}
+#endif

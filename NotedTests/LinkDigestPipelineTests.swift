@@ -97,6 +97,93 @@ final class LinkDigestPipelineTests: XCTestCase {
                         rawTitle: rawTitle)
     }
 
+    // MARK: - Phase 06 report
+
+    func testDigestReportCountsByDomainWithMetaFirstAndPercentiles() {
+        typealias Entry = LinkDigestReport.Entry
+        let entries = [
+            Entry(domain: "example.com", state: .complete, source: .api, milliseconds: 300),
+            Entry(domain: "example.com", state: .unreachable, source: .extractive, milliseconds: 100),
+            Entry(domain: "example.com", state: nil, source: .extractive, milliseconds: nil),
+            Entry(domain: "threads", state: .complete, source: .extractive, milliseconds: 200),
+            Entry(domain: "facebook", state: .loginWall, source: .extractive, milliseconds: 900),
+            Entry(domain: "facebook", state: .pending, source: .extractive, milliseconds: nil)
+        ]
+        let report = LinkDigestReport.make(entries, now: Date(timeIntervalSince1970: 0), engineVersion: "test")
+        XCTAssertEqual(report.rows.map(\.domain), ["facebook", "threads", "example.com"])
+        let example = report.rows[2]
+        XCTAssertEqual([example.total, example.complete, example.api, example.unreachable, example.notRead, example.measured], [3, 1, 1, 1, 1, 2])
+        XCTAssertEqual(example.p50Milliseconds, 100)
+        XCTAssertEqual(example.p95Milliseconds, 300)
+        XCTAssertEqual(report.rows[0].loginWall, 1)
+        XCTAssertEqual(report.rows[0].notRead, 1)
+        XCTAssertEqual(report.overall.total, 6)
+        XCTAssertEqual(report.overall.complete, 2)
+        XCTAssertEqual(report.overall.p50Milliseconds, 200)
+        XCTAssertEqual(report.overall.p95Milliseconds, 900)
+        XCTAssertNil(LinkDigestReport.percentile([], 0.5))
+        XCTAssertEqual(LinkDigestReport.percentile([5], 0.95), 5)
+    }
+
+    func testRetryAllRereadsEveryLinkAndRecordsTimingButNotOffline() async throws {
+        let store = try library()
+        let first = try await addLink("https://www.threads.net/@a/post/1", to: store)
+        let second = try await addLink("https://example.com/b", to: store)
+        let calls = Counter()
+        let runner = try runner { _ in calls.increment(); return Self.fetch() }
+        await runner.run(in: store)
+        XCTAssertEqual(calls.value, 2)
+        XCTAssertNotNil(runner.fetchMilliseconds[first.id])
+        XCTAssertNotNil(runner.fetchMilliseconds[second.id])
+
+        try runner.retryAll()
+        XCTAssertTrue(runner.fetchMilliseconds.isEmpty)
+        XCTAssertEqual(runner.digest(for: first)?.state, .pending)
+        await runner.run(in: store)
+        XCTAssertEqual(calls.value, 4)
+        let report = LinkDigestReport.make(items: store.items, runner: runner)
+        XCTAssertEqual(report.rows.map(\.domain), ["threads", "example.com"])
+        XCTAssertEqual(report.overall.complete, 2)
+        XCTAssertEqual(report.overall.measured, 2)
+
+        let offline = LinkDigestRunner(intelligence: runner.intelligence, loader: { _ in throw URLError(.notConnectedToInternet) })
+        try offline.retryAll()
+        await offline.run(in: store)
+        XCTAssertTrue(offline.fetchMilliseconds.isEmpty)
+        XCTAssertEqual(LinkDigestReport.make(items: store.items, runner: offline).overall.notRead, 2)
+    }
+
+    // MARK: - Backup (Phase 06)
+
+    func testBackupExcludesDigestsAndRestoreRebuildsThem() async throws {
+        let store = try library()
+        let item = try await addLink("https://example.com/backup", to: store)
+        let runner = try runner { _ in Self.fetch(summary: "Tóm tắt dẫn xuất chỉ nằm trong intelligence store.") }
+        await runner.run(in: store)
+        XCTAssertEqual(runner.digest(for: item)?.state, .complete)
+
+        let backup = try await BackupService().export(store: store)
+        let files = try XCTUnwrap(FileManager.default.subpaths(atPath: backup.url.path))
+        XCTAssertEqual(files.filter { !$0.hasPrefix("originals") }, ["manifest.json"])
+        let manifest = try String(contentsOf: backup.url.appendingPathComponent("manifest.json"), encoding: .utf8)
+        XCTAssertFalse(manifest.contains("Tóm tắt dẫn xuất"))
+        XCTAssertFalse(manifest.contains(runner.digest(for: item)!.fingerprint))
+
+        let restoredRoot = root.appendingPathComponent("restored")
+        let restored = try LibraryStore(root: restoredRoot, queue: ShareGateStore(root: root.appendingPathComponent("queue-restored")))
+        let summary = try await BackupService().importPackage(at: backup.url, into: restored)
+        XCTAssertEqual(summary.inserted, 1)
+        let restoredItem = try XCTUnwrap(restored.items.first { $0.id == item.id })
+        let calls = Counter()
+        let rebuilt = LinkDigestRunner(intelligence: try IntelligenceStore(root: restoredRoot.appendingPathComponent("Intelligence")),
+                                       loader: { _ in calls.increment(); return Self.fetch(summary: "Tóm tắt dẫn xuất chỉ nằm trong intelligence store.") })
+        XCTAssertNil(rebuilt.digest(for: restoredItem), "a restored library starts without digests")
+        await rebuilt.run(in: restored)
+        XCTAssertEqual(calls.value, 1)
+        XCTAssertEqual(rebuilt.digest(for: restoredItem)?.state, .complete)
+        XCTAssertEqual(rebuilt.digest(for: restoredItem)?.summary, "Tóm tắt dẫn xuất chỉ nằm trong intelligence store.")
+    }
+
     // MARK: - Fingerprint
 
     func testFingerprintIgnoresFragmentAndTracksEngineVersion() {

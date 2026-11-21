@@ -80,3 +80,15 @@ Quay lui: spike không ghi gì vào `library.store`. Màn gán nhãn chỉ có t
 - Asset NL tiếng Việt có thể mất sau mỗi lần cài lại app; cần bấm tải lại trước khi đánh giá.
 - Đo lại tài nguyên: `TEST_RUNNER_NOTED_E5_RESOURCE=1 [TEST_RUNNER_NOTED_E5_VARIANTS=fp16] xcodebuild test ... -only-testing:NotedTests/IntelligenceEngineTests/testE5IsolatedResourceGateOnDevice`, đọc dòng `NOTED_E5_RESOURCE_JSON`. Đo qua các lần mở app: cài app, chạy `xcrun devicectl device process launch --device <UDID> --terminate-existing dev.nguyenhoanghai861.Noted --e5-load-probe fp16` vài lần, rồi lấy `IntelligenceEvaluation/e5-load-probe.jsonl`.
 - Chạy test trên máy: `xcodebuild test -project Noted.xcodeproj -scheme Noted -destination 'platform=iOS,id=<UDID>' -allowProvisioningUpdates -only-testing:NotedTests/IntelligenceEngineTests`. Thêm `TEST_RUNNER_NOTED_SPIKE_REPORT=1` để in báo cáo trên bộ tổng hợp ra log (dòng `NOTED_SPIKE_REPORT_JSON`). Lần chạy gần nhất: 14/14 pass. `IntelligenceLabelingUITests` chạy với scheme `Noted-DeviceGate`, 1/1 pass.
+
+## Cập nhật 2026-11-16 — đánh giá lại sau digest link
+
+Plan Đọc hiểu link (Phase 06) đã cho link có tóm tắt. Người dùng gán nhãn lại: link thật “Không rõ” còn 2/14. Lần chạy mới có 89 nhãn, holdout 14: baseline 100% / 64,3%, E5 fp16 gốc 100% / 57,1%, mean-centered 100% / 42,9%. NL contextual không chạy vì thiếu asset. **Vẫn chưa chọn engine.** Gate số nhãn chưa đạt, và E5 fp16 cold load 4,0 s vượt gate 3 s. Trước lần chạy sau: loại 12 link fixture `example.com` (đang được gán “example”/“Example”), tải lại asset NL, gán thêm nhãn tới ≥150. [Chi tiết](../../docs/intelligence-evaluation.md#đánh-giá-lại-sau-khi-có-digest-link-2026-11-16).
+
+## Cập nhật 2026-11-17 — gom chủ đề
+
+Đã loại fixture (chuyển vào Thùng rác) và tải lại asset NL. Nhãn được gom vào 6 chủ đề: Food&Drink 40, Etc. 15 (gồm cả “Không rõ”), Work Hard 12, Mac App 2, Tiếng Anh 2, Update Noted. 1. Lần đánh giá sau cần thêm nhãn cho Mac App, Tiếng Anh, Update Noted. (mỗi chủ đề ≥10) và tổng ≥150. Baseline từ khóa sẽ yếu đi vì tên chủ đề mới ít xuất hiện trong text. [Chi tiết](../../docs/intelligence-evaluation.md#gom-chủ-đề-đánh-giá-2026-11-17).
+
+## Cập nhật 2026-11-18 — tách AI
+
+AI được tách khỏi Work Hard thành chủ đề riêng; hiện có 7 chủ đề. Food&Drink 40, Etc. 17, AI 9, Work Hard 9, Tiếng Anh 3, Mac App 2, Update Noted. 2 (86 nhãn trên mục không ở Thùng rác). Còn 4 ghi chú mang nhãn “example” cần xử lý.

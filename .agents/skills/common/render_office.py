@@ -18,7 +18,7 @@ def render(source, output):
     if source.suffix.lower() != '.pdf':
         if not executable:
             raise RuntimeError('LibreOffice is required; install it or set SOFFICE.')
-        with tempfile.TemporaryDirectory(prefix='agentkit-office-') as profile:
+        with tempfile.TemporaryDirectory(prefix='fridaynight-office-') as profile:
             cmd = [executable, '-env:UserInstallation=' + Path(profile).as_uri(),
                    '--headless', '--convert-to', 'pdf', '--outdir', str(output), str(source)]
             result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)

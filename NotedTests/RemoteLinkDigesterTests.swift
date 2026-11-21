@@ -232,6 +232,20 @@ final class RemoteLinkDigesterTests: XCTestCase {
         XCTAssertEqual(requests.count, 3)
         XCTAssertEqual(client.usedToday, 3)
     }
+
+    func testComparisonReportCountsVerdictsAndMajority() {
+        let content = LinkDigestContent(title: "T", summary: "S", status: .complete)
+        func row(_ api: LinkDigestContent?, _ verdict: DigestComparisonVerdict?) -> DigestComparisonRow {
+            DigestComparisonRow(id: UUID(), domain: "threads", extractive: content, api: api, verdict: verdict)
+        }
+        let report = DigestComparisonReport(rows: [row(content, .api), row(content, .api), row(content, .same),
+                                                   row(content, .extractive), row(nil, nil)], model: "m")
+        XCTAssertEqual([report.compared, report.apiBetter, report.same, report.extractiveBetter, report.apiFailed], [5, 2, 1, 1, 1])
+        XCTAssertFalse(report.apiWinsMajority, "2 of 4 judged is not a majority")
+        XCTAssertTrue(DigestComparisonReport(rows: [row(content, .api), row(content, .api), row(content, .same)], model: "m").apiWinsMajority)
+        XCTAssertFalse(DigestComparisonReport(rows: [], model: "m").apiWinsMajority)
+        XCTAssertEqual(report.entries.map(\.apiFailed), [false, false, false, false, true])
+    }
 }
 
 private final class RequestRecorder: @unchecked Sendable {

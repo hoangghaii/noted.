@@ -1,6 +1,6 @@
 # Phase 04 — Giao diện & màn gán nhãn
 
-Ngày 2026-11-04. Trạng thái: Implemented — build, unit và UI test iPhone đạt; còn nghe VoiceOver thủ công. Review: tự rà soát diff, chưa nghiệm thu accessibility đầy đủ. Phụ thuộc Phase 03. Giao diện thẻ/Detail theo layout của plan [Giấy & Bảng ghim](../archived/20261102-2119-paper-pinboard-ui/plan.md) (đã lưu trữ). Ưu tiên cao. Overview: [plan.md](plan.md).
+Ngày 2026-11-04. Trạng thái: Done — build, unit và UI test iPhone đạt; người dùng xác nhận VoiceOver trên iPhone ngày 2026-11-16. Review: tự rà soát diff. Phụ thuộc Phase 03. Giao diện thẻ/Detail theo layout của plan [Giấy & Bảng ghim](../archived/20261102-2119-paper-pinboard-ui/plan.md) (đã lưu trữ). Ưu tiên cao. Overview: [plan.md](plan.md).
 
 ## Mục tiêu
 

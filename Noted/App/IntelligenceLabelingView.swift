@@ -67,7 +67,7 @@ struct IntelligenceLabelingView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var labels: [UUID: IntelligenceLabel] = [:]
     @State private var index = 0
-    @State private var topic = "Không rõ"
+    @State private var topic = "Etc."
     @State private var customTopic = ""
     @State private var secondaryTopics = ""
     @State private var desiredTags = ""
@@ -82,7 +82,10 @@ struct IntelligenceLabelingView: View {
     @State private var linkProgress: (done: Int, total: Int)?
     /// False when an existing link-sources.json could not be read; measuring would overwrite earlier runs.
     @State private var linkReportReadable = true
-    private let topics = ["Cà phê", "Tìm việc", "Carepath", "Kiếm thêm thu nhập", "Hài hước", "Không rõ", "Chủ đề khác…"]
+    @State private var isMeasuringDigests = false
+    /// Main topics agreed with the user on 2026-11-17 (AI split out of Work Hard on 2026-11-18);
+    /// older labels (including “Không rõ”) were merged into these.
+    private let topics = ["Food&Drink", "Work Hard", "AI", "Mac App", "Tiếng Anh", "Update Noted.", "Etc.", "Chủ đề khác…"]
 
     private var items: [Item] {
         store.items.filter { $0.trashedAt == nil }.sorted { $0.id.uuidString < $1.id.uuidString }
@@ -152,6 +155,8 @@ struct IntelligenceLabelingView: View {
                 }
 
                 linkSourceSection
+
+                linkDigestSection
 
                 if let item = current {
                     Section("Mục \(index + 1)/\(items.count) · \(IntelligenceLabelStorage.split(for: item.id))") {
@@ -248,6 +253,64 @@ struct IntelligenceLabelingView: View {
         }
     }
 
+    private var digestReportURL: URL { LinkDigestReport.fileURL(for: store.root) }
+
+    @ViewBuilder private var linkDigestSection: some View {
+        Section {
+            if let digestRunner {
+                let report = LinkDigestReport.make(items: store.items, runner: digestRunner)
+                Button("Đọc lại tất cả link và đo") { Task { await measureDigests(digestRunner) } }
+                    .disabled(isMeasuringDigests || digestRunner.running || report.overall.total == 0)
+                    .accessibilityIdentifier("intelligenceMeasureLinkDigests")
+                if isMeasuringDigests || digestRunner.running {
+                    ProgressView("Đang đọc link, hãy giữ app mở…")
+                }
+                if digestRunner.isOffline { Text("Đang offline; runner chờ có mạng.").font(.footnote) }
+                ForEach([report.overall] + report.rows, id: \.self) { row in
+                    LabeledContent(row.domain == "all" ? "Tất cả (\(row.total))" : "\(row.domain) (\(row.total))",
+                                   value: Self.describe(row))
+                        .font(.footnote)
+                }
+                if FileManager.default.fileExists(atPath: digestReportURL.path) {
+                    ShareLink(item: digestReportURL) { Label("Xuất link-digest-report.json", systemImage: "square.and.arrow.up") }
+                        .accessibilityIdentifier("intelligenceExportLinkDigests")
+                }
+                NavigationLink("So sánh bản API với bản trích xuất") { RemoteDigestComparisonView(store: store) }
+                    .accessibilityIdentifier("intelligenceCompareRemoteDigests")
+            } else {
+                Text("Chưa mở được intelligence.store.").font(.footnote)
+            }
+        } header: {
+            Text("Nghiệm thu digest · DEBUG")
+        } footer: {
+            Text("Đặt mọi digest về chờ đọc rồi chạy runner thật (mỗi link 1 request). Thời gian là tải + trích xuất, không gồm API. File chỉ chứa domain và số đếm.")
+        }
+    }
+
+    private static func describe(_ row: LinkDigestDomainRow) -> String {
+        var parts = ["\(row.complete) đủ", "\(row.titleOnly) tiêu đề", "\(row.loginWall) login",
+                     "\(row.unreachable) lỗi mạng", "\(row.failed) hỏng", "\(row.notRead) chưa đọc"]
+        if row.api > 0 { parts.append("\(row.api) API") }
+        if let p50 = row.p50Milliseconds, let p95 = row.p95Milliseconds {
+            parts.append("p50 \(Int(p50)) ms · p95 \(Int(p95)) ms")
+        }
+        return parts.joined(separator: " · ")
+    }
+
+    @MainActor
+    private func measureDigests(_ runner: LinkDigestRunner) async {
+        guard !isMeasuringDigests else { return }
+        isMeasuringDigests = true
+        defer { isMeasuringDigests = false }
+        do {
+            try runner.retryAll()
+            await runner.run(in: store)
+            try LinkDigestReport.make(items: store.items, runner: runner).save(to: digestReportURL)
+        } catch {
+            self.error = "Không đo/lưu được link-digest-report.json: \(error.localizedDescription)"
+        }
+    }
+
     @MainActor
     private func measureLinkSources() async {
         guard linkProgress == nil, linkReportReadable else { return }
@@ -295,7 +358,7 @@ struct IntelligenceLabelingView: View {
         guard items.indices.contains(next) else { return }
         index = next
         let label = labels[items[next].id]
-        topic = label.map { topics.contains($0.topic) ? $0.topic : "Chủ đề khác…" } ?? "Không rõ"
+        topic = label.map { topics.contains($0.topic) ? $0.topic : "Chủ đề khác…" } ?? "Etc."
         customTopic = topic == "Chủ đề khác…" ? (label?.topic ?? "") : ""
         secondaryTopics = label?.secondaryTopics?.joined(separator: ", ") ?? ""
         desiredTags = label?.desiredTags.joined(separator: ", ") ?? ""

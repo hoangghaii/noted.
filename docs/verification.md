@@ -108,3 +108,13 @@ Thiết bị: iPhone 12 Pro, iOS 27.0.1, kết nối dây. App cài đè bằng 
 - `git diff --check`: đạt; đã tự rà diff/call path. Warning còn lại: AppIntents metadata; clean build có warning có sẵn của Share/AccentColor.
 
 Không gọi Groq thật hoặc kiểm chứng chất lượng tiếng Việt; chưa đánh giá API tốt hơn trên đa số link. Không chạy toàn bộ suite/Share Safari/Photos hoặc nghiệm thu VoiceOver thủ công. Phase giữ **Implemented, chờ quality gate**, không ghi Done. [Lệnh đầy đủ, kết quả và screenshot](evidence/20261105-link-phase5/summary.md), [điều khoản nhà cung cấp](intelligence-evaluation.md#link-phase-05--nhà-cung-cấp-api-tùy-chọn-2026-11-05).
+
+## 2026-11-16/17 — Đọc hiểu link, Phase 06 (nghiệm thu trên iPhone 12 Pro)
+
+Công cụ đo digest, trích xuất `link-extractive-v3` (mô tả lặp tiêu đề, tiêu đề Facebook dạng `|`), thẻ và Detail cho `titleOnly`, màn so sánh Groq, gom chủ đề đánh giá. Không đổi schema hoặc backup. Số liệu thật nằm ở `docs/intelligence-evaluation.md` (chỉ số đếm).
+
+- `xcodebuild ... -scheme Noted -destination 'platform=iOS,id=<UDID>' test`: **131 test, 0 lỗi, 2 skip opt-in** (`TEST_RUNNER_NOTED_E5_RESOURCE`, `TEST_RUNNER_NOTED_SPIKE_REPORT`).
+- `xcodebuild ... -configuration Release -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO build`: **đạt**.
+- `xcodebuild ... -scheme Noted-DeviceGate ... -only-testing:NotedUITests/IntelligenceLabelingUITests -only-testing:NotedUITests/RemoteAISettingsUITests test`: **5/5 đạt trên iPhone 12 Pro** (iOS 27.2.1). Lượt đầu không build được vì Xcode chưa đăng nhập tài khoản (`No Accounts`), nên chưa tạo được profile cho runner và `NotedGateHost`. Đạt sau khi người dùng đăng nhập lại. `testDebugLabelingScreenShowsLocalLibraryCounts` mở thư viện thật; sau lượt chạy, `labels.json` trên máy vẫn giống hệt.
+- Người dùng nghiệm thu thủ công: lưu link khi runner chạy, lưu offline, VoiceOver, thẻ Facebook sau v3.
+- Không chạy: các UI test Share Safari/Photos, `PhaseFourAcceptanceUITests`, `MockFidelityUITests` (ngoài phạm vi phase này).

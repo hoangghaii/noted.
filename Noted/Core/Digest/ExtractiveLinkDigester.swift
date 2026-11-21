@@ -22,7 +22,7 @@ struct LinkDigestContent: Equatable {
 
 enum ExtractiveLinkDigester {
     /// Bump when extraction rules change so stored digests are rebuilt.
-    static let engineVersion = "link-extractive-v1"
+    static let engineVersion = "link-extractive-v3"
     static let summaryLimit = 240
     static let titleLimit = 80
     static let minimumDescriptionLength = 40
@@ -41,6 +41,7 @@ enum ExtractiveLinkDigester {
         let rawTitle = fields.ogTitle ?? fields.jsonLD.headline ?? fields.htmlTitle.map { stripSiteSuffix($0, siteName: siteName) }
             ?? fields.twitterTitle
         var description = fields.description?.text ?? fields.jsonLD.description
+        let metaDescription = description
 
         if redirectedToLogin || loginWallPattern(description: description, title: rawTitle) != nil {
             return LinkDigestContent(siteName: siteName, status: .loginWall)
@@ -59,13 +60,18 @@ enum ExtractiveLinkDigester {
                 if let content = parsed.content, description == nil { description = content }
                 title = nil
             }
+            if platform == "facebook", let current = title, let split = facebookTitle(current) {
+                title = split.title
+                author = author ?? split.author
+            }
         }
         if let current = title, isGenericTitle(current, siteName: siteName) { title = nil }
 
         var summary: String?
         let minimum = social ? minimumSocialDescriptionLength : minimumDescriptionLength
         if let description, description.count >= minimum,
-           !sameText(description, title), !sameText(description, siteName) {
+           !contained(description, in: title), !contained(description, in: author), !sameText(description, siteName),
+           !(description == metaDescription && contained(description, in: rawTitle)) {
             summary = clip(description, limit: summaryLimit)
         }
         let body = fields.mainText.isEmpty ? (fields.jsonLD.articleBody ?? "") : fields.mainText
@@ -176,6 +182,21 @@ enum ExtractiveLinkDigester {
         return (match[0], nil)
     }
 
+    /// `excerpt | By Name | …` (Facebook share link without login, 2026-11-16): the first part is the post,
+    /// the rest name its author or page. Platform names are dropped.
+    static func facebookTitle(_ title: String) -> (title: String, author: String?)? {
+        let platforms = Set(platformNames.values.map(Item.normalize))
+        let parts = title.components(separatedBy: " | ")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty && !platforms.contains(Item.normalize($0)) }
+        guard parts.count >= 2 else { return nil }
+        let names = parts.dropFirst().map { part -> String in
+            for prefix in ["By ", "Bởi "] where part.hasPrefix(prefix) { return String(part.dropFirst(prefix.count)) }
+            return part
+        }
+        return (parts[0], names.joined(separator: " · "))
+    }
+
     // MARK: Text
 
     /// Drops a trailing "| Facebook", "• Instagram photos and videos", "- YouTube" style suffix.
@@ -243,6 +264,13 @@ enum ExtractiveLinkDigester {
 
     private static func isGenericTitle(_ title: String, siteName: String?) -> Bool {
         sameText(title, siteName) || genericLoginTitles.contains(Item.normalize(title))
+    }
+
+    /// A description that only repeats part of the title adds nothing (seen on a Facebook share link, 2026-11-16).
+    private static func contained(_ text: String, in other: String?) -> Bool {
+        guard let other else { return false }
+        let needle = Item.normalize(text).trimmingCharacters(in: .whitespacesAndNewlines)
+        return !needle.isEmpty && Item.normalize(other).contains(needle)
     }
 
     private static func sameText(_ lhs: String, _ rhs: String?) -> Bool {

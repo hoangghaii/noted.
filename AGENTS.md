@@ -6,7 +6,7 @@
 
 - Small, well-understood change: do it directly. Larger work: state the acceptance criteria first, then plan → implement → test → review.
 - Respect the requested stage. Brainstorm compares options, plan writes plans, debug diagnoses, test runs checks, review reports findings. None of these edit application code unless the user also asked for a fix or implementation.
-- Delegate only independent, substantial work: `scout` to locate code, `researcher` for external facts, `planner`, `tester`, `code-reviewer`, `debugger`. Give each one the objective, paths, constraints and expected output. Without delegation, do the same stages yourself.
+- Delegate only independent, substantial work: `scout` to locate code, `researcher` for external facts, `planner`, `tester`, `code-reviewer`, `security-reviewer` for auth, input, secrets or payment changes, `debugger`. Give each one the objective, paths, constraints and expected output. Without delegation, do the same stages yourself.
 - Load only the skills the task needs. Skill resources and scripts resolve relative to the installed skill directory, not the shell directory. Check the version the project actually uses before applying a bundled API example.
 
 ## Workflows
@@ -23,6 +23,10 @@ Plans live in `plans/YYYYMMDD-HHmm-<topic>/`: a `plan.md` overview plus one `pha
 4. Hand off: changed paths, checks run, remaining risks.
 
 Preserve existing project instructions, user edits, configuration and public APIs. Never silence errors with `any`, broad casts, skipped tests or suppression comments. Commit, push, publish or deploy only when the user asks.
+
+## Replies
+
+Answer first. Skip greetings, recaps and sign-offs, and do not narrate routine tool calls. Be concise, not lossy: never drop negations or limits (not, never, no, only, except), and keep numbers, paths, commands and identifiers exact. Use full prose for security warnings, irreversible actions, ordered steps and questions to the user.
 
 ## Principles
 
@@ -68,3 +72,37 @@ App SwiftUI + SwiftData cá nhân, **chỉ cho iPhone** (deployment target iOS 2
 
 - Build thành công ≠ test đã chạy ≠ nghiệm thu trên iPhone. Ghi rõ cái nào chưa chạy (thường do iPhone không kết nối, chưa bật UI Automation, profile hết hạn hoặc chạm giới hạn 3 app của Personal Team).
 - Kết quả kiểm chứng ghi vào `docs/verification.md`, bằng chứng vào `docs/evidence/<YYYYMMDD>-<topic>/`; kết quả đánh giá AI vào `docs/intelligence-evaluation.md`. Không commit nội dung cá nhân của người dùng (text, ảnh, link thật) làm fixture — dùng corpus tổng hợp.
+<!-- fridaynight:begin -->
+<!-- Managed by FridayNight. Put project-specific instructions outside this block; edits inside are kept but stop receiving FridayNight updates. -->
+# FridayNight
+
+## How to work
+
+- Small, well-understood change: do it directly. Larger work: state the acceptance criteria first, then plan → implement → test → review.
+- Respect the requested stage. Brainstorm compares options, plan writes plans, debug diagnoses, test runs checks, review reports findings. None of these edit application code unless the user also asked for a fix or implementation.
+- Delegate only independent, substantial work: `scout` to locate code, `researcher` for external facts, `planner`, `tester`, `code-reviewer`, `security-reviewer` for auth, input, secrets or payment changes, `debugger`. Give each one the objective, paths, constraints and expected output. Without delegation, do the same stages yourself.
+- Load only the skills the task needs. Skill resources and scripts resolve relative to the installed skill directory, not the shell directory. Check the version the project actually uses before applying a bundled API example.
+
+## Workflows
+
+Invoke `fnkit-plan`, `fnkit-implement`, `fnkit-debug`, `fnkit-fix`, `fnkit-test` and `fnkit-review` (Codex `$fnkit-plan`, Claude `/fnkit-plan` or the installed aliases). Use `fnkit-tdd` only when TDD is selected and the quality pack is installed.
+
+Plans live in `plans/YYYYMMDD-HHmm-<topic>/`: a `plan.md` overview plus one `phase-NN-<name>.md` per phase, unless the user wants the plan inline. When executing a plan, read the overview and the current phase only. Tick todos and update statuses only after their acceptance checks pass. Workflow details are in `.fridaynight/workflows/`.
+
+## Before saying "done"
+
+1. Run the project's real test, type-check and build commands for what you changed, and read the output.
+2. Report each command and its result. Say explicitly which checks failed, were skipped or could not run. Never present a skipped check as passing.
+3. Review your own diff for unrelated changes, debugging leftovers and secrets.
+4. Hand off: changed paths, checks run, remaining risks.
+
+Preserve existing project instructions, user edits, configuration and public APIs. Never silence errors with `any`, broad casts, skipped tests or suppression comments. Commit, push, publish or deploy only when the user asks.
+
+## Replies
+
+Answer first. Skip greetings, recaps and sign-offs, and do not narrate routine tool calls. Be concise, not lossy: never drop negations or limits (not, never, no, only, except), and keep numbers, paths, commands and identifiers exact. Use full prose for security warnings, irreversible actions, ordered steps and questions to the user.
+
+## Principles
+
+YAGNI: build only what is required now. KISS: choose the simplest solution that works. DRY: keep one source of truth, but do not abstract prematurely.
+<!-- fridaynight:end -->

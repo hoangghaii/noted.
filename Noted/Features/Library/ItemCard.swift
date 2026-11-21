@@ -151,6 +151,14 @@ struct ItemCard: View {
                             } else if digest.state == .loginWall {
                                 Text("Không đọc được nội dung (cần đăng nhập)")
                                     .font(.footnote).foregroundStyle(tone.secondaryForeground)
+                            } else if digest.state == .titleOnly {
+                                if !digest.byline.isEmpty {
+                                    Text(digest.byline).font(.caption).foregroundStyle(tone.secondaryForeground).lineLimit(1)
+                                }
+                                if excerpt.isEmpty {
+                                    Text("Chỉ có tiêu đề · thêm ghi chú để dễ nhớ")
+                                        .font(.footnote).foregroundStyle(tone.secondaryForeground)
+                                }
                             }
                         }
                         if item.kind == "link" {
